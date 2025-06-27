@@ -1,14 +1,19 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { Header } from "@/components/Header"
+import { MainActions } from "@/components/MainActions"
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/50 font-inter">
+      <div className="absolute inset-0 bg-gradient-to-br from-woices-violet/5 via-transparent to-woices-mint/5 pointer-events-none"></div>
+      <div className="relative">
+        <Header />
+        <main className="py-12">
+          <MainActions />
+        </main>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				woices: {
+					violet: '#7c3aed',
+					mint: '#10b981',
+					sky: '#0ea5e9',
+					bloom: '#ec4899',
+					brick: '#64748b'
 				}
 			},
 			borderRadius: {
@@ -84,11 +92,65 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'bloom': {
+					'0%': {
+						transform: 'scale(1)',
+						filter: 'brightness(1)'
+					},
+					'50%': {
+						transform: 'scale(1.05)',
+						filter: 'brightness(1.1)'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						filter: 'brightness(1)'
+					}
+				},
+				'brick': {
+					'0%': {
+						transform: 'translateX(0)',
+						opacity: '1'
+					},
+					'50%': {
+						transform: 'translateX(-10px)',
+						opacity: '0.7'
+					},
+					'100%': {
+						transform: 'translateX(0)',
+						opacity: '0.5'
+					}
+				},
+				'pulse-glow': {
+					'0%, 100%': {
+						boxShadow: '0 0 0 0 rgba(124, 58, 237, 0.4)'
+					},
+					'50%': {
+						boxShadow: '0 0 0 10px rgba(124, 58, 237, 0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'bloom': 'bloom 0.6s ease-out',
+				'brick': 'brick 0.4s ease-out',
+				'pulse-glow': 'pulse-glow 2s infinite'
+			},
+			fontFamily: {
+				'inter': ['Inter', 'system-ui', 'sans-serif'],
+				'dm-sans': ['DM Sans', 'system-ui', 'sans-serif']
 			}
 		}
 	},

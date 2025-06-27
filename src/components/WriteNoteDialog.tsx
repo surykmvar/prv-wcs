@@ -1,0 +1,130 @@
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { X } from "lucide-react"
+
+interface WriteNoteDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [tagInput, setTagInput] = useState("")
+  const [tags, setTags] = useState<string[]>([])
+
+  const handleAddTag = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      const tag = tagInput.trim()
+      if (tag && !tags.includes(tag)) {
+        setTags([...tags, tag])
+        setTagInput("")
+      }
+    }
+  }
+
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove))
+  }
+
+  const handleSubmit = () => {
+    console.log("Posted note:", { title, description, tags })
+    onOpenChange(false)
+    // Reset form
+    setTitle("")
+    setDescription("")
+    setTags([])
+    setTagInput("")
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">What's your thought or question?</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6">
+          <div>
+            <Label htmlFor="title" className="text-base font-medium">
+              Title
+            </Label>
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="What's on your mind?"
+              className="mt-2"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="description" className="text-base font-medium">
+              Description
+            </Label>
+            <p className="text-sm text-muted-foreground mb-2">
+              Add context to help others understand your note. (Maximum 600 characters)
+            </p>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Provide more details about your thought or question..."
+              className="min-h-[120px] resize-none"
+              maxLength={600}
+            />
+            <div className="text-right text-sm text-muted-foreground mt-1">
+              {description.length}/600
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="tags" className="text-base font-medium">
+              Tags (Optional)
+            </Label>
+            <Input
+              id="tags"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleAddTag}
+              placeholder="#startup #love #career"
+              className="mt-2"
+            />
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="px-3 py-1">
+                    #{tag}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="ml-2 h-4 w-4 p-0 hover:bg-transparent"
+                      onClick={() => removeTag(tag)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Button 
+            onClick={handleSubmit}
+            className="w-full bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 text-base font-medium"
+            disabled={!title.trim()}
+          >
+            Post and Wait for Woices
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
