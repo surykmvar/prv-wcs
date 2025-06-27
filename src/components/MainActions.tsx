@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +13,7 @@ export function MainActions() {
   return (
     <div className="w-full max-w-4xl mx-auto px-6">
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
           What would you like to do with your voice?
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
