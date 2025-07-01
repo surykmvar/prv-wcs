@@ -47,13 +47,13 @@ export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-xl sm:max-w-2xl mx-4 sm:mx-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl">What's your thought or question?</DialogTitle>
+          <DialogTitle className="text-xl sm:text-2xl font-semibold break-words">What's your thought or question?</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div>
-            <Label htmlFor="title" className="text-base font-medium">
+            <Label htmlFor="title" className="text-sm sm:text-base font-medium">
               Title
             </Label>
             <Input
@@ -61,15 +61,15 @@ export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="What's on your mind?"
-              className="mt-2"
+              className="mt-2 text-sm sm:text-base rounded-md"
             />
           </div>
 
           <div>
-            <Label htmlFor="description" className="text-base font-medium">
+            <Label htmlFor="description" className="text-sm sm:text-base font-medium">
               Description
             </Label>
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2">
               Add context to help others understand your note. (Maximum 600 characters)
             </p>
             <Textarea
@@ -77,16 +77,16 @@ export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Provide more details about your thought or question..."
-              className="min-h-[120px] resize-none"
+              className="min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base rounded-md"
               maxLength={600}
             />
-            <div className="text-right text-sm text-muted-foreground mt-1">
+            <div className="text-right text-xs sm:text-sm text-muted-foreground mt-1">
               {description.length}/600
             </div>
           </div>
 
           <div>
-            <Label htmlFor="tags" className="text-base font-medium">
+            <Label htmlFor="tags" className="text-sm sm:text-base font-medium">
               Tags (Optional)
             </Label>
             <Input
@@ -95,20 +95,20 @@ export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleAddTag}
               placeholder="#startup #love #career"
-              className="mt-2"
+              className="mt-2 text-sm sm:text-base rounded-md"
             />
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="px-3 py-1">
+                  <Badge key={tag} variant="secondary" className="px-2 sm:px-3 py-1 text-xs sm:text-sm">
                     #{tag}
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="ml-2 h-4 w-4 p-0 hover:bg-transparent"
+                      className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 p-0 hover:bg-transparent"
                       onClick={() => removeTag(tag)}
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-2 w-2 sm:h-3 sm:w-3" />
                     </Button>
                   </Badge>
                 ))}
@@ -118,7 +118,7 @@ export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
 
           <Button 
             onClick={handleSubmit}
-            className="w-full bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 text-base font-medium"
+            className="w-full bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-2 sm:py-3 text-sm sm:text-base font-medium rounded-xl shadow-md transition-all duration-300"
             disabled={!title.trim()}
           >
             Post and Wait for Woices

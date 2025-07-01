@@ -68,16 +68,16 @@ export function ReplyToThoughtCard({ onClose }: ReplyToThoughtCardProps) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 animate-fade-in">
-      <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Reply to a Thought</h2>
-        <Button variant="ghost" onClick={onClose}>
+    <div className="w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto animate-fade-in">
+      <div className="mb-4 sm:mb-6 flex justify-between items-center">
+        <h2 className="text-xl sm:text-2xl font-bold">Reply to a Thought</h2>
+        <Button variant="ghost" onClick={onClose} className="text-sm sm:text-base">
           Close
         </Button>
       </div>
 
       <Card 
-        className={`mb-6 transition-all duration-500 select-none ${
+        className={`mb-4 sm:mb-6 transition-all duration-500 select-none p-4 sm:p-6 rounded-xl ${
           noteStatus === "bloomed" 
             ? "border-woices-bloom shadow-lg animate-bloom bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-950/20 dark:to-rose-950/20" 
             : noteStatus === "bricked"
@@ -88,28 +88,28 @@ export function ReplyToThoughtCard({ onClose }: ReplyToThoughtCardProps) {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-medium">{mockNote.username}</span>
-                <span className="text-muted-foreground text-sm">{mockNote.timestamp}</span>
-                {noteStatus === "bloomed" && <Flower className="w-4 h-4 text-woices-bloom" />}
-                {noteStatus === "bricked" && <Square className="w-4 h-4 text-woices-brick" />}
+        <CardHeader className="p-0">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4">
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="font-medium text-sm sm:text-base">{mockNote.username}</span>
+                <span className="text-muted-foreground text-xs sm:text-sm">{mockNote.timestamp}</span>
+                {noteStatus === "bloomed" && <Flower className="w-3 h-3 sm:w-4 sm:h-4 text-woices-bloom" />}
+                {noteStatus === "bricked" && <Square className="w-3 h-3 sm:w-4 sm:h-4 text-woices-brick" />}
               </div>
-              <CardTitle className="text-xl mb-2">{mockNote.title}</CardTitle>
+              <CardTitle className="text-lg sm:text-xl mb-2 break-words">{mockNote.title}</CardTitle>
             </div>
-            <Badge variant="outline" className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
+            <Badge variant="outline" className="flex items-center gap-1 text-xs sm:text-sm shrink-0">
+              <Clock className="w-2 h-2 sm:w-3 sm:h-3" />
               {mockNote.timeLeft} left
             </Badge>
           </div>
-          <CardDescription className="text-base">
+          <CardDescription className="text-sm sm:text-base break-words">
             {mockNote.description}
           </CardDescription>
           <div className="flex flex-wrap gap-2 mt-3">
             {mockNote.tags.map((tag) => (
-              <Badge key={tag} variant="secondary">
+              <Badge key={tag} variant="secondary" className="text-xs sm:text-sm">
                 #{tag}
               </Badge>
             ))}
@@ -117,8 +117,8 @@ export function ReplyToThoughtCard({ onClose }: ReplyToThoughtCardProps) {
         </CardHeader>
       </Card>
 
-      <div className="text-center mb-4">
-        <p className="text-muted-foreground">
+      <div className="text-center mb-4 px-4">
+        <p className="text-muted-foreground text-xs sm:text-sm">
           Swipe right to Bloom 🌸 • Swipe left to Brick 🧱
         </p>
       </div>
@@ -126,16 +126,16 @@ export function ReplyToThoughtCard({ onClose }: ReplyToThoughtCardProps) {
       {noteStatus !== "bricked" && (
         <>
           {!showRecorder ? (
-            <Card className="text-center">
-              <CardContent className="pt-6">
+            <Card className="text-center p-4 sm:p-6 rounded-xl">
+              <CardContent className="p-0 space-y-4">
                 <Button
                   onClick={() => setShowRecorder(true)}
-                  className="bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white px-8 py-3 text-lg font-medium"
+                  className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white font-medium rounded-xl shadow-md transition-all duration-300"
                 >
-                  <Mic className="w-5 h-5 mr-2" />
+                  <Mic className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Start Recording Your Woice
                 </Button>
-                <p className="text-muted-foreground mt-2">
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Share your honest thoughts in 60 seconds
                 </p>
               </CardContent>

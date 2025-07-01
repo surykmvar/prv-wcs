@@ -8,7 +8,7 @@ const Index = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-woices-violet/5 via-transparent to-woices-mint/5 pointer-events-none"></div>
       <div className="relative">
         <Header />
-        <main className="py-12">
+        <main className="py-6 sm:py-8 md:py-12">
           <MainActions />
         </main>
       </div>
