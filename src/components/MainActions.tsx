@@ -13,7 +13,7 @@ export function MainActions() {
   return (
     <div className="w-full max-w-4xl mx-auto px-6">
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-slate-600 to-slate-800 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent">
           What would you like to do with your voice?
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -28,9 +28,9 @@ export function MainActions() {
             <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-woices-violet to-woices-bloom rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <Mic className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-xl">Speak on someone's note</CardTitle>
+            <CardTitle className="text-xl">Break the ice. Speak your Woice.</CardTitle>
             <CardDescription className="text-base">
-              Listen to a note and reply with your 60-second voice.
+              Reply with your 60-second voice to a thought that matters.
             </CardDescription>
           </CardHeader>
         </Card>
