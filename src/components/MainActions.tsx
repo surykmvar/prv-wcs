@@ -4,45 +4,28 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mic, Plus } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
-import { ThoughtSelector } from "@/components/ThoughtSelector"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
+import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
+import { useSupabase } from "@/hooks/useSupabase"
 
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
-  const [showThoughtSelector, setShowThoughtSelector] = useState(false)
-  const [selectedThoughtId, setSelectedThoughtId] = useState<string | null>(null)
+  const [showRandomRecorder, setShowRandomRecorder] = useState(false)
 
-  const handleSelectThought = (thoughtId: string) => {
-    setSelectedThoughtId(thoughtId)
-    setShowThoughtSelector(false)
-  }
-
-  const handleRecordingSuccess = () => {
-    setSelectedThoughtId(null)
+  const handleRandomRecorderSuccess = () => {
+    setShowRandomRecorder(false)
   }
 
   const handleBack = () => {
-    setShowThoughtSelector(false)
-    setSelectedThoughtId(null)
+    setShowRandomRecorder(false)
   }
 
-  // Show voice recorder when a thought is selected
-  if (selectedThoughtId) {
+  // Show random thought recorder when "Break the ice" is clicked
+  if (showRandomRecorder) {
     return (
-      <VoiceRecorder
-        thoughtId={selectedThoughtId}
-        onClose={handleBack}
-        onSuccess={handleRecordingSuccess}
-      />
-    )
-  }
-
-  // Show thought selector when "Break the ice" is clicked
-  if (showThoughtSelector) {
-    return (
-      <ThoughtSelector
-        onSelectThought={handleSelectThought}
+      <RandomThoughtRecorder
         onBack={handleBack}
+        onSuccess={handleRandomRecorderSuccess}
       />
     )
   }
@@ -60,7 +43,7 @@ export function MainActions() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-woices-violet/20 cursor-pointer p-4 sm:p-6 rounded-xl" 
-              onClick={() => setShowThoughtSelector(true)}>
+              onClick={() => setShowRandomRecorder(true)}>
           <CardHeader className="text-center pb-4 p-0">
             <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-br from-woices-violet to-woices-bloom rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <Mic className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
