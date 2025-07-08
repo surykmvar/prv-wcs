@@ -13,30 +13,43 @@ interface VoicePlayerProps {
 export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const [audioDuration, setAudioDuration] = useState(duration)
+  const [audioDuration, setAudioDuration] = useState(duration || 0)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
 
+    // Reset states when audio URL changes
+    setIsPlaying(false)
+    setCurrentTime(0)
+    setAudioDuration(duration || 0)
+
     const updateTime = () => setCurrentTime(audio.currentTime)
-    const updateDuration = () => setAudioDuration(audio.duration)
+    const updateDuration = () => {
+      const validDuration = audio.duration && isFinite(audio.duration) ? audio.duration : duration || 0
+      setAudioDuration(validDuration)
+    }
     const handleEnded = () => {
       setIsPlaying(false)
       setCurrentTime(0)
     }
+    const handleLoadedData = () => {
+      updateDuration()
+    }
 
     audio.addEventListener('timeupdate', updateTime)
     audio.addEventListener('loadedmetadata', updateDuration)
+    audio.addEventListener('loadeddata', handleLoadedData)
     audio.addEventListener('ended', handleEnded)
 
     return () => {
       audio.removeEventListener('timeupdate', updateTime)
       audio.removeEventListener('loadedmetadata', updateDuration)
+      audio.removeEventListener('loadeddata', handleLoadedData)
       audio.removeEventListener('ended', handleEnded)
     }
-  }, [])
+  }, [audioUrl, duration])
 
   const togglePlayPause = () => {
     const audio = audioRef.current
@@ -71,6 +84,9 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
   }
 
   const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds) || !isFinite(seconds)) {
+      return '0:00'
+    }
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins}:${secs.toString().padStart(2, '0')}`
@@ -98,7 +114,7 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
           <div className="flex-1 space-y-2">
             <Slider
               value={[currentTime]}
-              max={audioDuration}
+              max={audioDuration || 100}
               step={0.1}
               onValueChange={handleSliderChange}
               className="w-full"
