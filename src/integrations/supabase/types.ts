@@ -14,13 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      thoughts: {
+        Row: {
+          bloom_count: number
+          brick_count: number
+          created_at: string
+          description: string | null
+          expires_at: string
+          id: string
+          status: string
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          bloom_count?: number
+          brick_count?: number
+          created_at?: string
+          description?: string | null
+          expires_at?: string
+          id?: string
+          status?: string
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          bloom_count?: number
+          brick_count?: number
+          created_at?: string
+          description?: string | null
+          expires_at?: string
+          id?: string
+          status?: string
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
+      voice_responses: {
+        Row: {
+          audio_url: string
+          bloom_count: number
+          brick_count: number
+          classification: string | null
+          created_at: string
+          duration: number
+          id: string
+          thought_id: string
+          transcript: string | null
+        }
+        Insert: {
+          audio_url: string
+          bloom_count?: number
+          brick_count?: number
+          classification?: string | null
+          created_at?: string
+          duration: number
+          id?: string
+          thought_id: string
+          transcript?: string | null
+        }
+        Update: {
+          audio_url?: string
+          bloom_count?: number
+          brick_count?: number
+          classification?: string | null
+          created_at?: string
+          duration?: number
+          id?: string
+          thought_id?: string
+          transcript?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_responses_thought_id_fkey"
+            columns: ["thought_id"]
+            isOneToOne: false
+            referencedRelation: "thoughts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_expired_thoughts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

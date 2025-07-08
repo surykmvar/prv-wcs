@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { supabase, STORAGE_BUCKETS, isSupabaseConfigured } from '@/lib/supabase'
-import { NewThought, NewVoiceResponse, Thought, VoiceResponse } from '@/types/database'
 import { useToast } from '@/hooks/use-toast'
+
+// Use the integrated Supabase types
+type Database = import('@/integrations/supabase/types').Database
+type Thought = Database['public']['Tables']['thoughts']['Row']
+type VoiceResponse = Database['public']['Tables']['voice_responses']['Row']
+type NewThought = Database['public']['Tables']['thoughts']['Insert']
+type NewVoiceResponse = Database['public']['Tables']['voice_responses']['Insert']
 
 export function useSupabase() {
   const [loading, setLoading] = useState(false)
