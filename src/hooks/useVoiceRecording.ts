@@ -23,6 +23,7 @@ export function useVoiceRecording(maxDuration: number = 60) {
   const streamRef = useRef<MediaStream | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const chunksRef = useRef<Blob[]>([])
+  const startTimeRef = useRef<number>(0)
 
   const startRecording = useCallback(async () => {
     try {
@@ -36,6 +37,7 @@ export function useVoiceRecording(maxDuration: number = 60) {
       })
       
       streamRef.current = stream
+      startTimeRef.current = Date.now()
       
       // Create MediaRecorder with WebM format (fallback to available format)
       const options = { mimeType: 'audio/webm;codecs=opus' }
@@ -59,7 +61,7 @@ export function useVoiceRecording(maxDuration: number = 60) {
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType })
         const audioUrl = URL.createObjectURL(audioBlob)
-        const duration = maxDuration - state.timeLeft
+        const duration = Math.max(0, (Date.now() - startTimeRef.current) / 1000)
         
         setState(prev => ({
           ...prev,
@@ -78,7 +80,8 @@ export function useVoiceRecording(maxDuration: number = 60) {
         isRecording: true,
         timeLeft: maxDuration,
         audioBlob: null,
-        audioUrl: null
+        audioUrl: null,
+        duration: 0
       }))
 
       // Start countdown timer
@@ -97,10 +100,10 @@ export function useVoiceRecording(maxDuration: number = 60) {
       console.error('Error starting recording:', error)
       throw new Error('Failed to start recording. Please check microphone permissions.')
     }
-  }, [maxDuration, state.timeLeft])
+  }, [maxDuration])
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && state.isRecording) {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop()
     }
     
@@ -113,7 +116,7 @@ export function useVoiceRecording(maxDuration: number = 60) {
       clearInterval(timerRef.current)
       timerRef.current = null
     }
-  }, [state.isRecording])
+  }, [])
 
   const resetRecording = useCallback(() => {
     if (state.audioUrl) {

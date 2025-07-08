@@ -14,6 +14,7 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [audioDuration, setAudioDuration] = useState(duration || 0)
+  const [playbackRate, setPlaybackRate] = useState(1)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
@@ -51,7 +52,8 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
     }
   }, [audioUrl, duration])
 
-  const togglePlayPause = () => {
+  const togglePlayPause = (e: React.MouseEvent) => {
+    e.stopPropagation()
     const audio = audioRef.current
     if (!audio) return
 
@@ -63,7 +65,8 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
     setIsPlaying(!isPlaying)
   }
 
-  const restart = () => {
+  const restart = (e: React.MouseEvent) => {
+    e.stopPropagation()
     const audio = audioRef.current
     if (!audio) return
 
@@ -81,6 +84,20 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
     const newTime = value[0]
     audio.currentTime = newTime
     setCurrentTime(newTime)
+  }
+
+  const togglePlaybackSpeed = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const audio = audioRef.current
+    if (!audio) return
+
+    const speeds = [1, 1.5, 2]
+    const currentIndex = speeds.indexOf(playbackRate)
+    const nextIndex = (currentIndex + 1) % speeds.length
+    const newRate = speeds[nextIndex]
+    
+    setPlaybackRate(newRate)
+    audio.playbackRate = newRate
   }
 
   const formatTime = (seconds: number) => {
@@ -119,11 +136,19 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
               onValueChange={handleSliderChange}
               className="w-full"
             />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(audioDuration)}</span>
+            <div className="flex justify-end text-xs text-muted-foreground">
+              <span>{formatTime(audioDuration - currentTime)}</span>
             </div>
           </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={togglePlaybackSpeed}
+            className="flex-shrink-0 min-w-[2.5rem] text-xs font-medium"
+          >
+            {playbackRate}x
+          </Button>
 
           <Button
             variant="ghost"
