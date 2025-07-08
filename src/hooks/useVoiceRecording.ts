@@ -61,7 +61,7 @@ export function useVoiceRecording(maxDuration: number = 60) {
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType })
         const audioUrl = URL.createObjectURL(audioBlob)
-        const duration = Math.max(0, (Date.now() - startTimeRef.current) / 1000)
+        const duration = Math.max(0, Math.floor((Date.now() - startTimeRef.current) / 1000))
         
         setState(prev => ({
           ...prev,
