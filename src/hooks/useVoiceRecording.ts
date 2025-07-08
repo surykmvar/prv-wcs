@@ -45,6 +45,10 @@ export function useVoiceRecording(maxDuration: number = 60) {
         options.mimeType = 'audio/webm'
         if (!MediaRecorder.isTypeSupported(options.mimeType)) {
           options.mimeType = 'audio/mp4'
+          if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+            // Fallback to default
+            delete options.mimeType
+          }
         }
       }
       
@@ -55,25 +59,41 @@ export function useVoiceRecording(maxDuration: number = 60) {
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           chunksRef.current.push(event.data)
+          console.log('Audio chunk received:', event.data.size, 'bytes')
         }
       }
 
       mediaRecorder.onstop = () => {
+        console.log('MediaRecorder stopped, chunks:', chunksRef.current.length)
         const audioBlob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType })
-        const audioUrl = URL.createObjectURL(audioBlob)
         const duration = Math.max(0, Math.floor((Date.now() - startTimeRef.current) / 1000))
         
-        setState(prev => ({
-          ...prev,
-          audioBlob,
-          audioUrl,
-          duration,
-          isRecording: false
-        }))
+        console.log('Created audio blob:', audioBlob.size, 'bytes, duration:', duration, 'seconds')
+        
+        // Only create audio URL and set state if we have actual audio data
+        if (audioBlob.size > 0 && duration > 0) {
+          const audioUrl = URL.createObjectURL(audioBlob)
+          setState(prev => ({
+            ...prev,
+            audioBlob,
+            audioUrl,
+            duration,
+            isRecording: false
+          }))
+        } else {
+          console.warn('Recording has no audio data or duration is 0')
+          setState(prev => ({
+            ...prev,
+            audioBlob: null,
+            audioUrl: null,
+            duration: 0,
+            isRecording: false
+          }))
+        }
       }
 
-      // Start recording
-      mediaRecorder.start(100) // Collect data every 100ms
+      // Start recording - collect data more frequently
+      mediaRecorder.start(250) // Collect data every 250ms instead of 100ms
       
       setState(prev => ({
         ...prev,

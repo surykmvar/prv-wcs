@@ -37,7 +37,10 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
   }
 
   const handleSendRecording = async () => {
-    if (!audioBlob) return
+    if (!audioBlob || audioBlob.size === 0 || duration === 0) {
+      console.error('Cannot send empty recording')
+      return
+    }
     
     try {
       await submitVoiceResponse(thoughtId, audioBlob, duration)
