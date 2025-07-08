@@ -15,7 +15,13 @@ export function VoicePlayer({ audioUrl, duration, className }: VoicePlayerProps)
   const [currentTime, setCurrentTime] = useState(0)
   const [audioDuration, setAudioDuration] = useState(duration || 0)
   const [playbackRate, setPlaybackRate] = useState(1)
+  const [hasError, setHasError] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
+
+  // Don't render if invalid audio
+  if (!audioUrl || duration <= 0) {
+    return null
+  }
 
   useEffect(() => {
     const audio = audioRef.current

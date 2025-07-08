@@ -138,7 +138,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
       ) : (
         <div className="space-y-6">
           {thoughts.map((thought) => {
-            const responseCount = thought.voice_responses?.length || 0
+            const responseCount = thought.voice_responses?.filter(response => response.duration > 0 && response.audio_url)?.length || 0
             const timeLeft = new Date(thought.expires_at).getTime() - Date.now()
             const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)))
             const isExpanded = expandedThoughts.has(thought.id)
@@ -226,7 +226,9 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                   {responseCount > 0 && isExpanded && (
                     <Collapsible open={isExpanded}>
                       <CollapsibleContent className="mt-4 space-y-3 border-t pt-4">
-                        {thought.voice_responses?.map((response) => (
+                        {thought.voice_responses
+                          ?.filter((response) => response.duration > 0 && response.audio_url) // Only show valid recordings
+                          ?.map((response) => (
                           <div key={response.id} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
                             <div className="flex-1">
                               <VoicePlayer 
