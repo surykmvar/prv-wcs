@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase, STORAGE_BUCKETS } from '@/lib/supabase'
+import { supabase, STORAGE_BUCKETS, isSupabaseConfigured } from '@/lib/supabase'
 import { NewThought, NewVoiceResponse, Thought, VoiceResponse } from '@/types/database'
 import { useToast } from '@/hooks/use-toast'
 
@@ -9,6 +9,15 @@ export function useSupabase() {
 
   // Create a new thought
   const createThought = async (thought: Omit<NewThought, 'id' | 'created_at' | 'expires_at'>) => {
+    if (!isSupabaseConfigured) {
+      toast({
+        title: "Supabase not configured",
+        description: "Please set up Supabase environment variables to use this feature.",
+        variant: "destructive"
+      })
+      return null
+    }
+    
     setLoading(true)
     try {
       const { data, error } = await supabase
@@ -140,6 +149,15 @@ export function useSupabase() {
 
   // Submit complete voice response (upload + create record)
   const submitVoiceResponse = async (thoughtId: string, audioBlob: Blob, duration: number) => {
+    if (!isSupabaseConfigured) {
+      toast({
+        title: "Supabase not configured",
+        description: "Please set up Supabase environment variables to use this feature.",
+        variant: "destructive"
+      })
+      return null
+    }
+    
     try {
       // Upload audio file
       const { url } = await uploadAudioFile(audioBlob, thoughtId)
