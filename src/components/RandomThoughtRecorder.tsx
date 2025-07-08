@@ -2,10 +2,19 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, ArrowLeft } from "lucide-react"
+import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Play, Bookmark, BookmarkCheck } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { useSupabase } from "@/hooks/useSupabase"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
+import { VoicePlayer } from "@/components/VoicePlayer"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+
+type VoiceResponse = {
+  id: string
+  audio_url: string
+  duration: number
+  created_at: string
+}
 
 type Thought = {
   id: string
@@ -14,7 +23,7 @@ type Thought = {
   tags: string[] | null
   created_at: string
   expires_at: string
-  voice_responses?: { id: string }[]
+  voice_responses?: VoiceResponse[]
 }
 
 interface RandomThoughtRecorderProps {
@@ -23,138 +32,222 @@ interface RandomThoughtRecorderProps {
 }
 
 export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecorderProps) {
-  const [thought, setThought] = useState<Thought | null>(null)
+  const [thoughts, setThoughts] = useState<Thought[]>([])
   const [loading, setLoading] = useState(true)
-  const [showRecorder, setShowRecorder] = useState(false)
+  const [recordingThoughtId, setRecordingThoughtId] = useState<string | null>(null)
+  const [expandedThoughts, setExpandedThoughts] = useState<Set<string>>(new Set())
+  const [savedThoughts, setSavedThoughts] = useState<Set<string>>(new Set())
   const { getThoughts } = useSupabase()
 
-  const loadRandomThought = async () => {
+  const loadThoughts = async () => {
     try {
       setLoading(true)
       const data = await getThoughts()
-      
-      if (data && data.length > 0) {
-        // Get a random thought
-        const randomIndex = Math.floor(Math.random() * data.length)
-        setThought(data[randomIndex])
-      }
+      setThoughts(data || [])
     } catch (error) {
-      console.error('Failed to load random thought:', error)
+      console.error('Failed to load thoughts:', error)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    loadRandomThought()
+    loadThoughts()
+    // Load saved thoughts from localStorage
+    const saved = localStorage.getItem('savedThoughts')
+    if (saved) {
+      setSavedThoughts(new Set(JSON.parse(saved)))
+    }
   }, [])
 
-  const handleStartRecording = () => {
-    setShowRecorder(true)
+  const handleRefresh = () => {
+    loadThoughts()
+  }
+
+  const handleStartRecording = (thoughtId: string) => {
+    setRecordingThoughtId(thoughtId)
   }
 
   const handleRecordingSuccess = () => {
-    setShowRecorder(false)
-    onSuccess?.()
-    onBack()
+    setRecordingThoughtId(null)
+    loadThoughts() // Refresh the feed to show updated voice count
   }
 
-  if (loading) {
-    return (
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">Finding a thought for you...</p>
-        </div>
-      </div>
-    )
+  const toggleExpanded = (thoughtId: string) => {
+    const newExpanded = new Set(expandedThoughts)
+    if (newExpanded.has(thoughtId)) {
+      newExpanded.delete(thoughtId)
+    } else {
+      newExpanded.add(thoughtId)
+    }
+    setExpandedThoughts(newExpanded)
   }
 
-  if (!thought) {
-    return (
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
-        </div>
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">
-            No active thoughts yet. Create one first!
-          </p>
-        </div>
-      </div>
-    )
+  const toggleSaved = (thoughtId: string) => {
+    const newSaved = new Set(savedThoughts)
+    if (newSaved.has(thoughtId)) {
+      newSaved.delete(thoughtId)
+    } else {
+      newSaved.add(thoughtId)
+    }
+    setSavedThoughts(newSaved)
+    localStorage.setItem('savedThoughts', JSON.stringify(Array.from(newSaved)))
   }
 
-  if (showRecorder) {
+  if (recordingThoughtId) {
     return (
       <VoiceRecorder
-        thoughtId={thought.id}
-        onClose={() => setShowRecorder(false)}
+        thoughtId={recordingThoughtId}
+        onClose={() => setRecordingThoughtId(null)}
         onSuccess={handleRecordingSuccess}
       />
     )
   }
 
-  const responseCount = thought.voice_responses?.length || 0
-  const timeLeft = new Date(thought.expires_at).getTime() - Date.now()
-  const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)))
-
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 sm:px-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4" />
-          Back
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+          <h2 className="text-2xl font-bold">Break the Ice</h2>
+        </div>
+        <Button
+          variant="outline"
+          onClick={handleRefresh}
+          disabled={loading}
+          className="flex items-center gap-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          Refresh
         </Button>
-        <h2 className="text-2xl font-bold">Break the Ice</h2>
       </div>
 
-      <Card className="p-4 sm:p-6 mb-6">
-        <CardHeader className="p-0 mb-4">
-          <div className="flex justify-between items-start gap-4">
-            <CardTitle className="text-lg sm:text-xl font-semibold leading-tight">
-              {thought.title}
-            </CardTitle>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
-              <Clock className="w-4 h-4" />
-              {hoursLeft}h left
-            </div>
-          </div>
-          
-          {thought.description && (
-            <p className="text-sm sm:text-base text-muted-foreground mt-3 leading-relaxed">
-              {thought.description}
-            </p>
-          )}
-          
-          {thought.tags && thought.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              {thought.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs">
-                  #{tag}
-                </Badge>
-              ))}
-            </div>
-          )}
-        </CardHeader>
-        
-        <CardContent className="p-0">
-          <div className="text-xs text-muted-foreground mb-4">
-            Posted {formatDistanceToNow(new Date(thought.created_at), { addSuffix: true })} • {responseCount} voice{responseCount === 1 ? '' : 's'}
-          </div>
-          
-          <div className="text-center">
-            <Button
-              onClick={handleStartRecording}
-              className="w-full sm:w-auto px-8 py-3 text-lg bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl shadow-md"
-            >
-              Record Your 60-Second Woice
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {loading && thoughts.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-lg">Loading thoughts...</p>
+        </div>
+      ) : thoughts.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-lg">
+            No active thoughts yet. Create one first!
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {thoughts.map((thought) => {
+            const responseCount = thought.voice_responses?.length || 0
+            const timeLeft = new Date(thought.expires_at).getTime() - Date.now()
+            const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)))
+            const isExpanded = expandedThoughts.has(thought.id)
+            const isSaved = savedThoughts.has(thought.id)
+
+            return (
+              <Card key={thought.id} className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="p-0 mb-4">
+                  <div className="flex justify-between items-start gap-4">
+                    <CardTitle className="text-lg sm:text-xl font-semibold leading-tight">
+                      {thought.title}
+                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleSaved(thought.id)}
+                        className="h-8 w-8 p-0"
+                      >
+                        {isSaved ? (
+                          <BookmarkCheck className="w-4 h-4 text-woices-violet" />
+                        ) : (
+                          <Bookmark className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
+                        <Clock className="w-4 h-4" />
+                        {hoursLeft}h left
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {thought.description && (
+                    <p className="text-sm sm:text-base text-muted-foreground mt-3 leading-relaxed">
+                      {thought.description}
+                    </p>
+                  )}
+                  
+                  {thought.tags && thought.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {thought.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          #{tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </CardHeader>
+                
+                <CardContent className="p-0">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="text-xs text-muted-foreground">
+                        Posted {formatDistanceToNow(new Date(thought.created_at), { addSuffix: true })} • {responseCount} voice{responseCount === 1 ? '' : 's'}
+                      </div>
+                      {responseCount > 0 && (
+                        <Collapsible>
+                          <CollapsibleTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleExpanded(thought.id)}
+                              className="flex items-center gap-1 text-sm"
+                            >
+                              View Replies
+                              {isExpanded ? (
+                                <ChevronUp className="w-4 h-4" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </CollapsibleTrigger>
+                        </Collapsible>
+                      )}
+                    </div>
+                    
+                    <Button
+                      onClick={() => handleStartRecording(thought.id)}
+                      className="bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl"
+                    >
+                      Record Your 60-Second Woice
+                    </Button>
+                  </div>
+
+                  {responseCount > 0 && isExpanded && (
+                    <Collapsible open={isExpanded}>
+                      <CollapsibleContent className="mt-4 space-y-3 border-t pt-4">
+                        {thought.voice_responses?.map((response) => (
+                          <div key={response.id} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                            <div className="flex-1">
+                              <VoicePlayer 
+                                audioUrl={response.audio_url} 
+                                duration={response.duration}
+                              />
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(response.created_at), { addSuffix: true })}
+                            </div>
+                          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
