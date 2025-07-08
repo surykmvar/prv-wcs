@@ -7,17 +7,21 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { X } from "lucide-react"
+import { useSupabase } from "@/hooks/useSupabase"
 
 interface WriteNoteDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSuccess?: (thoughtId: string) => void
 }
 
-export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
+export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDialogProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [tagInput, setTagInput] = useState("")
   const [tags, setTags] = useState<string[]>([])
+  
+  const { createThought, loading } = useSupabase()
 
   const handleAddTag = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -34,14 +38,27 @@ export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
     setTags(tags.filter(tag => tag !== tagToRemove))
   }
 
-  const handleSubmit = () => {
-    console.log("Posted note:", { title, description, tags })
-    onOpenChange(false)
-    // Reset form
-    setTitle("")
-    setDescription("")
-    setTags([])
-    setTagInput("")
+  const handleSubmit = async () => {
+    if (!title.trim()) return
+    
+    try {
+      const thought = await createThought({
+        title: title.trim(),
+        description: description.trim() || null,
+        tags: tags.length > 0 ? tags : null
+      })
+      
+      // Reset form
+      setTitle("")
+      setDescription("")
+      setTags([])
+      setTagInput("")
+      
+      onOpenChange(false)
+      onSuccess?.(thought.id)
+    } catch (error) {
+      console.error('Failed to create thought:', error)
+    }
   }
 
   return (
@@ -121,9 +138,9 @@ export function WriteNoteDialog({ open, onOpenChange }: WriteNoteDialogProps) {
           <Button 
             onClick={handleSubmit}
             className="w-full bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300 mt-6"
-            disabled={!title.trim()}
+            disabled={!title.trim() || loading}
           >
-            Post and Wait for Woices
+            {loading ? 'Posting...' : 'Post and Wait for Woices'}
           </Button>
         </div>
       </DialogContent>

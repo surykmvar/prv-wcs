@@ -9,6 +9,7 @@ import { ReplyToThoughtCard } from "@/components/ReplyToThoughtCard"
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
   const [showReplyToThought, setShowReplyToThought] = useState(false)
+  const [currentThoughtId, setCurrentThoughtId] = useState<string | null>(null)
 
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-6xl mx-auto">
@@ -49,7 +50,14 @@ export function MainActions() {
         </Card>
       </div>
 
-      <WriteNoteDialog open={showWriteNote} onOpenChange={setShowWriteNote} />
+      <WriteNoteDialog 
+        open={showWriteNote} 
+        onOpenChange={setShowWriteNote}
+        onSuccess={(thoughtId) => {
+          setCurrentThoughtId(thoughtId)
+          setShowReplyToThought(true)
+        }}
+      />
       
       {showReplyToThought && (
         <ReplyToThoughtCard onClose={() => setShowReplyToThought(false)} />

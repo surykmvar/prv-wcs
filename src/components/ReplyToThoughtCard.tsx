@@ -141,7 +141,14 @@ export function ReplyToThoughtCard({ onClose }: ReplyToThoughtCardProps) {
               </CardContent>
             </Card>
           ) : (
-            <VoiceRecorder onClose={() => setShowRecorder(false)} />
+            <VoiceRecorder 
+              thoughtId={mockNote.id} 
+              onClose={() => setShowRecorder(false)} 
+              onSuccess={() => {
+                setShowRecorder(false)
+                handleBloom()
+              }}
+            />
           )}
         </>
       )}

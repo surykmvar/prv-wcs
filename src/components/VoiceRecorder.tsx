@@ -1,56 +1,56 @@
 
-import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mic, Square, Send } from "lucide-react"
+import { Mic, Square, Send, AlertCircle } from "lucide-react"
+import { useVoiceRecording } from "@/hooks/useVoiceRecording"
+import { useSupabase } from "@/hooks/useSupabase"
+import { VoicePlayer } from "@/components/VoicePlayer"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface VoiceRecorderProps {
+  thoughtId: string
   onClose: () => void
+  onSuccess?: () => void
 }
 
-export function VoiceRecorder({ onClose }: VoiceRecorderProps) {
-  const [isRecording, setIsRecording] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(60)
-  const [hasRecording, setHasRecording] = useState(false)
+export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderProps) {
+  const { 
+    isRecording, 
+    timeLeft, 
+    audioBlob, 
+    audioUrl, 
+    duration,
+    startRecording, 
+    stopRecording, 
+    resetRecording, 
+    formatTime 
+  } = useVoiceRecording(60)
+  
+  const { submitVoiceResponse, loading } = useSupabase()
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout
-    if (isRecording && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            setIsRecording(false)
-            setHasRecording(true)
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
+  const handleStartRecording = async () => {
+    try {
+      await startRecording()
+    } catch (error) {
+      console.error('Failed to start recording:', error)
     }
-    return () => clearInterval(timer)
-  }, [isRecording, timeLeft])
-
-  const startRecording = () => {
-    setIsRecording(true)
-    setTimeLeft(60)
-    console.log("Started recording...")
   }
 
-  const stopRecording = () => {
-    setIsRecording(false)
-    setHasRecording(true)
-    console.log("Stopped recording...")
+  const handleSendRecording = async () => {
+    if (!audioBlob) return
+    
+    try {
+      await submitVoiceResponse(thoughtId, audioBlob, duration)
+      resetRecording()
+      onSuccess?.()
+      onClose()
+    } catch (error) {
+      console.error('Failed to send recording:', error)
+    }
   }
 
-  const sendRecording = () => {
-    console.log("Sending voice recording...")
-    onClose()
-  }
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
+  const handleReRecord = () => {
+    resetRecording()
   }
 
   return (
@@ -75,10 +75,18 @@ export function VoiceRecorder({ onClose }: VoiceRecorderProps) {
             {formatTime(timeLeft)}
           </div>
 
+          {/* Audio playback section */}
+          {audioUrl && (
+            <div className="mb-6">
+              <VoicePlayer audioUrl={audioUrl} duration={duration} />
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-            {!isRecording && !hasRecording && (
+            {!isRecording && !audioBlob && (
               <Button
-                onClick={startRecording}
+                onClick={handleStartRecording}
+                disabled={loading}
                 className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl shadow-md transition-all duration-300"
               >
                 <Mic className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
@@ -97,28 +105,37 @@ export function VoiceRecorder({ onClose }: VoiceRecorderProps) {
               </Button>
             )}
 
-            {hasRecording && !isRecording && (
+            {audioBlob && !isRecording && (
               <>
                 <Button
-                  onClick={() => {
-                    setHasRecording(false)
-                    setTimeLeft(60)
-                  }}
+                  onClick={handleReRecord}
                   variant="outline"
+                  disabled={loading}
                   className="w-full sm:w-auto max-w-xs px-4 py-2 text-base rounded-xl"
                 >
                   Re-record
                 </Button>
                 <Button
-                  onClick={sendRecording}
+                  onClick={handleSendRecording}
+                  disabled={loading}
                   className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg bg-gradient-to-r from-woices-mint to-woices-sky hover:from-woices-mint/90 hover:to-woices-sky/90 text-white rounded-xl shadow-md"
                 >
                   <Send className="w-4 h-4 mr-2" />
-                  Send Woice
+                  {loading ? 'Sending...' : 'Send Woice'}
                 </Button>
               </>
             )}
           </div>
+
+          {/* Error state */}
+          {!navigator.mediaDevices && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Voice recording is not supported in this browser. Please use a modern browser with microphone access.
+              </AlertDescription>
+            </Alert>
+          )}
 
           <Button variant="ghost" onClick={onClose} className="text-base">
             Cancel
