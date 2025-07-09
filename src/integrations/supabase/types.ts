@@ -127,6 +127,7 @@ export type Database = {
           thought_id: string
           transcript: string | null
           unclear_votes: number | null
+          user_session: string
         }
         Insert: {
           audio_url: string
@@ -140,6 +141,7 @@ export type Database = {
           thought_id: string
           transcript?: string | null
           unclear_votes?: number | null
+          user_session: string
         }
         Update: {
           audio_url?: string
@@ -153,6 +155,7 @@ export type Database = {
           thought_id?: string
           transcript?: string | null
           unclear_votes?: number | null
+          user_session?: string
         }
         Relationships: [
           {

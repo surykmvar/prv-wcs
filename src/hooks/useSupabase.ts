@@ -190,7 +190,7 @@ export function useSupabase() {
         .select('id')
         .eq('thought_id', thoughtId)
         .eq('user_session', userSession)
-        .single()
+        .maybeSingle()
 
       if (voiceError && voiceError.code !== 'PGRST116') throw voiceError
       
