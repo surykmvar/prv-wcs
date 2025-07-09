@@ -33,7 +33,7 @@ export function MainActions() {
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-6xl mx-auto">
       <div className="text-center mb-8 sm:mb-12">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-slate-600 to-slate-800 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent break-words">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-600 to-slate-800 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight sm:leading-tight md:leading-tight lg:leading-tight px-2 py-2">
           What would you like to do with your voice?
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
