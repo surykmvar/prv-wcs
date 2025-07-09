@@ -108,12 +108,12 @@ export function ReactionButtons({ voiceResponseId, reactions, className }: React
             size="sm"
             onClick={() => handleReaction(type)}
             disabled={loading}
-            className="h-7 px-2 text-xs"
+            className="h-6 sm:h-7 px-1.5 sm:px-2 text-xs"
             title={label}
           >
-            <span className="mr-1">{emoji}</span>
+            <span className="mr-0.5 sm:mr-1">{emoji}</span>
             {count > 0 && (
-              <Badge variant="secondary" className="h-4 px-1 text-xs ml-1">
+              <Badge variant="secondary" className="h-3 sm:h-4 px-1 text-xs ml-0.5 sm:ml-1">
                 {count}
               </Badge>
             )}

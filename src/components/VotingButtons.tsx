@@ -100,11 +100,12 @@ export function VotingButtons({
 
   return (
     <TooltipProvider>
-      <div className={`flex items-center gap-2 ${className}`}>
+      <div className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 ${className}`}>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="text-xs text-muted-foreground">
-              What do you think about this voice reply?
+              <span className="hidden sm:inline">What do you think about this voice reply?</span>
+              <span className="sm:hidden">Your verdict:</span>
             </div>
           </TooltipTrigger>
           <TooltipContent>
@@ -112,18 +113,18 @@ export function VotingButtons({
           </TooltipContent>
         </Tooltip>
         
-        <div className="flex gap-1">
+        <div className="flex gap-1 sm:gap-2 w-full sm:w-auto">
           <Button
             variant={userVote === 'fact' ? 'default' : 'outline'}
             size="sm"
             onClick={() => handleVote('fact')}
             disabled={loading}
-            className="h-8 px-3"
+            className="h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none"
           >
-            <Check className="w-3 h-3 mr-1" />
-            Fact
+            <Check className="w-3 h-3 mr-0.5 sm:mr-1" />
+            <span className="text-xs">Fact</span>
             {factVotes > 0 && (
-              <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+              <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
                 {factVotes}
               </Badge>
             )}
@@ -134,12 +135,12 @@ export function VotingButtons({
             size="sm"
             onClick={() => handleVote('myth')}
             disabled={loading}
-            className="h-8 px-3"
+            className="h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none"
           >
-            <X className="w-3 h-3 mr-1" />
-            Myth
+            <X className="w-3 h-3 mr-0.5 sm:mr-1" />
+            <span className="text-xs">Myth</span>
             {mythVotes > 0 && (
-              <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+              <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
                 {mythVotes}
               </Badge>
             )}
@@ -150,12 +151,12 @@ export function VotingButtons({
             size="sm"
             onClick={() => handleVote('unclear')}
             disabled={loading}
-            className="h-8 px-3"
+            className="h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none"
           >
-            <HelpCircle className="w-3 h-3 mr-1" />
-            Unclear
+            <HelpCircle className="w-3 h-3 mr-0.5 sm:mr-1" />
+            <span className="text-xs">Unclear</span>
             {unclearVotes > 0 && (
-              <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+              <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
                 {unclearVotes}
               </Badge>
             )}

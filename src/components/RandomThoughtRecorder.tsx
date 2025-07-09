@@ -110,23 +110,23 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
+    <div className="w-full max-w-4xl mx-auto px-3 sm:px-6">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Button variant="ghost" onClick={onBack} className="flex items-center gap-1 sm:gap-2 h-8 sm:h-10 px-2 sm:px-4">
             <ArrowLeft className="w-4 h-4" />
-            Back
+            <span className="hidden sm:inline">Back</span>
           </Button>
-          <h2 className="text-2xl font-bold">Break the Ice</h2>
+          <h2 className="text-lg sm:text-2xl font-bold">Break the Ice</h2>
         </div>
         <Button
           variant="outline"
           onClick={handleRefresh}
           disabled={loading}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 h-8 sm:h-10 px-2 sm:px-4"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
+          <span className="hidden sm:inline">Refresh</span>
         </Button>
       </div>
 
@@ -141,7 +141,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {thoughts.map((thought) => {
             const responseCount = thought.voice_responses?.filter(response => response.duration > 0 && response.audio_url)?.length || 0
             const timeLeft = new Date(thought.expires_at).getTime() - Date.now()
@@ -150,42 +150,43 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
             const isSaved = savedThoughts.has(thought.id)
 
             return (
-              <Card key={thought.id} className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
-                <CardHeader className="p-0 mb-4">
-                  <div className="flex justify-between items-start gap-4">
-                    <CardTitle className="text-lg sm:text-xl font-semibold leading-tight">
+              <Card key={thought.id} className="p-3 sm:p-6 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="p-0 mb-3 sm:mb-4">
+                  <div className="flex justify-between items-start gap-3">
+                    <CardTitle className="text-base sm:text-xl font-semibold leading-tight flex-1">
                       {thought.title}
                     </CardTitle>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleSaved(thought.id)}
-                        className="h-8 w-8 p-0"
+                        className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                       >
                         {isSaved ? (
-                          <BookmarkCheck className="w-4 h-4 text-woices-violet" />
+                          <BookmarkCheck className="w-3 h-3 sm:w-4 sm:h-4 text-woices-violet" />
                         ) : (
-                          <Bookmark className="w-4 h-4" />
+                          <Bookmark className="w-3 h-3 sm:w-4 sm:h-4" />
                         )}
                       </Button>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
-                        <Clock className="w-4 h-4" />
-                        {hoursLeft}h left
+                      <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">{hoursLeft}h left</span>
+                        <span className="sm:hidden">{hoursLeft}h</span>
                       </div>
                     </div>
                   </div>
                   
                   {thought.description && (
-                    <p className="text-sm sm:text-base text-muted-foreground mt-3 leading-relaxed">
+                    <p className="text-xs sm:text-base text-muted-foreground mt-2 sm:mt-3 leading-relaxed">
                       {thought.description}
                     </p>
                   )}
                   
                   {thought.tags && thought.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-3">
+                    <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-3">
                       {thought.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
+                        <Badge key={tag} variant="secondary" className="text-xs px-1.5 py-0.5">
                           #{tag}
                         </Badge>
                       ))}
@@ -194,54 +195,59 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                 </CardHeader>
                 
                 <CardContent className="p-0">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="text-xs text-muted-foreground">
-                        Posted {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
-                        {thought.final_status !== 'pending' && (
-                          <Badge variant="outline" className="ml-2">
-                            {thought.final_status === 'bloomed' ? '🌸 Bloomed' : 
-                             thought.final_status === 'bricked' ? '🧱 Bricked' : 
-                             '🤔 Unclear'}
-                          </Badge>
+                  {/* Mobile-first layout */}
+                  <div className="space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                        <div className="text-xs text-muted-foreground">
+                          {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
+                          {thought.final_status !== 'pending' && (
+                            <Badge variant="outline" className="ml-2 text-xs">
+                              {thought.final_status === 'bloomed' ? '🌸 Bloomed' : 
+                               thought.final_status === 'bricked' ? '🧱 Bricked' : 
+                               '🤔 Unclear'}
+                            </Badge>
+                          )}
+                        </div>
+                        {responseCount > 0 && (
+                          <Collapsible>
+                            <CollapsibleTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleExpanded(thought.id)}
+                                className="flex items-center gap-1 text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3"
+                              >
+                                <span className="hidden sm:inline">View Replies</span>
+                                <span className="sm:hidden">Replies</span>
+                                {isExpanded ? (
+                                  <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                                ) : (
+                                  <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                                )}
+                              </Button>
+                            </CollapsibleTrigger>
+                          </Collapsible>
                         )}
                       </div>
-                      {responseCount > 0 && (
-                        <Collapsible>
-                          <CollapsibleTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleExpanded(thought.id)}
-                              className="flex items-center gap-1 text-sm"
-                            >
-                              View Replies
-                              {isExpanded ? (
-                                <ChevronUp className="w-4 h-4" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4" />
-                              )}
-                            </Button>
-                          </CollapsibleTrigger>
-                        </Collapsible>
-                      )}
+                      
+                      <Button
+                        onClick={() => handleStartRecording(thought.id)}
+                        className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base h-9 sm:h-10"
+                      >
+                        <span className="sm:hidden">Record Woice</span>
+                        <span className="hidden sm:inline">Record Your 60-Second Woice</span>
+                      </Button>
                     </div>
-                    
-                    <Button
-                      onClick={() => handleStartRecording(thought.id)}
-                      className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-4 py-2 text-sm sm:text-base"
-                    >
-                      Record Your 60-Second Woice
-                    </Button>
                   </div>
 
                   {responseCount > 0 && isExpanded && (
                     <Collapsible open={isExpanded}>
-                      <CollapsibleContent className="mt-4 space-y-3 border-t pt-4">
+                      <CollapsibleContent className="mt-3 sm:mt-4 space-y-2 sm:space-y-3 border-t pt-3 sm:pt-4">
                         {thought.voice_responses
                           ?.filter((response) => response.duration > 0 && response.audio_url) // Only show valid recordings
                           ?.map((response) => (
-                          <div key={response.id} className="space-y-2">
+                          <div key={response.id} className="space-y-1 sm:space-y-2">
                             <ModernVoicePlayer 
                               voiceResponseId={response.id}
                               audioUrl={response.audio_url} 
@@ -251,7 +257,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                               unclearVotes={response.unclear_votes || 0}
                               reactions={typeof response.reactions === 'object' ? response.reactions : {}}
                             />
-                            <div className="text-xs text-muted-foreground pl-4">
+                            <div className="text-xs text-muted-foreground pl-2 sm:pl-4">
                               {formatTimeAgo(response.created_at)}
                             </div>
                           </div>
