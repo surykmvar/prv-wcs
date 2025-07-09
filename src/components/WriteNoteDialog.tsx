@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { X } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
 
@@ -21,16 +22,40 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
   const [tagInput, setTagInput] = useState("")
   const [tags, setTags] = useState<string[]>([])
   const [maxWoicesAllowed, setMaxWoicesAllowed] = useState(10)
+  const [tagError, setTagError] = useState("")
   
   const { createThought, loading } = useSupabase()
+
+  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    
+    // Check for manual hashtag entry
+    if (value.includes('#')) {
+      setTagError("Don't include '#' - just type the tag and hit Enter. We'll add the hashtag for you!")
+      return
+    }
+    
+    // Check for hashtags in between words (spaces with more content after)
+    if (value.includes(' ') && value.trim().split(' ').length > 1) {
+      setTagError("Please enter one tag at a time. Hit Enter after each tag.")
+      return
+    }
+    
+    setTagError("")
+    setTagInput(value)
+  }
 
   const handleAddTag = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault()
       const tag = tagInput.trim()
+      
+      if (tagError) return
+      
       if (tag && !tags.includes(tag) && tags.length < 3) {
         setTags([...tags, tag])
         setTagInput("")
+        setTagError("")
       }
     }
   }
@@ -117,12 +142,21 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
             <Input
               id="tags"
               value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
+              onChange={handleTagInputChange}
               onKeyDown={handleAddTag}
               placeholder="#startup #creativity #career"
-              className="w-full text-sm sm:text-base rounded-lg border-2 focus:border-woices-violet/50 transition-colors"
+              className={`w-full text-sm sm:text-base rounded-lg border-2 transition-colors ${
+                tagError ? 'border-red-500 focus:border-red-500' : 'focus:border-woices-violet/50'
+              }`}
               disabled={tags.length >= 3}
             />
+            {tagError && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertDescription className="text-xs sm:text-sm">
+                  {tagError}
+                </AlertDescription>
+              </Alert>
+            )}
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {tags.map((tag) => (
