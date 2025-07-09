@@ -132,8 +132,8 @@ export function ModernVoicePlayer({
 
   // Create waveform visualization
   const generateWaveform = () => {
-    const bars = 40
-    const heights = Array.from({ length: bars }, () => Math.random() * 40 + 10)
+    const bars = window.innerWidth < 640 ? 25 : 40 // Fewer bars on mobile
+    const heights = Array.from({ length: bars }, () => Math.random() * 30 + 8) // Shorter bars
     const progress = currentTime / audioDuration
     
     return heights.map((height, index) => {
@@ -141,7 +141,7 @@ export function ModernVoicePlayer({
       return (
         <div
           key={index}
-          className={`w-1 rounded-full transition-colors duration-150 ${
+          className={`w-0.5 sm:w-1 rounded-full transition-colors duration-150 ${
             isActive 
               ? 'bg-gradient-to-t from-woices-violet to-woices-bloom' 
               : 'bg-muted'
@@ -175,13 +175,13 @@ export function ModernVoicePlayer({
             </Button>
 
             {/* Waveform Visualization */}
-            <div className="flex-1 relative">
-              <div className="flex items-end justify-between h-8 sm:h-12 gap-px px-1 sm:px-2">
+            <div className="flex-1 relative min-w-0">
+              <div className="flex items-end justify-between h-6 sm:h-10 gap-px px-1">
                 {generateWaveform()}
               </div>
               
               {/* Timeline Scrubber */}
-              <div className="mt-1 sm:mt-2">
+              <div className="mt-1">
                 <Slider
                   value={[currentTime]}
                   max={audioDuration || 100}
@@ -193,9 +193,9 @@ export function ModernVoicePlayer({
             </div>
 
             {/* Duration & Controls */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              <span className="text-xs text-muted-foreground font-mono min-w-[2.5rem] sm:min-w-[3rem]">
-                <span className="hidden sm:inline">{formatTime(currentTime)} / {formatTime(audioDuration)}</span>
+            <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+              <span className="text-xs text-muted-foreground font-mono text-right min-w-[2rem] sm:min-w-[2.5rem]">
+                <span className="hidden sm:inline">{formatTime(currentTime)}/{formatTime(audioDuration)}</span>
                 <span className="sm:hidden">{formatTime(currentTime)}</span>
               </span>
               
@@ -203,7 +203,7 @@ export function ModernVoicePlayer({
                 variant="ghost"
                 size="sm"
                 onClick={togglePlaybackSpeed}
-                className="flex-shrink-0 min-w-[1.5rem] sm:min-w-[2.5rem] text-xs font-medium h-6 sm:h-8 px-1 sm:px-2"
+                className="flex-shrink-0 w-8 sm:w-10 text-xs font-medium h-6 sm:h-8 px-0"
               >
                 {playbackRate}x
               </Button>
