@@ -16,33 +16,30 @@ export type Database = {
     Tables: {
       thoughts: {
         Row: {
-          bloom_count: number
-          brick_count: number
           created_at: string
           description: string | null
           expires_at: string
+          final_status: string | null
           id: string
           status: string
           tags: string[] | null
           title: string
         }
         Insert: {
-          bloom_count?: number
-          brick_count?: number
           created_at?: string
           description?: string | null
           expires_at?: string
+          final_status?: string | null
           id?: string
           status?: string
           tags?: string[] | null
           title: string
         }
         Update: {
-          bloom_count?: number
-          brick_count?: number
           created_at?: string
           description?: string | null
           expires_at?: string
+          final_status?: string | null
           id?: string
           status?: string
           tags?: string[] | null
@@ -50,39 +47,109 @@ export type Database = {
         }
         Relationships: []
       }
+      user_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          reaction_type: string
+          user_session: string
+          voice_response_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reaction_type: string
+          user_session: string
+          voice_response_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reaction_type?: string
+          user_session?: string
+          voice_response_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_reactions_voice_response_id_fkey"
+            columns: ["voice_response_id"]
+            isOneToOne: false
+            referencedRelation: "voice_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_session: string
+          voice_response_id: string | null
+          vote_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_session: string
+          voice_response_id?: string | null
+          vote_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_session?: string
+          voice_response_id?: string | null
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_votes_voice_response_id_fkey"
+            columns: ["voice_response_id"]
+            isOneToOne: false
+            referencedRelation: "voice_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voice_responses: {
         Row: {
           audio_url: string
-          bloom_count: number
-          brick_count: number
           classification: string | null
           created_at: string
           duration: number
+          fact_votes: number | null
           id: string
+          myth_votes: number | null
+          reactions: Json | null
           thought_id: string
           transcript: string | null
+          unclear_votes: number | null
         }
         Insert: {
           audio_url: string
-          bloom_count?: number
-          brick_count?: number
           classification?: string | null
           created_at?: string
           duration: number
+          fact_votes?: number | null
           id?: string
+          myth_votes?: number | null
+          reactions?: Json | null
           thought_id: string
           transcript?: string | null
+          unclear_votes?: number | null
         }
         Update: {
           audio_url?: string
-          bloom_count?: number
-          brick_count?: number
           classification?: string | null
           created_at?: string
           duration?: number
+          fact_votes?: number | null
           id?: string
+          myth_votes?: number | null
+          reactions?: Json | null
           thought_id?: string
           transcript?: string | null
+          unclear_votes?: number | null
         }
         Relationships: [
           {
@@ -99,6 +166,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      evaluate_thought_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       update_expired_thoughts: {
         Args: Record<PropertyKey, never>
         Returns: undefined

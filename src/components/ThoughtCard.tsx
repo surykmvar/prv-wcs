@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Mic, Clock, MessageCircle } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
+import { formatTimeAgo } from "@/utils/timeUtils"
 
 type Thought = {
   id: string
@@ -63,7 +63,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
           
           <Button
             onClick={() => onRecordResponse(thought.id)}
-            className="bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white"
+            className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-4 py-2"
           >
             <Mic className="w-4 h-4 mr-2" />
             Record Woice
@@ -71,7 +71,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
         </div>
         
         <div className="text-xs text-muted-foreground mt-2">
-          Posted {formatDistanceToNow(new Date(thought.created_at), { addSuffix: true })}
+          Posted {formatTimeAgo(thought.created_at)}
         </div>
       </CardContent>
     </Card>

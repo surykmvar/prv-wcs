@@ -133,7 +133,16 @@ export function useSupabase() {
         .from('thoughts')
         .select(`
           *,
-          voice_responses (*)
+          voice_responses (
+            id,
+            audio_url,
+            duration,
+            created_at,
+            myth_votes,
+            fact_votes,
+            unclear_votes,
+            reactions
+          )
         `)
         .eq('status', 'active')
         .order('created_at', { ascending: false })

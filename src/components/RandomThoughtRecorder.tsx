@@ -3,17 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Play, Bookmark, BookmarkCheck } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
 import { useSupabase } from "@/hooks/useSupabase"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
-import { VoicePlayer } from "@/components/VoicePlayer"
+import { ModernVoicePlayer } from "@/components/ModernVoicePlayer"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { formatTimeAgo } from "@/utils/timeUtils"
 
 type VoiceResponse = {
   id: string
   audio_url: string
   duration: number
   created_at: string
+  myth_votes: number
+  fact_votes: number
+  unclear_votes: number
+  reactions: Record<string, number> | any
 }
 
 type Thought = {
@@ -23,6 +27,7 @@ type Thought = {
   tags: string[] | null
   created_at: string
   expires_at: string
+  final_status: string
   voice_responses?: VoiceResponse[]
 }
 
@@ -192,7 +197,14 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
                       <div className="text-xs text-muted-foreground">
-                        Posted {formatDistanceToNow(new Date(thought.created_at), { addSuffix: true })} • {responseCount} voice{responseCount === 1 ? '' : 's'}
+                        Posted {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
+                        {thought.final_status !== 'pending' && (
+                          <Badge variant="outline" className="ml-2">
+                            {thought.final_status === 'bloomed' ? '🌸 Bloomed' : 
+                             thought.final_status === 'bricked' ? '🧱 Bricked' : 
+                             '🤔 Unclear'}
+                          </Badge>
+                        )}
                       </div>
                       {responseCount > 0 && (
                         <Collapsible>
@@ -217,7 +229,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                     
                     <Button
                       onClick={() => handleStartRecording(thought.id)}
-                      className="bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl"
+                      className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-4 py-2 text-sm sm:text-base"
                     >
                       Record Your 60-Second Woice
                     </Button>
@@ -229,15 +241,18 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                         {thought.voice_responses
                           ?.filter((response) => response.duration > 0 && response.audio_url) // Only show valid recordings
                           ?.map((response) => (
-                          <div key={response.id} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-                            <div className="flex-1">
-                              <VoicePlayer 
-                                audioUrl={response.audio_url} 
-                                duration={response.duration}
-                              />
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(new Date(response.created_at), { addSuffix: true })}
+                          <div key={response.id} className="space-y-2">
+                            <ModernVoicePlayer 
+                              voiceResponseId={response.id}
+                              audioUrl={response.audio_url} 
+                              duration={response.duration}
+                              mythVotes={response.myth_votes || 0}
+                              factVotes={response.fact_votes || 0}
+                              unclearVotes={response.unclear_votes || 0}
+                              reactions={typeof response.reactions === 'object' ? response.reactions : {}}
+                            />
+                            <div className="text-xs text-muted-foreground pl-4">
+                              {formatTimeAgo(response.created_at)}
                             </div>
                           </div>
                         ))}
