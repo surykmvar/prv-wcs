@@ -3,6 +3,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Mic, Clock, MessageCircle } from "lucide-react"
 import { formatTimeAgo } from "@/utils/timeUtils"
+import { useSupabase } from "@/hooks/useSupabase"
+import { useUserSession } from "@/hooks/useUserSession"
+import { useState, useEffect } from "react"
 
 type Thought = {
   id: string
@@ -26,6 +29,20 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
   const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)))
   const maxWoices = thought.max_woices_allowed || 10
   const isMaxReached = responseCount >= maxWoices
+  
+  const { canUserSubmitVoice } = useSupabase()
+  const userSession = useUserSession()
+  const [canSubmit, setCanSubmit] = useState(true)
+  const [submitMessage, setSubmitMessage] = useState("")
+
+  useEffect(() => {
+    if (userSession && !isMaxReached) {
+      canUserSubmitVoice(thought.id, userSession).then(result => {
+        setCanSubmit(result.canSubmit)
+        setSubmitMessage(result.reason || "")
+      })
+    }
+  }, [thought.id, userSession, responseCount, isMaxReached, canUserSubmitVoice])
 
   return (
     <Card className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
@@ -67,6 +84,10 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
           {isMaxReached ? (
             <div className="text-center text-sm text-green-600 font-medium bg-green-50 px-4 py-2 rounded-xl">
               🎉 This Thought has received all its reviews!
+            </div>
+          ) : !canSubmit ? (
+            <div className="text-center text-sm text-amber-700 font-medium bg-amber-50 px-4 py-2 rounded-xl">
+              {submitMessage}
             </div>
           ) : (
             <Button

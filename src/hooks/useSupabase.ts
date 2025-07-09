@@ -162,8 +162,51 @@ export function useSupabase() {
     }
   }
 
+  // Check if user can submit a voice response
+  const canUserSubmitVoice = async (thoughtId: string, userSession: string) => {
+    try {
+      // Check if thought exists and get its max_woices_allowed
+      const { data: thought, error: thoughtError } = await supabase
+        .from('thoughts')
+        .select('max_woices_allowed, voice_responses(id)')
+        .eq('id', thoughtId)
+        .eq('status', 'active')
+        .single()
+
+      if (thoughtError) throw thoughtError
+      if (!thought) return { canSubmit: false, reason: 'Thought not found or inactive' }
+
+      const maxWoices = thought.max_woices_allowed || 10
+      const currentCount = thought.voice_responses?.length || 0
+
+      // Check if max woices reached
+      if (currentCount >= maxWoices) {
+        return { canSubmit: false, reason: 'This thought has reached the maximum number of Woice replies.' }
+      }
+
+      // Check if user already submitted a woice for this thought
+      const { data: existingVoice, error: voiceError } = await supabase
+        .from('voice_responses')
+        .select('id')
+        .eq('thought_id', thoughtId)
+        .eq('user_session', userSession)
+        .single()
+
+      if (voiceError && voiceError.code !== 'PGRST116') throw voiceError
+      
+      if (existingVoice) {
+        return { canSubmit: false, reason: 'You have already submitted a Woice for this thought.' }
+      }
+
+      return { canSubmit: true, reason: null }
+    } catch (error) {
+      console.error('Error checking user submission eligibility:', error)
+      return { canSubmit: false, reason: 'Unable to verify submission eligibility.' }
+    }
+  }
+
   // Submit complete voice response (upload + create record)
-  const submitVoiceResponse = async (thoughtId: string, audioBlob: Blob, duration: number) => {
+  const submitVoiceResponse = async (thoughtId: string, audioBlob: Blob, duration: number, userSession: string) => {
     if (!isSupabaseConfigured) {
       toast({
         title: "Supabase not configured",
@@ -174,6 +217,17 @@ export function useSupabase() {
     }
     
     try {
+      // First check if user can submit
+      const eligibilityCheck = await canUserSubmitVoice(thoughtId, userSession)
+      if (!eligibilityCheck.canSubmit) {
+        toast({
+          title: "Cannot submit Woice",
+          description: eligibilityCheck.reason || "Unable to submit voice response.",
+          variant: "destructive"
+        })
+        return null
+      }
+
       // Upload audio file
       const { url } = await uploadAudioFile(audioBlob, thoughtId)
       
@@ -181,7 +235,8 @@ export function useSupabase() {
       const voiceResponse = await createVoiceResponse({
         thought_id: thoughtId,
         audio_url: url,
-        duration
+        duration,
+        user_session: userSession
       })
       
       return voiceResponse
@@ -197,6 +252,7 @@ export function useSupabase() {
     uploadAudioFile,
     createVoiceResponse,
     submitVoiceResponse,
-    getThoughts
+    getThoughts,
+    canUserSubmitVoice
   }
 }

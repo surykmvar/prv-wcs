@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mic, Square, Send, AlertCircle } from "lucide-react"
 import { useVoiceRecording } from "@/hooks/useVoiceRecording"
 import { useSupabase } from "@/hooks/useSupabase"
+import { useUserSession } from "@/hooks/useUserSession"
 import { VoicePlayer } from "@/components/VoicePlayer"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -27,6 +28,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
   } = useVoiceRecording(60)
   
   const { submitVoiceResponse, loading } = useSupabase()
+  const userSession = useUserSession()
 
   const handleStartRecording = async () => {
     try {
@@ -43,7 +45,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
     }
     
     try {
-      await submitVoiceResponse(thoughtId, audioBlob, duration)
+      await submitVoiceResponse(thoughtId, audioBlob, duration, userSession)
       resetRecording()
       onSuccess?.()
       onClose()
@@ -61,6 +63,9 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
       <Card className="p-4 sm:p-6 rounded-xl shadow-lg">
         <CardHeader className="text-center p-0 mb-6">
           <CardTitle className="text-xl sm:text-2xl font-semibold">Record Your Woice</CardTitle>
+          <p className="text-sm text-muted-foreground mt-2 px-4">
+            *You can send only one thoughtful, respectful, and valuable Woice reply for this thought. Be kind and make your voice count! 😉
+          </p>
         </CardHeader>
         <CardContent className="text-center space-y-6 p-0">
           <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto relative">
