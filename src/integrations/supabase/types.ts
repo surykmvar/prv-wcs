@@ -21,6 +21,7 @@ export type Database = {
           expires_at: string
           final_status: string | null
           id: string
+          max_woices_allowed: number | null
           status: string
           tags: string[] | null
           title: string
@@ -31,6 +32,7 @@ export type Database = {
           expires_at?: string
           final_status?: string | null
           id?: string
+          max_woices_allowed?: number | null
           status?: string
           tags?: string[] | null
           title: string
@@ -41,6 +43,7 @@ export type Database = {
           expires_at?: string
           final_status?: string | null
           id?: string
+          max_woices_allowed?: number | null
           status?: string
           tags?: string[] | null
           title?: string

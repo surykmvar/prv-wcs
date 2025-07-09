@@ -11,6 +11,7 @@ type Thought = {
   tags: string[] | null
   created_at: string
   expires_at: string
+  max_woices_allowed?: number
   voice_responses?: { id: string }[]
 }
 
@@ -23,6 +24,8 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
   const responseCount = thought.voice_responses?.length || 0
   const timeLeft = new Date(thought.expires_at).getTime() - Date.now()
   const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)))
+  const maxWoices = thought.max_woices_allowed || 10
+  const isMaxReached = responseCount >= maxWoices
 
   return (
     <Card className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
@@ -58,16 +61,22 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MessageCircle className="w-4 h-4" />
-            {responseCount} voice{responseCount === 1 ? '' : 's'}
+            {responseCount}/{maxWoices} voice{responseCount === 1 ? '' : 's'}
           </div>
           
-          <Button
-            onClick={() => onRecordResponse(thought.id)}
-            className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-4 py-2"
-          >
-            <Mic className="w-4 h-4 mr-2" />
-            Record Woice
-          </Button>
+          {isMaxReached ? (
+            <div className="text-center text-sm text-green-600 font-medium bg-green-50 px-4 py-2 rounded-xl">
+              🎉 This Thought has received all its reviews!
+            </div>
+          ) : (
+            <Button
+              onClick={() => onRecordResponse(thought.id)}
+              className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-4 py-2"
+            >
+              <Mic className="w-4 h-4 mr-2" />
+              Record Woice
+            </Button>
+          )}
         </div>
         
         <div className="text-xs text-muted-foreground mt-2">

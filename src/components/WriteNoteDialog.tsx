@@ -20,6 +20,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
   const [description, setDescription] = useState("")
   const [tagInput, setTagInput] = useState("")
   const [tags, setTags] = useState<string[]>([])
+  const [maxWoicesAllowed, setMaxWoicesAllowed] = useState(10)
   
   const { createThought, loading } = useSupabase()
 
@@ -27,7 +28,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault()
       const tag = tagInput.trim()
-      if (tag && !tags.includes(tag)) {
+      if (tag && !tags.includes(tag) && tags.length < 3) {
         setTags([...tags, tag])
         setTagInput("")
       }
@@ -45,7 +46,8 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
       const thought = await createThought({
         title: title.trim(),
         description: description.trim() || null,
-        tags: tags.length > 0 ? tags : null
+        tags: tags.length > 0 ? tags : null,
+        max_woices_allowed: maxWoicesAllowed
       })
       
       // Reset form
@@ -53,6 +55,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
       setDescription("")
       setTags([])
       setTagInput("")
+      setMaxWoicesAllowed(10)
       
       onOpenChange(false)
       onSuccess?.(thought.id)
@@ -108,6 +111,9 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
             <Label htmlFor="tags" className="text-sm sm:text-base font-medium">
               Tags (Optional)
             </Label>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Type a tag and hit Enter to add it as a hashtag. Maximum 3 tags allowed.
+            </p>
             <Input
               id="tags"
               value={tagInput}
@@ -115,6 +121,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
               onKeyDown={handleAddTag}
               placeholder="#startup #creativity #career"
               className="w-full text-sm sm:text-base rounded-lg border-2 focus:border-woices-violet/50 transition-colors"
+              disabled={tags.length >= 3}
             />
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
@@ -133,6 +140,29 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm sm:text-base font-medium flex items-center gap-2">
+              🗣️ Choose how many Woice Reviews you want:
+            </Label>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {[5, 6, 7, 8, 9, 10].map((num) => (
+                <Button
+                  key={num}
+                  variant={maxWoicesAllowed === num ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMaxWoicesAllowed(num)}
+                  className={`text-sm font-medium ${
+                    maxWoicesAllowed === num 
+                      ? 'bg-woices-violet text-white' 
+                      : 'hover:bg-woices-violet/10'
+                  }`}
+                >
+                  {num}
+                </Button>
+              ))}
+            </div>
           </div>
 
           <Button 
