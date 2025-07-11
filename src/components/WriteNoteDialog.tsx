@@ -181,7 +181,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
               🗣️ Choose how many Woice Reviews you want:
             </Label>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {[5, 6, 7, 8, 9, 10].map((num) => (
+              {[5, 10, 15, 20, 25, 30].map((num) => (
                 <Button
                   key={num}
                   variant={maxWoicesAllowed === num ? "default" : "outline"}
