@@ -120,60 +120,72 @@ export function VotingButtons({
           </TooltipContent>
         </Tooltip>
         
-        <div className="flex gap-1 sm:gap-2 w-full sm:w-auto">
-          <Button
-            variant={userVote === 'fact' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => handleVote('fact')}
-            disabled={loading}
-            className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
-              animatingButton === 'fact' ? 'animate-pulse scale-110' : ''
-            }`}
-          >
-            <span className="mr-0.5 sm:mr-1">🎯</span>
-            <span className="text-xs">Fact</span>
-            {factVotes > 0 && (
-              <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
-                {factVotes}
-              </Badge>
-            )}
-          </Button>
-          
-          <Button
-            variant={userVote === 'myth' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => handleVote('myth')}
-            disabled={loading}
-            className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
-              animatingButton === 'myth' ? 'animate-pulse scale-110' : ''
-            }`}
-          >
-            <span className="mr-0.5 sm:mr-1">⛓️‍💥</span>
-            <span className="text-xs">Myth</span>
-            {mythVotes > 0 && (
-              <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
-                {mythVotes}
-              </Badge>
-            )}
-          </Button>
-          
-          <Button
-            variant={userVote === 'unclear' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => handleVote('unclear')}
-            disabled={loading}
-            className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
-              animatingButton === 'unclear' ? 'animate-pulse scale-110' : ''
-            }`}
-          >
-            <span className="mr-0.5 sm:mr-1">❓</span>
-            <span className="text-xs">Unclear</span>
-            {unclearVotes > 0 && (
-              <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
-                {unclearVotes}
-              </Badge>
-            )}
-          </Button>
+        <div className="flex flex-col gap-2 w-full sm:w-auto">
+          {/* Reaction Buttons */}
+          <div className="flex gap-1 sm:gap-2">
+            <Button
+              variant={userVote === 'fact' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleVote('fact')}
+              disabled={loading}
+              className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
+                animatingButton === 'fact' ? 'animate-pulse scale-110' : ''
+              }`}
+            >
+              <span className="mr-0.5 sm:mr-1">🎯</span>
+              <span className="text-xs">Fact</span>
+            </Button>
+            
+            <Button
+              variant={userVote === 'myth' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleVote('myth')}
+              disabled={loading}
+              className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
+                animatingButton === 'myth' ? 'animate-pulse scale-110' : ''
+              }`}
+            >
+              <span className="mr-0.5 sm:mr-1">⛓️‍💥</span>
+              <span className="text-xs">Myth</span>
+            </Button>
+            
+            <Button
+              variant={userVote === 'unclear' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleVote('unclear')}
+              disabled={loading}
+              className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
+                animatingButton === 'unclear' ? 'animate-pulse scale-110' : ''
+              }`}
+            >
+              <span className="mr-0.5 sm:mr-1">❓</span>
+              <span className="text-xs">Unclear</span>
+            </Button>
+          </div>
+
+          {/* Reaction Counters - Instagram/Facebook Style */}
+          {(factVotes > 0 || mythVotes > 0 || unclearVotes > 0) && (
+            <div className="flex gap-3 text-xs text-muted-foreground justify-center sm:justify-start">
+              {factVotes > 0 && (
+                <div className="flex items-center gap-1 transition-all duration-300 hover:text-foreground">
+                  <span>🎯</span>
+                  <span className="font-medium">{factVotes}</span>
+                </div>
+              )}
+              {mythVotes > 0 && (
+                <div className="flex items-center gap-1 transition-all duration-300 hover:text-foreground">
+                  <span>⛓️‍💥</span>
+                  <span className="font-medium">{mythVotes}</span>
+                </div>
+              )}
+              {unclearVotes > 0 && (
+                <div className="flex items-center gap-1 transition-all duration-300 hover:text-foreground">
+                  <span>❓</span>
+                  <span className="font-medium">{unclearVotes}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </TooltipProvider>
