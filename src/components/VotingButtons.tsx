@@ -176,12 +176,12 @@ export function VotingButtons({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('fact')}
-                  disabled={loading || !user}
+                  disabled={loading}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
                     userVote === 'fact' 
                       ? 'bg-primary/10 text-primary scale-110' 
                       : 'hover:bg-muted/50'
-                  } ${animatingButton === 'fact' ? 'animate-pulse' : ''} ${!user ? 'opacity-50' : ''}`}
+                  } ${animatingButton === 'fact' ? 'animate-pulse' : ''} ${!user ? 'hover:bg-primary/10' : ''}`}
                 >
                   🎯
                 </Button>
@@ -206,12 +206,12 @@ export function VotingButtons({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('myth')}
-                  disabled={loading || !user}
+                  disabled={loading}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
                     userVote === 'myth' 
                       ? 'bg-primary/10 text-primary scale-110' 
                       : 'hover:bg-muted/50'
-                  } ${animatingButton === 'myth' ? 'animate-pulse' : ''} ${!user ? 'opacity-50' : ''}`}
+                  } ${animatingButton === 'myth' ? 'animate-pulse' : ''} ${!user ? 'hover:bg-primary/10' : ''}`}
                 >
                   ⛓️‍💥
                 </Button>
@@ -236,12 +236,12 @@ export function VotingButtons({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('unclear')}
-                  disabled={loading || !user}
+                  disabled={loading}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
                     userVote === 'unclear' 
                       ? 'bg-primary/10 text-primary scale-110' 
                       : 'hover:bg-muted/50'
-                  } ${animatingButton === 'unclear' ? 'animate-pulse' : ''} ${!user ? 'opacity-50' : ''}`}
+                  } ${animatingButton === 'unclear' ? 'animate-pulse' : ''} ${!user ? 'hover:bg-primary/10' : ''}`}
                 >
                   ❓
                 </Button>
