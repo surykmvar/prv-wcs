@@ -150,84 +150,89 @@ export function VotingButtons({
 
   return (
     <TooltipProvider>
-      <div className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 ${className}`}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="text-xs text-muted-foreground">
-              <span className="hidden sm:inline">What do you think about this voice reply?</span>
-              <span className="sm:hidden">Your verdict:</span>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Cast your vote to help verify content accuracy</p>
-          </TooltipContent>
-        </Tooltip>
-        
-        <div className="flex flex-col gap-2 w-full sm:w-auto">
-          {/* Reaction Buttons */}
-          <div className="flex gap-1 sm:gap-2">
-            <Button
-              variant={userVote === 'fact' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleVote('fact')}
-              disabled={loading}
-              className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
-                animatingButton === 'fact' ? 'animate-pulse scale-110' : ''
-              }`}
-            >
-              <span className="mr-0.5 sm:mr-1">🎯</span>
-              <span className="text-xs">Fact</span>
-            </Button>
-            
-            <Button
-              variant={userVote === 'myth' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleVote('myth')}
-              disabled={loading}
-              className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
-                animatingButton === 'myth' ? 'animate-pulse scale-110' : ''
-              }`}
-            >
-              <span className="mr-0.5 sm:mr-1">⛓️‍💥</span>
-              <span className="text-xs">Myth</span>
-            </Button>
-            
-            <Button
-              variant={userVote === 'unclear' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleVote('unclear')}
-              disabled={loading}
-              className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
-                animatingButton === 'unclear' ? 'animate-pulse scale-110' : ''
-              }`}
-            >
-              <span className="mr-0.5 sm:mr-1">❓</span>
-              <span className="text-xs">Unclear</span>
-            </Button>
-          </div>
+      <div className={`flex items-center justify-center gap-3 ${className}`}>
+        {/* Compact Emoji-Only Voting Buttons */}
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleVote('fact')}
+                disabled={loading}
+                className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
+                  userVote === 'fact' 
+                    ? 'bg-primary/10 text-primary scale-110' 
+                    : 'hover:bg-muted/50'
+                } ${animatingButton === 'fact' ? 'animate-pulse' : ''}`}
+              >
+                🎯
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Mark as Fact</p>
+            </TooltipContent>
+          </Tooltip>
+          {factVotes > 0 && (
+            <span className="text-sm font-medium text-muted-foreground">
+              {factVotes}
+            </span>
+          )}
+        </div>
 
-          {/* Reaction Counters - Instagram/Facebook Style */}
-          {(factVotes > 0 || mythVotes > 0 || unclearVotes > 0) && (
-            <div className="flex gap-3 text-xs text-muted-foreground justify-center sm:justify-start">
-              {factVotes > 0 && (
-                <div className="flex items-center gap-1 transition-all duration-300 hover:text-foreground">
-                  <span>🎯</span>
-                  <span className="font-medium">{factVotes}</span>
-                </div>
-              )}
-              {mythVotes > 0 && (
-                <div className="flex items-center gap-1 transition-all duration-300 hover:text-foreground">
-                  <span>⛓️‍💥</span>
-                  <span className="font-medium">{mythVotes}</span>
-                </div>
-              )}
-              {unclearVotes > 0 && (
-                <div className="flex items-center gap-1 transition-all duration-300 hover:text-foreground">
-                  <span>❓</span>
-                  <span className="font-medium">{unclearVotes}</span>
-                </div>
-              )}
-            </div>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleVote('myth')}
+                disabled={loading}
+                className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
+                  userVote === 'myth' 
+                    ? 'bg-primary/10 text-primary scale-110' 
+                    : 'hover:bg-muted/50'
+                } ${animatingButton === 'myth' ? 'animate-pulse' : ''}`}
+              >
+                ⛓️‍💥
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Mark as Myth</p>
+            </TooltipContent>
+          </Tooltip>
+          {mythVotes > 0 && (
+            <span className="text-sm font-medium text-muted-foreground">
+              {mythVotes}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleVote('unclear')}
+                disabled={loading}
+                className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
+                  userVote === 'unclear' 
+                    ? 'bg-primary/10 text-primary scale-110' 
+                    : 'hover:bg-muted/50'
+                } ${animatingButton === 'unclear' ? 'animate-pulse' : ''}`}
+              >
+                ❓
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Still Unclear</p>
+            </TooltipContent>
+          </Tooltip>
+          {unclearVotes > 0 && (
+            <span className="text-sm font-medium text-muted-foreground">
+              {unclearVotes}
+            </span>
           )}
         </div>
       </div>

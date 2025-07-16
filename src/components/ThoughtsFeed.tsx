@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { ThoughtCard } from "@/components/ThoughtCard"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
+import { WelcomeModal } from "@/components/WelcomeModal"
 import { useSupabase } from "@/hooks/useSupabase"
 import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
@@ -56,6 +57,8 @@ export function ThoughtsFeed() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6">
+      <WelcomeModal />
+      
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Live Thoughts</h2>
         <Button
