@@ -17,14 +17,20 @@ interface VotingButtonsProps {
 
 export function VotingButtons({ 
   voiceResponseId, 
-  mythVotes, 
-  factVotes, 
-  unclearVotes,
+  mythVotes: initialMythVotes, 
+  factVotes: initialFactVotes, 
+  unclearVotes: initialUnclearVotes,
   className 
 }: VotingButtonsProps) {
   const [userVote, setUserVote] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [animatingButton, setAnimatingButton] = useState<string | null>(null)
+  
+  // Local state for real-time vote counts
+  const [mythVotes, setMythVotes] = useState(initialMythVotes)
+  const [factVotes, setFactVotes] = useState(initialFactVotes)
+  const [unclearVotes, setUnclearVotes] = useState(initialUnclearVotes)
+  
   const { toast } = useToast()
   const userSession = useUserSession()
 
@@ -52,44 +58,80 @@ export function VotingButtons({
     checkExistingVote()
   }, [voiceResponseId, userSession])
 
+  // Real-time subscription for vote count updates
+  useEffect(() => {
+    const channel = supabase
+      .channel(`voice_response_votes_${voiceResponseId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'voice_responses',
+          filter: `id=eq.${voiceResponseId}`
+        },
+        (payload) => {
+          if (payload.new) {
+            const newData = payload.new as any
+            setMythVotes(newData.myth_votes || 0)
+            setFactVotes(newData.fact_votes || 0)
+            setUnclearVotes(newData.unclear_votes || 0)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [voiceResponseId])
+
   const handleVote = async (voteType: 'myth' | 'fact' | 'unclear') => {
     if (!userSession) return
     
     setLoading(true)
+    setAnimatingButton(voteType)
+    
     try {
       if (userVote === voteType) {
-        // Remove vote
-        await supabase
+        // Remove vote if clicking same button
+        const { error } = await supabase
           .from('user_votes')
           .delete()
           .eq('voice_response_id', voiceResponseId)
           .eq('user_session', userSession)
         
+        if (error) throw error
+        
         setUserVote(null)
         toast({
           title: "Vote removed",
-          description: "Your vote has been removed."
+          description: "Your vote has been removed.",
+          duration: 1500
         })
       } else {
-        // Add or update vote
-        await supabase
+        // Change vote or add new vote
+        const { error } = await supabase
           .from('user_votes')
           .upsert({
             voice_response_id: voiceResponseId,
             user_session: userSession,
             vote_type: voteType
+          }, {
+            onConflict: 'voice_response_id,user_session'
           })
         
+        if (error) throw error
+        
+        const previousVote = userVote
         setUserVote(voteType)
         
-        // Trigger animation
-        setAnimatingButton(voteType)
-        setTimeout(() => setAnimatingButton(null), 600)
-        
         const voteLabels = { myth: '⛓️‍💥 Myth', fact: '🎯 Fact', unclear: '❓ Unclear' }
+        const actionText = previousVote ? 'changed to' : 'reacted'
+        
         toast({
-          title: "Reaction added",
-          description: `You reacted ${voteLabels[voteType]} to this voice note`,
+          title: `Vote ${actionText}`,
+          description: `You ${actionText} ${voteLabels[voteType]} to this voice note`,
           duration: 2000
         })
       }
@@ -102,6 +144,7 @@ export function VotingButtons({
       })
     } finally {
       setLoading(false)
+      setTimeout(() => setAnimatingButton(null), 600)
     }
   }
 
