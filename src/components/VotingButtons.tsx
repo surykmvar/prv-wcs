@@ -113,7 +113,17 @@ export function VotingButtons({
         
         if (error) throw error
         
+        // Immediately update local state for better UX
         setUserVote(null)
+        // Decrease the count for the removed vote
+        if (voteType === 'myth') {
+          setMythVotes(prev => Math.max(0, prev - 1))
+        } else if (voteType === 'fact') {
+          setFactVotes(prev => Math.max(0, prev - 1))
+        } else if (voteType === 'unclear') {
+          setUnclearVotes(prev => Math.max(0, prev - 1))
+        }
+        
         toast({
           title: "Vote removed",
           description: "Your vote has been removed.",
@@ -135,6 +145,28 @@ export function VotingButtons({
         if (error) throw error
         
         const previousVote = userVote
+        
+        // Immediately update local state for better UX
+        if (previousVote) {
+          // Remove previous vote count
+          if (previousVote === 'myth') {
+            setMythVotes(prev => Math.max(0, prev - 1))
+          } else if (previousVote === 'fact') {
+            setFactVotes(prev => Math.max(0, prev - 1))
+          } else if (previousVote === 'unclear') {
+            setUnclearVotes(prev => Math.max(0, prev - 1))
+          }
+        }
+        
+        // Add new vote count
+        if (voteType === 'myth') {
+          setMythVotes(prev => prev + 1)
+        } else if (voteType === 'fact') {
+          setFactVotes(prev => prev + 1)
+        } else if (voteType === 'unclear') {
+          setUnclearVotes(prev => prev + 1)
+        }
+        
         setUserVote(voteType)
         
         const voteLabels = { myth: '⛓️‍💥 Myth', fact: '🎯 Fact', unclear: '❓ Unclear' }
