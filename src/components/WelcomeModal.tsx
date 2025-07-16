@@ -31,7 +31,7 @@ export function WelcomeModal() {
         
         <div className="space-y-4 text-center text-muted-foreground">
           <p className="text-sm leading-relaxed">
-            Here's how reactions work:
+            Here's how voting works:
           </p>
           
           <div className="space-y-2 text-sm">

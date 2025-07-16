@@ -140,8 +140,7 @@ export function useSupabase() {
             created_at,
             myth_votes,
             fact_votes,
-            unclear_votes,
-            reactions
+            unclear_votes
           )
         `)
         .eq('status', 'active')

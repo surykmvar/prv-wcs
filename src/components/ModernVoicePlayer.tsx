@@ -12,7 +12,6 @@ interface ModernVoicePlayerProps {
   mythVotes: number
   factVotes: number
   unclearVotes: number
-  reactions: Record<string, number>
   className?: string
 }
 
@@ -23,8 +22,7 @@ export function ModernVoicePlayer({
   mythVotes,
   factVotes,
   unclearVotes,
-  reactions,
-  className 
+  className
 }: ModernVoicePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)

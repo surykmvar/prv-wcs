@@ -17,7 +17,6 @@ type VoiceResponse = {
   myth_votes: number
   fact_votes: number
   unclear_votes: number
-  reactions: Record<string, number> | any
 }
 
 type Thought = {
@@ -255,7 +254,6 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                               mythVotes={response.myth_votes || 0}
                               factVotes={response.fact_votes || 0}
                               unclearVotes={response.unclear_votes || 0}
-                              reactions={typeof response.reactions === 'object' ? response.reactions : {}}
                             />
                             <div className="text-xs text-muted-foreground pl-2 sm:pl-4">
                               {formatTimeAgo(response.created_at)}
