@@ -50,38 +50,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_reactions: {
-        Row: {
-          created_at: string | null
-          id: string
-          reaction_type: string
-          user_session: string
-          voice_response_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          reaction_type: string
-          user_session: string
-          voice_response_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          reaction_type?: string
-          user_session?: string
-          voice_response_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_reactions_voice_response_id_fkey"
-            columns: ["voice_response_id"]
-            isOneToOne: false
-            referencedRelation: "voice_responses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_votes: {
         Row: {
           created_at: string | null
@@ -123,7 +91,6 @@ export type Database = {
           fact_votes: number | null
           id: string
           myth_votes: number | null
-          reactions: Json | null
           thought_id: string
           transcript: string | null
           unclear_votes: number | null
@@ -137,7 +104,6 @@ export type Database = {
           fact_votes?: number | null
           id?: string
           myth_votes?: number | null
-          reactions?: Json | null
           thought_id: string
           transcript?: string | null
           unclear_votes?: number | null
@@ -151,7 +117,6 @@ export type Database = {
           fact_votes?: number | null
           id?: string
           myth_votes?: number | null
-          reactions?: Json | null
           thought_id?: string
           transcript?: string | null
           unclear_votes?: number | null
