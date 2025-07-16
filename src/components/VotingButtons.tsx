@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Check, X, HelpCircle } from 'lucide-react'
+
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { useUserSession } from '@/hooks/useUserSession'
@@ -24,6 +24,7 @@ export function VotingButtons({
 }: VotingButtonsProps) {
   const [userVote, setUserVote] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [animatingButton, setAnimatingButton] = useState<string | null>(null)
   const { toast } = useToast()
   const userSession = useUserSession()
 
@@ -80,10 +81,16 @@ export function VotingButtons({
           })
         
         setUserVote(voteType)
-        const voteLabels = { myth: 'Myth', fact: 'Fact', unclear: 'Unclear' }
+        
+        // Trigger animation
+        setAnimatingButton(voteType)
+        setTimeout(() => setAnimatingButton(null), 600)
+        
+        const voteLabels = { myth: '⛓️‍💥 Myth', fact: '🎯 Fact', unclear: '❓ Unclear' }
         toast({
-          title: "Vote cast",
-          description: `You voted: ${voteLabels[voteType]}`
+          title: "Reaction added",
+          description: `You reacted ${voteLabels[voteType]} to this voice note`,
+          duration: 2000
         })
       }
     } catch (error) {
@@ -119,9 +126,11 @@ export function VotingButtons({
             size="sm"
             onClick={() => handleVote('fact')}
             disabled={loading}
-            className="h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none"
+            className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
+              animatingButton === 'fact' ? 'animate-pulse scale-110' : ''
+            }`}
           >
-            <Check className="w-3 h-3 mr-0.5 sm:mr-1" />
+            <span className="mr-0.5 sm:mr-1">🎯</span>
             <span className="text-xs">Fact</span>
             {factVotes > 0 && (
               <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
@@ -135,9 +144,11 @@ export function VotingButtons({
             size="sm"
             onClick={() => handleVote('myth')}
             disabled={loading}
-            className="h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none"
+            className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
+              animatingButton === 'myth' ? 'animate-pulse scale-110' : ''
+            }`}
           >
-            <X className="w-3 h-3 mr-0.5 sm:mr-1" />
+            <span className="mr-0.5 sm:mr-1">⛓️‍💥</span>
             <span className="text-xs">Myth</span>
             {mythVotes > 0 && (
               <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">
@@ -151,9 +162,11 @@ export function VotingButtons({
             size="sm"
             onClick={() => handleVote('unclear')}
             disabled={loading}
-            className="h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none"
+            className={`h-7 sm:h-8 px-2 sm:px-3 flex-1 sm:flex-none transition-all duration-300 ${
+              animatingButton === 'unclear' ? 'animate-pulse scale-110' : ''
+            }`}
           >
-            <HelpCircle className="w-3 h-3 mr-0.5 sm:mr-1" />
+            <span className="mr-0.5 sm:mr-1">❓</span>
             <span className="text-xs">Unclear</span>
             {unclearVotes > 0 && (
               <Badge variant="secondary" className="ml-1 h-3 sm:h-4 px-1 text-xs">

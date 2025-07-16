@@ -4,7 +4,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 import { Slider } from '@/components/ui/slider'
 import { VotingButtons } from './VotingButtons'
-import { ReactionButtons } from './ReactionButtons'
 
 interface ModernVoicePlayerProps {
   voiceResponseId: string
@@ -226,13 +225,6 @@ export function ModernVoicePlayer({
             factVotes={factVotes}
             unclearVotes={unclearVotes}
             className="border-t pt-2 sm:pt-3"
-          />
-
-          {/* Reactions Section */}
-          <ReactionButtons
-            voiceResponseId={voiceResponseId}
-            reactions={reactions}
-            className="border-t pt-2"
           />
         </div>
       </CardContent>

@@ -235,8 +235,8 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                         onClick={() => handleStartRecording(thought.id)}
                         className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base h-9 sm:h-10"
                       >
-                        <span className="sm:hidden">Record Woice</span>
-                        <span className="hidden sm:inline">Record Your 60-Second Woice</span>
+                        <span className="sm:hidden">Record Woice Reply🎙️</span>
+                        <span className="hidden sm:inline">Record Your Woice Reply🎙️</span>
                       </Button>
                     </div>
                   </div>
