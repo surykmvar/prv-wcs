@@ -179,11 +179,13 @@ export function VotingButtons({
                 <p>Mark as Fact</p>
               </TooltipContent>
             </Tooltip>
-            {factVotes > 0 && (
-              <span className="text-sm font-medium text-muted-foreground">
-                {factVotes}
-              </span>
-            )}
+            <span 
+              className={`text-sm font-medium text-muted-foreground transition-all duration-300 ${
+                animatingButton === 'fact' ? 'scale-125 text-primary' : ''
+              }`}
+            >
+              {factVotes}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -207,11 +209,13 @@ export function VotingButtons({
                 <p>Mark as Myth</p>
               </TooltipContent>
             </Tooltip>
-            {mythVotes > 0 && (
-              <span className="text-sm font-medium text-muted-foreground">
-                {mythVotes}
-              </span>
-            )}
+            <span 
+              className={`text-sm font-medium text-muted-foreground transition-all duration-300 ${
+                animatingButton === 'myth' ? 'scale-125 text-primary' : ''
+              }`}
+            >
+              {mythVotes}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -235,11 +239,13 @@ export function VotingButtons({
                 <p>Still Unclear</p>
               </TooltipContent>
             </Tooltip>
-            {unclearVotes > 0 && (
-              <span className="text-sm font-medium text-muted-foreground">
-                {unclearVotes}
-              </span>
-            )}
+            <span 
+              className={`text-sm font-medium text-muted-foreground transition-all duration-300 ${
+                animatingButton === 'unclear' ? 'scale-125 text-primary' : ''
+              }`}
+            >
+              {unclearVotes}
+            </span>
           </div>
         </div>
       </div>
