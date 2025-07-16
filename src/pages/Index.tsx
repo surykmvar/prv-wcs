@@ -1,6 +1,8 @@
 
+import { useState } from 'react'
 import { Header } from "@/components/Header"
 import { MainActions } from "@/components/MainActions"
+import { VotingExplanationModal } from '@/components/VotingExplanationModal'
 
 const Index = () => {
   return (
@@ -12,6 +14,7 @@ const Index = () => {
           <MainActions />
         </main>
       </div>
+      <VotingExplanationModal />
     </div>
   )
 }

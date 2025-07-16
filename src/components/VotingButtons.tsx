@@ -5,7 +5,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
-import { useUserSession } from '@/hooks/useUserSession'
+import { useAuth } from '@/hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 interface VotingButtonsProps {
   voiceResponseId: string
@@ -32,19 +33,20 @@ export function VotingButtons({
   const [unclearVotes, setUnclearVotes] = useState(initialUnclearVotes)
   
   const { toast } = useToast()
-  const userSession = useUserSession()
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     // Check if user has already voted
     const checkExistingVote = async () => {
-      if (!userSession) return
+      if (!user?.id) return
       
       try {
         const { data } = await supabase
           .from('user_votes')
           .select('vote_type')
           .eq('voice_response_id', voiceResponseId)
-          .eq('user_session', userSession)
+          .eq('user_id', user.id)
           .single()
         
         if (data) {
@@ -56,7 +58,7 @@ export function VotingButtons({
     }
     
     checkExistingVote()
-  }, [voiceResponseId, userSession])
+  }, [voiceResponseId, user?.id])
 
   // Real-time subscription for vote count updates
   useEffect(() => {
@@ -87,7 +89,15 @@ export function VotingButtons({
   }, [voiceResponseId])
 
   const handleVote = async (voteType: 'myth' | 'fact' | 'unclear') => {
-    if (!userSession) return
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to vote on voice responses.",
+        variant: "destructive"
+      })
+      navigate('/auth')
+      return
+    }
     
     setLoading(true)
     setAnimatingButton(voteType)
@@ -99,7 +109,7 @@ export function VotingButtons({
           .from('user_votes')
           .delete()
           .eq('voice_response_id', voiceResponseId)
-          .eq('user_session', userSession)
+          .eq('user_id', user.id)
         
         if (error) throw error
         
@@ -115,10 +125,11 @@ export function VotingButtons({
           .from('user_votes')
           .upsert({
             voice_response_id: voiceResponseId,
-            user_session: userSession,
+            user_id: user.id,
+            user_session: '', // Keep for compatibility but will be deprecated
             vote_type: voteType
           }, {
-            onConflict: 'voice_response_id,user_session'
+            onConflict: 'user_id,voice_response_id'
           })
         
         if (error) throw error
@@ -153,7 +164,7 @@ export function VotingButtons({
       <div className={`space-y-2 ${className}`}>
         {/* Descriptive Text */}
         <div className="text-xs text-muted-foreground">
-          What do you think about this voice reply?
+          {user ? "What do you think about this voice reply?" : "Sign in to vote on voice replies"}
         </div>
         
         {/* Left-Aligned Emoji Reactions */}
@@ -165,12 +176,12 @@ export function VotingButtons({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('fact')}
-                  disabled={loading}
+                  disabled={loading || !user}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
                     userVote === 'fact' 
                       ? 'bg-primary/10 text-primary scale-110' 
                       : 'hover:bg-muted/50'
-                  } ${animatingButton === 'fact' ? 'animate-pulse' : ''}`}
+                  } ${animatingButton === 'fact' ? 'animate-pulse' : ''} ${!user ? 'opacity-50' : ''}`}
                 >
                   🎯
                 </Button>
@@ -195,12 +206,12 @@ export function VotingButtons({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('myth')}
-                  disabled={loading}
+                  disabled={loading || !user}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
                     userVote === 'myth' 
                       ? 'bg-primary/10 text-primary scale-110' 
                       : 'hover:bg-muted/50'
-                  } ${animatingButton === 'myth' ? 'animate-pulse' : ''}`}
+                  } ${animatingButton === 'myth' ? 'animate-pulse' : ''} ${!user ? 'opacity-50' : ''}`}
                 >
                   ⛓️‍💥
                 </Button>
@@ -225,12 +236,12 @@ export function VotingButtons({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('unclear')}
-                  disabled={loading}
+                  disabled={loading || !user}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
                     userVote === 'unclear' 
                       ? 'bg-primary/10 text-primary scale-110' 
                       : 'hover:bg-muted/50'
-                  } ${animatingButton === 'unclear' ? 'animate-pulse' : ''}`}
+                  } ${animatingButton === 'unclear' ? 'animate-pulse' : ''} ${!user ? 'opacity-50' : ''}`}
                 >
                   ❓
                 </Button>

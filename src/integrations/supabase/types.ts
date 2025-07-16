@@ -54,6 +54,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          user_id: string | null
           user_session: string
           voice_response_id: string | null
           vote_type: string
@@ -61,6 +62,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          user_id?: string | null
           user_session: string
           voice_response_id?: string | null
           vote_type: string
@@ -68,6 +70,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          user_id?: string | null
           user_session?: string
           voice_response_id?: string | null
           vote_type?: string
