@@ -209,11 +209,9 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('fact')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
-                    userVote === 'fact' 
-                      ? 'bg-primary/10 text-primary scale-110' 
-                      : 'hover:bg-muted/50'
-                  } ${animatingButton === 'fact' ? 'animate-pulse' : ''} ${!user ? 'hover:bg-primary/10' : ''}`}
+                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-primary/10 hover:scale-110 ${
+                    animatingButton === 'fact' ? 'animate-pulse' : ''
+                  }`}
                 >
                   🎯
                 </Button>
@@ -223,9 +221,11 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-              className={`text-sm font-medium text-muted-foreground transition-all duration-300 ${
-                animatingButton === 'fact' ? 'scale-125 text-primary' : ''
-              }`}
+              className={`text-sm font-medium transition-all duration-300 ${
+                userVote === 'fact' 
+                  ? 'text-primary font-semibold' 
+                  : 'text-muted-foreground'
+              } ${animatingButton === 'fact' ? 'scale-125' : ''}`}
             >
               {factVotes}
             </span>
@@ -239,11 +239,9 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('myth')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
-                    userVote === 'myth' 
-                      ? 'bg-primary/10 text-primary scale-110' 
-                      : 'hover:bg-muted/50'
-                  } ${animatingButton === 'myth' ? 'animate-pulse' : ''} ${!user ? 'hover:bg-primary/10' : ''}`}
+                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-destructive/10 hover:scale-110 ${
+                    animatingButton === 'myth' ? 'animate-pulse' : ''
+                  }`}
                 >
                   ⛓️‍💥
                 </Button>
@@ -253,9 +251,11 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-              className={`text-sm font-medium text-muted-foreground transition-all duration-300 ${
-                animatingButton === 'myth' ? 'scale-125 text-primary' : ''
-              }`}
+              className={`text-sm font-medium transition-all duration-300 ${
+                userVote === 'myth' 
+                  ? 'text-destructive font-semibold' 
+                  : 'text-muted-foreground'
+              } ${animatingButton === 'myth' ? 'scale-125' : ''}`}
             >
               {mythVotes}
             </span>
@@ -269,11 +269,9 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('unclear')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 ${
-                    userVote === 'unclear' 
-                      ? 'bg-primary/10 text-primary scale-110' 
-                      : 'hover:bg-muted/50'
-                  } ${animatingButton === 'unclear' ? 'animate-pulse' : ''} ${!user ? 'hover:bg-primary/10' : ''}`}
+                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-yellow-500/10 hover:scale-110 ${
+                    animatingButton === 'unclear' ? 'animate-pulse' : ''
+                  }`}
                 >
                   ❓
                 </Button>
@@ -283,9 +281,11 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-              className={`text-sm font-medium text-muted-foreground transition-all duration-300 ${
-                animatingButton === 'unclear' ? 'scale-125 text-primary' : ''
-              }`}
+              className={`text-sm font-medium transition-all duration-300 ${
+                userVote === 'unclear' 
+                  ? 'text-yellow-600 dark:text-yellow-400 font-semibold' 
+                  : 'text-muted-foreground'
+              } ${animatingButton === 'unclear' ? 'scale-125' : ''}`}
             >
               {unclearVotes}
             </span>
