@@ -223,8 +223,8 @@ export function VotingButtons({
             <span 
               className={`text-sm font-medium transition-all duration-300 ${
                 userVote === 'fact' 
-                  ? 'text-primary font-semibold' 
-                  : 'text-muted-foreground'
+                  ? 'text-green-500 font-semibold' 
+                  : 'text-green-400'
               } ${animatingButton === 'fact' ? 'scale-125' : ''}`}
             >
               {factVotes}
