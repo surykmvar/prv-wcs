@@ -6,6 +6,7 @@ import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Play, Bookmark, Bo
 import { useSupabase } from "@/hooks/useSupabase"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { ModernVoicePlayer } from "@/components/ModernVoicePlayer"
+import { VotingExplanationModal } from "@/components/VotingExplanationModal"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { formatTimeAgo } from "@/utils/timeUtils"
 
@@ -41,6 +42,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   const [recordingThoughtId, setRecordingThoughtId] = useState<string | null>(null)
   const [expandedThoughts, setExpandedThoughts] = useState<Set<string>>(new Set())
   const [savedThoughts, setSavedThoughts] = useState<Set<string>>(new Set())
+  const [showVotingModal, setShowVotingModal] = useState(false)
   const { getThoughts } = useSupabase()
 
   const loadThoughts = async () => {
@@ -83,6 +85,12 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
       newExpanded.delete(thoughtId)
     } else {
       newExpanded.add(thoughtId)
+      
+      // Show voting explanation modal on first expand if user hasn't seen it
+      const hasSeenVotingExplanation = localStorage.getItem('hasSeenVotingExplanation')
+      if (!hasSeenVotingExplanation) {
+        setShowVotingModal(true)
+      }
     }
     setExpandedThoughts(newExpanded)
   }
@@ -110,6 +118,10 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
 
   return (
     <div className="w-full max-w-4xl mx-auto px-3 sm:px-6">
+      <VotingExplanationModal 
+        isOpen={showVotingModal} 
+        onClose={() => setShowVotingModal(false)} 
+      />
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div className="flex items-center gap-2 sm:gap-4">
           <Button variant="ghost" onClick={onBack} className="flex items-center gap-1 sm:gap-2 h-8 sm:h-10 px-2 sm:px-4">

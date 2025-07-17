@@ -8,24 +8,35 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 
-export function VotingExplanationModal() {
-  const [isOpen, setIsOpen] = useState(false)
+interface VotingExplanationModalProps {
+  isOpen?: boolean
+  onClose?: () => void
+}
+
+export function VotingExplanationModal({ isOpen: externalIsOpen, onClose: externalOnClose }: VotingExplanationModalProps = {}) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false)
+  
+  // Use external state if provided, otherwise use internal
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen
+  const onClose = externalOnClose || (() => setInternalIsOpen(false))
 
   useEffect(() => {
-    // Check if user has seen the explanation before
-    const hasSeenExplanation = localStorage.getItem('hasSeenVotingExplanation')
-    if (!hasSeenExplanation) {
-      setIsOpen(true)
+    // Check if user has seen the explanation before (only if using internal state)
+    if (externalIsOpen === undefined) {
+      const hasSeenExplanation = localStorage.getItem('hasSeenVotingExplanation')
+      if (!hasSeenExplanation) {
+        setInternalIsOpen(true)
+      }
     }
-  }, [])
+  }, [externalIsOpen])
 
   const handleClose = () => {
-    setIsOpen(false)
+    onClose()
     localStorage.setItem('hasSeenVotingExplanation', 'true')
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>How to Vote on Voice Replies</DialogTitle>
