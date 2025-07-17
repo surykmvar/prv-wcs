@@ -12,6 +12,8 @@ import { Eye, EyeOff } from 'lucide-react'
 export default function Auth() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
@@ -39,7 +41,11 @@ export default function Auth() {
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl
+          emailRedirectTo: redirectUrl,
+          data: {
+            first_name: firstName,
+            last_name: lastName
+          }
         }
       })
 
@@ -152,12 +158,36 @@ export default function Auth() {
 
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="first-name">First Name</Label>
+                    <Input
+                      id="first-name"
+                      type="text"
+                      placeholder="John"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last-name">Last Name</Label>
+                    <Input
+                      id="last-name"
+                      type="text"
+                      placeholder="Doe"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="john@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
