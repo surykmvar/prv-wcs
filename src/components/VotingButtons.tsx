@@ -253,7 +253,7 @@ export function VotingButtons({
             <span 
               className={`text-sm font-medium transition-all duration-300 ${
                 userVote === 'myth' 
-                  ? 'text-destructive font-semibold' 
+                  ? 'text-red-500 font-semibold' 
                   : 'text-muted-foreground'
               } ${animatingButton === 'myth' ? 'scale-125' : ''}`}
             >
