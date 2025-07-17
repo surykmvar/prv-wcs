@@ -39,21 +39,27 @@ export function VotingButtons({
   useEffect(() => {
     // Check if user has already voted
     const checkExistingVote = async () => {
-      if (!user?.id) return
+      if (!user?.id) {
+        setUserVote(null)
+        return
+      }
       
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('user_votes')
           .select('vote_type')
           .eq('voice_response_id', voiceResponseId)
           .eq('user_id', user.id)
-          .single()
+          .maybeSingle()
         
-        if (data) {
-          setUserVote(data.vote_type)
+        if (error) {
+          console.error('Error checking existing vote:', error)
+          return
         }
+        
+        setUserVote(data?.vote_type || null)
       } catch (error) {
-        // No existing vote found
+        console.error('Unexpected error in checkExistingVote:', error)
       }
     }
     
