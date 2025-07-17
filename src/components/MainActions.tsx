@@ -1,5 +1,6 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mic, Plus } from "lucide-react"
@@ -11,6 +12,16 @@ import { useSupabase } from "@/hooks/useSupabase"
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
   const [showRandomRecorder, setShowRandomRecorder] = useState(false)
+  const location = useLocation()
+
+  // Reset state when navigating back to home page
+  useEffect(() => {
+    console.log('MainActions route changed:', location.pathname); // Debug log
+    if (location.pathname === '/') {
+      setShowRandomRecorder(false)
+      setShowWriteNote(false)
+    }
+  }, [location.pathname])
 
   const handleRandomRecorderSuccess = () => {
     setShowRandomRecorder(false)
