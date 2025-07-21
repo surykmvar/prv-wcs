@@ -103,6 +103,13 @@ export function VotingButtons({
     }
   }, [voiceResponseId])
 
+  // Sync initial vote counts when component mounts or props change
+  useEffect(() => {
+    setMythVotes(initialMythVotes)
+    setFactVotes(initialFactVotes)
+    setUnclearVotes(initialUnclearVotes)
+  }, [initialMythVotes, initialFactVotes, initialUnclearVotes])
+
   const handleVote = async (voteType: 'myth' | 'fact' | 'unclear') => {
     if (!user && !userSession) {
       toast({
