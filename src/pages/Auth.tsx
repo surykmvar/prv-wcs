@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, X } from 'lucide-react'
+
+type AuthMode = 'signin' | 'signup'
 
 export default function Auth() {
+  const [searchParams] = useSearchParams()
+  const urlMode = searchParams.get('mode')
+  const mode: AuthMode = (urlMode === 'signup' || urlMode === 'signin') ? urlMode : 'signin'
+  
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -95,9 +100,38 @@ export default function Auth() {
     }
   }
 
+  const renderTabButtons = () => (
+    <div className="flex justify-center gap-2 mb-6">
+      <Button 
+        variant={mode === 'signin' ? 'default' : 'outline'}
+        onClick={() => navigate('/auth?mode=signin')}
+        className="flex-1"
+      >
+        Sign In
+      </Button>
+      <Button 
+        variant={mode === 'signup' ? 'default' : 'outline'}
+        onClick={() => navigate('/auth?mode=signup')}
+        className="flex-1"
+      >
+        Sign Up
+      </Button>
+    </div>
+  )
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md relative">
+        {/* Back/Close Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/')}
+          className="absolute right-4 top-4 h-8 w-8 p-0"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+        
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Welcome to Woices</CardTitle>
           <CardDescription>
@@ -105,13 +139,10 @@ export default function Auth() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="signin">
+          {mode === 'signin' ? (
+            // Sign In Form
+            <div className="space-y-4">
+              {renderTabButtons()}
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
@@ -154,9 +185,11 @@ export default function Auth() {
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
-            </TabsContent>
-
-            <TabsContent value="signup">
+            </div>
+          ) : (
+            // Sign Up Form
+            <div className="space-y-4">
+              {renderTabButtons()}
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -227,8 +260,8 @@ export default function Auth() {
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>
               </form>
-            </TabsContent>
-          </Tabs>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
