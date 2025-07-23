@@ -107,7 +107,7 @@ export default function Auth() {
         onClick={() => navigate('/auth?mode=signin')}
         className="flex-1"
       >
-        Sign In
+        Log In
       </Button>
       <Button 
         variant={mode === 'signup' ? 'default' : 'outline'}
