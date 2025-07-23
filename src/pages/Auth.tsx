@@ -114,7 +114,7 @@ export default function Auth() {
         onClick={() => navigate('/auth?mode=signup')}
         className="flex-1"
       >
-        Sign Up
+        Register Now!
       </Button>
     </div>
   )
