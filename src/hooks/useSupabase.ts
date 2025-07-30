@@ -14,7 +14,7 @@ export function useSupabase() {
   const { toast } = useToast()
 
   // Create a new thought
-  const createThought = async (thought: Omit<NewThought, 'id' | 'created_at' | 'expires_at'>, userId?: string) => {
+  const createThought = async (thought: Omit<NewThought, 'id' | 'created_at' | 'expires_at'>) => {
     if (!isSupabaseConfigured) {
       toast({
         title: "Supabase not configured",
@@ -30,7 +30,6 @@ export function useSupabase() {
         .from('thoughts')
         .insert({
           ...thought,
-          user_id: userId,
           expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString() // 48 hours from now
         })
         .select()
@@ -96,15 +95,12 @@ export function useSupabase() {
   }
 
   // Create a voice response
-  const createVoiceResponse = async (voiceResponse: Omit<NewVoiceResponse, 'id' | 'created_at'>, userId?: string) => {
+  const createVoiceResponse = async (voiceResponse: Omit<NewVoiceResponse, 'id' | 'created_at'>) => {
     setLoading(true)
     try {
       const { data, error } = await supabase
         .from('voice_responses')
-        .insert({
-          ...voiceResponse,
-          user_id: userId
-        })
+        .insert(voiceResponse)
         .select()
         .single()
 
@@ -209,7 +205,7 @@ export function useSupabase() {
   }
 
   // Submit complete voice response (upload + create record)
-  const submitVoiceResponse = async (thoughtId: string, audioBlob: Blob, duration: number, userSession: string, userId?: string) => {
+  const submitVoiceResponse = async (thoughtId: string, audioBlob: Blob, duration: number, userSession: string) => {
     if (!isSupabaseConfigured) {
       toast({
         title: "Supabase not configured",
@@ -240,7 +236,7 @@ export function useSupabase() {
         audio_url: url,
         duration,
         user_session: userSession
-      }, userId)
+      })
       
       return voiceResponse
     } catch (error) {

@@ -9,7 +9,6 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthGuard } from '@/components/AuthGuard'
 import Index from "./pages/Index";
 import Auth from './pages/Auth'
-import Profile from './pages/Profile'
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,14 +28,6 @@ const App = () => (
                 element={
                   <AuthGuard requireAuth={false}>
                     <Auth />
-                  </AuthGuard>
-                } 
-              />
-              <Route 
-                path="/profile" 
-                element={
-                  <AuthGuard requireAuth={true}>
-                    <Profile />
                   </AuthGuard>
                 } 
               />

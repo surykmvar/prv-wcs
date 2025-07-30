@@ -6,120 +6,89 @@
 
 @layer base {
   :root {
-    /* Soft pastel color palette - Light Mode */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 12%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 12%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 12%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    /* Soft purple primary */
-    --primary: 258 85% 70%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-    /* Soft pastels */
-    --secondary: 210 15% 95%;
-    --secondary-foreground: 0 0% 25%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 15% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 197 37% 85%;
-    --accent-foreground: 0 0% 20%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 210 15% 92%;
-    --input: 210 15% 94%;
-    --ring: 258 85% 70%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
-    --radius: 1rem;
+    --radius: 0.5rem;
 
-    /* Soft backgrounds for special elements */
-    --tag-background: 45 100% 95%;
-    --tag-foreground: 45 100% 25%;
-    
-    /* Woices brand colors - reduced saturation */
-    --woices-violet-soft: 258 65% 75%;
-    --woices-mint-soft: 158 45% 75%;
-    --woices-sky-soft: 198 65% 75%;
-    --woices-bloom-soft: 322 45% 75%;
-    --woices-brick-soft: 213 15% 65%;
-
-    /* Enhanced shadows and borders */
-    --shadow-soft: 0 2px 10px -2px hsl(0 0% 0% / 0.08);
-    --shadow-medium: 0 4px 20px -4px hsl(0 0% 0% / 0.12);
-
-    /* Sidebar colors */
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 20%;
-    --sidebar-primary: 258 65% 75%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 210 15% 95%;
-    --sidebar-accent-foreground: 0 0% 20%;
-    --sidebar-border: 210 15% 92%;
-    --sidebar-ring: 258 85% 70%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    /* Soft dark mode with reduced contrast */
-    --background: 225 6% 8%;
-    --foreground: 210 40% 95%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 225 6% 10%;
-    --card-foreground: 210 40% 95%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 225 6% 10%;
-    --popover-foreground: 210 40% 95%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    /* Soft dusty lavender primary */
-    --primary: 258 45% 75%;
-    --primary-foreground: 225 6% 8%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 215 13% 15%;
-    --secondary-foreground: 210 40% 90%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 215 13% 14%;
-    --muted-foreground: 215 13% 65%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 180 25% 65%;
-    --accent-foreground: 225 6% 8%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 210 40% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 215 13% 18%;
-    --input: 215 13% 16%;
-    --ring: 258 45% 75%;
-
-    /* Dark mode tags */
-    --tag-background: 215 13% 18%;
-    --tag-foreground: 210 40% 85%;
-
-    /* Dark woices colors - muted */
-    --woices-violet-soft: 258 45% 65%;
-    --woices-mint-soft: 158 35% 65%;
-    --woices-sky-soft: 198 45% 65%;
-    --woices-bloom-soft: 322 35% 65%;
-    --woices-brick-soft: 213 15% 55%;
-
-    /* Dark shadows */
-    --shadow-soft: 0 2px 10px -2px hsl(0 0% 0% / 0.3);
-    --shadow-medium: 0 4px 20px -4px hsl(0 0% 0% / 0.4);
-
-    /* Dark sidebar */
-    --sidebar-background: 225 6% 8%;
-    --sidebar-foreground: 210 40% 85%;
-    --sidebar-primary: 258 45% 65%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 13% 15%;
-    --sidebar-accent-foreground: 210 40% 85%;
-    --sidebar-border: 215 13% 18%;
-    --sidebar-ring: 258 45% 75%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 

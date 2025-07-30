@@ -5,7 +5,6 @@ import { Mic, Square, Send, AlertCircle } from "lucide-react"
 import { useVoiceRecording } from "@/hooks/useVoiceRecording"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useUserSession } from "@/hooks/useUserSession"
-import { useAuth } from "@/hooks/useAuth"
 import { VoicePlayer } from "@/components/VoicePlayer"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -30,7 +29,6 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
   
   const { submitVoiceResponse, loading } = useSupabase()
   const userSession = useUserSession()
-  const { user } = useAuth()
 
   const handleStartRecording = async () => {
     try {
@@ -47,7 +45,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
     }
     
     try {
-      await submitVoiceResponse(thoughtId, audioBlob, duration, userSession, user?.id)
+      await submitVoiceResponse(thoughtId, audioBlob, duration, userSession)
       resetRecording()
       onSuccess?.()
       onClose()
