@@ -64,11 +64,15 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				woices: {
-					violet: '#7c3aed',
-					mint: '#10b981',
-					sky: '#0ea5e9',
-					bloom: '#ec4899',
-					brick: '#64748b'
+					violet: 'hsl(var(--woices-violet-soft))',
+					mint: 'hsl(var(--woices-mint-soft))',
+					sky: 'hsl(var(--woices-sky-soft))',
+					bloom: 'hsl(var(--woices-bloom-soft))',
+					brick: 'hsl(var(--woices-brick-soft))'
+				},
+				tag: {
+					DEFAULT: 'hsl(var(--tag-background))',
+					foreground: 'hsl(var(--tag-foreground))'
 				}
 			},
 			borderRadius: {

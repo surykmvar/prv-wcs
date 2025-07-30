@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Mic, Clock, MessageCircle } from "lucide-react"
+import { Mic, Clock, MessageCircle, Users, CheckCircle2 } from "lucide-react"
 import { formatTimeAgo } from "@/utils/timeUtils"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useUserSession } from "@/hooks/useUserSession"
@@ -45,28 +45,31 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
   }, [thought.id, userSession, responseCount, isMaxReached, canUserSubmitVoice])
 
   return (
-    <Card className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
-      <CardHeader className="p-0 mb-4">
-        <div className="flex justify-between items-start gap-4">
-          <CardTitle className="text-lg sm:text-xl font-semibold leading-tight">
+    <Card className="rounded-2xl border-0 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-medium)] transition-all duration-300 bg-card overflow-hidden">
+      <CardHeader className="p-6 pb-4">
+        <div className="flex justify-between items-start gap-4 mb-4">
+          <CardTitle className="text-xl font-bold leading-tight text-card-foreground line-clamp-2">
             {thought.title}
           </CardTitle>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground whitespace-nowrap bg-muted/50 px-3 py-1.5 rounded-full">
             <Clock className="w-4 h-4" />
             {hoursLeft}h left
           </div>
         </div>
         
         {thought.description && (
-          <p className="text-sm sm:text-base text-muted-foreground mt-3 leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed line-clamp-3">
             {thought.description}
           </p>
         )}
         
         {thought.tags && thought.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-2 mt-4">
             {thought.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
+              <Badge 
+                key={tag} 
+                className="px-3 py-1 text-sm rounded-full bg-tag text-tag-foreground border-0 font-medium"
+              >
                 #{tag}
               </Badge>
             ))}
@@ -74,33 +77,41 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
         )}
       </CardHeader>
       
-      <CardContent className="p-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MessageCircle className="w-4 h-4" />
-            {responseCount}/{maxWoices} voice{responseCount === 1 ? '' : 's'}
+      <CardContent className="p-6 pt-0">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <MessageCircle className="w-4 h-4" />
+              <span className="font-medium">{responseCount}</span>
+            </div>
+            <div className="h-4 w-px bg-border"></div>
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Users className="w-4 h-4" />
+              <span className="font-medium">{maxWoices} max</span>
+            </div>
           </div>
           
           {isMaxReached ? (
-            <div className="text-center text-sm text-green-600 font-medium bg-green-50 px-4 py-2 rounded-xl">
-              🎉 This Thought has received all its reviews!
+            <div className="flex items-center gap-2 text-sm font-medium text-woices-mint bg-woices-mint/10 px-4 py-2.5 rounded-xl">
+              <CheckCircle2 className="w-4 h-4" />
+              All responses received!
             </div>
           ) : !canSubmit ? (
-            <div className="text-center text-sm text-amber-700 font-medium bg-amber-50 px-4 py-2 rounded-xl">
+            <div className="text-sm font-medium text-woices-brick bg-woices-brick/10 px-4 py-2.5 rounded-xl">
               {submitMessage}
             </div>
           ) : (
             <Button
               onClick={() => onRecordResponse(thought.id)}
-              className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-4 py-2"
+              className="bg-gradient-to-r from-woices-violet to-woices-bloom hover:opacity-90 text-white rounded-xl px-6 py-2.5 font-medium shadow-sm transition-all duration-200 hover:shadow-md"
             >
               <Mic className="w-4 h-4 mr-2" />
-              Record Woice
+              🎙️ Record Your Woice Reply
             </Button>
           )}
         </div>
         
-        <div className="text-xs text-muted-foreground mt-2">
+        <div className="text-sm text-muted-foreground">
           Posted {formatTimeAgo(thought.created_at)}
         </div>
       </CardContent>
