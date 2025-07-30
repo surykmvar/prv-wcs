@@ -61,6 +61,7 @@ export type Database = {
           status: string
           tags: string[] | null
           title: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -72,6 +73,7 @@ export type Database = {
           status?: string
           tags?: string[] | null
           title: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -83,6 +85,7 @@ export type Database = {
           status?: string
           tags?: string[] | null
           title?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -133,6 +136,7 @@ export type Database = {
           thought_id: string
           transcript: string | null
           unclear_votes: number | null
+          user_id: string | null
           user_session: string
         }
         Insert: {
@@ -146,6 +150,7 @@ export type Database = {
           thought_id: string
           transcript?: string | null
           unclear_votes?: number | null
+          user_id?: string | null
           user_session: string
         }
         Update: {
@@ -159,6 +164,7 @@ export type Database = {
           thought_id?: string
           transcript?: string | null
           unclear_votes?: number | null
+          user_id?: string | null
           user_session?: string
         }
         Relationships: [
@@ -179,6 +185,37 @@ export type Database = {
       evaluate_thought_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_user_thoughts: {
+        Args: { user_uuid: string }
+        Returns: {
+          id: string
+          title: string
+          description: string
+          tags: string[]
+          created_at: string
+          expires_at: string
+          status: string
+          final_status: string
+          max_woices_allowed: number
+          voice_response_count: number
+        }[]
+      }
+      get_user_voice_responses: {
+        Args: { user_uuid: string }
+        Returns: {
+          id: string
+          thought_id: string
+          thought_title: string
+          created_at: string
+          duration: number
+          audio_url: string
+          transcript: string
+          classification: string
+          myth_votes: number
+          fact_votes: number
+          unclear_votes: number
+        }[]
       }
       update_expired_thoughts: {
         Args: Record<PropertyKey, never>
