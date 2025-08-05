@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { VoicePlayer } from '@/components/VoicePlayer'
-import { User, MessageSquare, Volume2, TrendingUp, ThumbsUp, ThumbsDown, AlertCircle } from 'lucide-react'
+import { User, MessageSquare, Volume2, TrendingUp, ThumbsUp, ThumbsDown, AlertCircle, Bookmark } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface UserThought {
@@ -81,10 +81,12 @@ export default function Profile() {
     }
   }
 
-  const getTotalVotes = () => {
-    return userVoiceResponses.reduce((total, response) => 
-      total + response.myth_votes + response.fact_votes + response.unclear_votes, 0
-    )
+  const getVoteBreakdown = () => {
+    return userVoiceResponses.reduce((totals, response) => ({
+      facts: totals.facts + response.fact_votes,
+      myths: totals.myths + response.myth_votes,
+      unclear: totals.unclear + response.unclear_votes
+    }), { facts: 0, myths: 0, unclear: 0 })
   }
 
   const getTopVoteType = (response: UserVoiceResponse) => {
@@ -124,18 +126,35 @@ export default function Profile() {
               <div className="flex-1">
                 <h1 className="text-3xl font-bold">{profile?.display_name || 'Anonymous User'}</h1>
                 <p className="text-muted-foreground">{user?.email}</p>
-                <div className="flex gap-6 mt-4">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-primary">{userThoughts.length}</p>
-                    <p className="text-sm text-muted-foreground">Thoughts</p>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+                  <div className="text-center p-3 rounded-lg bg-muted/30">
+                    <p className="text-xl font-bold text-primary">{userThoughts.length}</p>
+                    <p className="text-xs text-muted-foreground">Thoughts</p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-primary">{userVoiceResponses.length}</p>
-                    <p className="text-sm text-muted-foreground">Woices</p>
+                  <div className="text-center p-3 rounded-lg bg-muted/30">
+                    <p className="text-xl font-bold text-primary">{userVoiceResponses.length}</p>
+                    <p className="text-xs text-muted-foreground">Woices</p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-primary">{getTotalVotes()}</p>
-                    <p className="text-sm text-muted-foreground">Total Votes</p>
+                  <div className="text-center p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <ThumbsUp className="h-3 w-3 text-green-500" />
+                      <p className="text-lg font-bold text-green-500">{getVoteBreakdown().facts}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Facts</p>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <ThumbsDown className="h-3 w-3 text-red-500" />
+                      <p className="text-lg font-bold text-red-500">{getVoteBreakdown().myths}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Myths</p>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <AlertCircle className="h-3 w-3 text-yellow-500" />
+                      <p className="text-lg font-bold text-yellow-500">{getVoteBreakdown().unclear}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Unclear</p>
                   </div>
                 </div>
               </div>
@@ -145,7 +164,7 @@ export default function Profile() {
 
         {/* Content Tabs */}
         <Tabs defaultValue="thoughts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="thoughts" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               My Thoughts
@@ -153,6 +172,10 @@ export default function Profile() {
             <TabsTrigger value="woices" className="flex items-center gap-2">
               <Volume2 className="h-4 w-4" />
               My Woices
+            </TabsTrigger>
+            <TabsTrigger value="saved" className="flex items-center gap-2">
+              <Bookmark className="h-4 w-4" />
+              Saved
             </TabsTrigger>
           </TabsList>
 
@@ -256,6 +279,16 @@ export default function Profile() {
                 )
               })
             )}
+          </TabsContent>
+
+          <TabsContent value="saved" className="space-y-4">
+            <Card>
+              <CardContent className="text-center py-12">
+                <Bookmark className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">You haven't saved any thoughts or woices yet.</p>
+                <p className="text-sm text-muted-foreground mt-2">Save interesting content to easily find it later!</p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
