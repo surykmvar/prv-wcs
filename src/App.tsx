@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthGuard } from '@/components/AuthGuard'
 import Index from "./pages/Index";
 import Auth from './pages/Auth'
+import BreakTheIce from './pages/BreakTheIce'
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,14 @@ const App = () => (
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route 
+                path="/break-the-ice" 
+                element={
+                  <AuthGuard requireAuth={true}>
+                    <BreakTheIce />
+                  </AuthGuard>
+                } 
+              />
               <Route 
                 path="/auth" 
                 element={

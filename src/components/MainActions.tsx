@@ -1,45 +1,13 @@
 
-import { useState, useEffect } from "react"
-import { useLocation } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mic, Plus } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
-import { VoiceRecorder } from "@/components/VoiceRecorder"
-import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
-import { useSupabase } from "@/hooks/useSupabase"
 
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
-  const [showRandomRecorder, setShowRandomRecorder] = useState(false)
-  const location = useLocation()
-
-  // Reset state when navigating back to home page
-  useEffect(() => {
-    console.log('MainActions route changed:', location.pathname); // Debug log
-    if (location.pathname === '/') {
-      setShowRandomRecorder(false)
-      setShowWriteNote(false)
-    }
-  }, [location.pathname])
-
-  const handleRandomRecorderSuccess = () => {
-    setShowRandomRecorder(false)
-  }
-
-  const handleBack = () => {
-    setShowRandomRecorder(false)
-  }
-
-  // Show random thought recorder when "Break the ice" is clicked
-  if (showRandomRecorder) {
-    return (
-      <RandomThoughtRecorder
-        onBack={handleBack}
-        onSuccess={handleRandomRecorderSuccess}
-      />
-    )
-  }
+  const navigate = useNavigate()
 
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-6xl mx-auto">
@@ -54,7 +22,7 @@ export function MainActions() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-woices-violet/20 cursor-pointer p-4 sm:p-6 rounded-xl" 
-              onClick={() => setShowRandomRecorder(true)}>
+              onClick={() => navigate('/break-the-ice')}>
           <CardHeader className="text-center pb-4 p-0">
             <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-br from-woices-violet to-woices-bloom rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <Mic className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
