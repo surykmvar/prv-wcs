@@ -90,14 +90,14 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4">
             {!isRecording && !audioBlob && (
               <Button
                 onClick={handleStartRecording}
                 disabled={loading}
-                className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl shadow-md transition-all duration-300"
+                className="mx-auto w-32 xs:w-36 sm:w-40 md:w-44 lg:w-48 px-2 xs:px-3 sm:px-4 py-1.5 xs:py-2 text-xs xs:text-sm sm:text-base md:text-lg bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl shadow-md transition-all duration-300"
               >
-                <Mic className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                <Mic className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 mr-1 xs:mr-2" />
                 Start Recording
               </Button>
             )}
