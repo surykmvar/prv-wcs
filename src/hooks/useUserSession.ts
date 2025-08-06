@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 export function useUserSession() {
   const [userSession, setUserSession] = useState<string>('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let session = localStorage.getItem('userSession')
@@ -10,7 +11,8 @@ export function useUserSession() {
       localStorage.setItem('userSession', session)
     }
     setUserSession(session)
+    setLoading(false)
   }, [])
 
-  return userSession
+  return { userSession, loading }
 }

@@ -35,7 +35,7 @@ export function VotingButtons({
   
   const { toast } = useToast()
   const { user } = useAuth()
-  const userSession = useUserSession()
+  const { userSession } = useUserSession()
   const navigate = useNavigate()
 
   useEffect(() => {

@@ -28,7 +28,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
   } = useVoiceRecording(60)
   
   const { submitVoiceResponse, loading, canUserSubmitVoice } = useSupabase()
-  const userSession = useUserSession()
+  const { userSession } = useUserSession()
 
   const handleStartRecording = async () => {
     try {

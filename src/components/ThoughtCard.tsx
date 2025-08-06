@@ -31,7 +31,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
   const isMaxReached = responseCount >= maxWoices
   
   const { canUserSubmitVoice } = useSupabase()
-  const userSession = useUserSession()
+  const { userSession } = useUserSession()
   const [canSubmit, setCanSubmit] = useState(true)
   const [submitMessage, setSubmitMessage] = useState("")
 

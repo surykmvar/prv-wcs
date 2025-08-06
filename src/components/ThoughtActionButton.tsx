@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Mic } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
@@ -11,37 +11,41 @@ interface ThoughtActionButtonProps {
 
 export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActionButtonProps) {
   const { canUserSubmitVoice } = useSupabase()
-  const userSession = useUserSession()
+  const { userSession, loading: sessionLoading } = useUserSession()
   const [canSubmit, setCanSubmit] = useState(true)
   const [submitMessage, setSubmitMessage] = useState("")
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const checkUserPermission = async () => {
-      if (!userSession) {
-        setCanSubmit(false)
-        setSubmitMessage("Please sign in to record")
-        setLoading(false)
-        return
-      }
-
-      setLoading(true)
-      try {
-        const result = await canUserSubmitVoice(thoughtId, userSession)
-        console.log('Permission check result for thought', thoughtId, ':', result)
-        setCanSubmit(result.canSubmit)
-        setSubmitMessage(result.reason || "")
-      } catch (error) {
-        console.error('Error checking user permission:', error)
-        setCanSubmit(false)
-        setSubmitMessage("Error checking permissions. Please try again.")
-      } finally {
-        setLoading(false)
-      }
+  const checkUserPermission = useCallback(async () => {
+    if (sessionLoading) {
+      return
     }
 
+    if (!userSession) {
+      setCanSubmit(false)
+      setSubmitMessage("Please sign in to record")
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    try {
+      const result = await canUserSubmitVoice(thoughtId, userSession)
+      console.log('Permission check result for thought', thoughtId, ':', result)
+      setCanSubmit(result.canSubmit)
+      setSubmitMessage(result.reason || "")
+    } catch (error) {
+      console.error('Error checking user permission:', error)
+      setCanSubmit(false)
+      setSubmitMessage("Error checking permissions. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }, [thoughtId, userSession, sessionLoading])
+
+  useEffect(() => {
     checkUserPermission()
-  }, [thoughtId, userSession, canUserSubmitVoice])
+  }, [checkUserPermission])
 
   if (loading) {
     return (
