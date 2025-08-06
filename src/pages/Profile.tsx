@@ -137,21 +137,21 @@ export default function Profile() {
                   </div>
                   <div className="text-center p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <ThumbsUp className="h-3 w-3 text-green-500" />
+                      <span className="text-lg">🎯</span>
                       <p className="text-lg font-bold text-green-500">{getVoteBreakdown().facts}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Facts</p>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <ThumbsDown className="h-3 w-3 text-red-500" />
+                      <span className="text-lg">⛓️‍💥</span>
                       <p className="text-lg font-bold text-red-500">{getVoteBreakdown().myths}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Myths</p>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <AlertCircle className="h-3 w-3 text-yellow-500" />
+                      <span className="text-lg">❓</span>
                       <p className="text-lg font-bold text-yellow-500">{getVoteBreakdown().unclear}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Unclear</p>
@@ -257,15 +257,15 @@ export default function Profile() {
                         <div className="flex justify-between items-center">
                           <div className="flex gap-4 text-sm">
                             <span className="flex items-center gap-1">
-                              <ThumbsUp className="h-3 w-3 text-green-500" />
+                              <span>🎯</span>
                               {response.fact_votes}
                             </span>
                             <span className="flex items-center gap-1">
-                              <ThumbsDown className="h-3 w-3 text-red-500" />
+                              <span>⛓️‍💥</span>
                               {response.myth_votes}
                             </span>
                             <span className="flex items-center gap-1">
-                              <AlertCircle className="h-3 w-3 text-yellow-500" />
+                              <span>❓</span>
                               {response.unclear_votes}
                             </span>
                           </div>
