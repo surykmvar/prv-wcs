@@ -27,7 +27,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
     formatTime 
   } = useVoiceRecording(60)
   
-  const { submitVoiceResponse, loading } = useSupabase()
+  const { submitVoiceResponse, loading, canUserSubmitVoice } = useSupabase()
   const userSession = useUserSession()
 
   const handleStartRecording = async () => {
@@ -45,12 +45,24 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
     }
     
     try {
+      // Double-check permissions before submitting
+      const permissionCheck = await canUserSubmitVoice(thoughtId, userSession)
+      
+      if (!permissionCheck.canSubmit) {
+        console.error('Permission denied:', permissionCheck.reason)
+        // Show error to user
+        alert(permissionCheck.reason || 'You cannot submit a voice response for this thought')
+        onClose()
+        return
+      }
+      
       await submitVoiceResponse(thoughtId, audioBlob, duration, userSession)
       resetRecording()
       onSuccess?.()
       onClose()
     } catch (error) {
       console.error('Failed to send recording:', error)
+      alert('Failed to send recording. Please try again.')
     }
   }
 

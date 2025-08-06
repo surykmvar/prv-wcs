@@ -197,8 +197,14 @@ export function useSupabase() {
         .eq('status', 'active')
         .single()
 
-      if (thoughtError) throw thoughtError
-      if (!thought) return { canSubmit: false, reason: 'Thought not found or inactive' }
+      if (thoughtError) {
+        console.error('Error fetching thought:', thoughtError)
+        throw thoughtError
+      }
+      if (!thought) {
+        console.log('Thought not found or inactive:', thoughtId)
+        return { canSubmit: false, reason: 'Thought not found or inactive' }
+      }
 
       const maxWoices = thought.max_woices_allowed || 10
       const currentCount = thought.voice_responses?.length || 0
@@ -208,33 +214,55 @@ export function useSupabase() {
         return { canSubmit: false, reason: 'This thought has reached the maximum number of Woice replies.' }
       }
 
-      // Check if user already submitted a woice for this thought
-      // Check by user_id if authenticated, otherwise by user_session
-      let existingVoiceQuery = supabase
-        .from('voice_responses')
-        .select('id')
-        .eq('thought_id', thoughtId)
-      
+      // For authenticated users, check if they already submitted
       if (user?.id) {
-        existingVoiceQuery = existingVoiceQuery.eq('user_id', user.id)
-      } else {
-        existingVoiceQuery = existingVoiceQuery
+        const { data: existingVoice, error: voiceError } = await supabase
+          .from('voice_responses')
+          .select('id')
+          .eq('thought_id', thoughtId)
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        if (voiceError && voiceError.code !== 'PGRST116') {
+          console.error('Error checking existing voice response:', voiceError)
+          throw voiceError
+        }
+        
+        if (existingVoice) {
+          return { canSubmit: false, reason: "You've already shared your Woice on this thought" }
+        }
+        
+        return { canSubmit: true, reason: null }
+      }
+      
+      // For anonymous users, check by user_session
+      if (userSession) {
+        const { data: existingVoice, error: voiceError } = await supabase
+          .from('voice_responses')
+          .select('id')
+          .eq('thought_id', thoughtId)
           .eq('user_session', userSession)
           .is('user_id', null)
-      }
-      
-      const { data: existingVoice, error: voiceError } = await existingVoiceQuery.maybeSingle()
+          .maybeSingle()
 
-      if (voiceError && voiceError.code !== 'PGRST116') throw voiceError
-      
-      if (existingVoice) {
-        return { canSubmit: false, reason: "You've already shared your voice on this thought" }
+        if (voiceError && voiceError.code !== 'PGRST116') {
+          console.error('Error checking existing anonymous voice response:', voiceError)
+          throw voiceError
+        }
+        
+        if (existingVoice) {
+          return { canSubmit: false, reason: "You've already shared your Woice on this thought" }
+        }
+        
+        return { canSubmit: true, reason: null }
       }
 
-      return { canSubmit: true, reason: null }
+      // No user session available
+      return { canSubmit: false, reason: 'Please refresh the page and try again' }
+      
     } catch (error) {
       console.error('Error checking user submission eligibility:', error)
-      return { canSubmit: false, reason: 'Unable to verify submission eligibility.' }
+      return { canSubmit: false, reason: 'Unable to verify submission eligibility. Please try again.' }
     }
   }
 

@@ -25,14 +25,16 @@ export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActi
         return
       }
 
+      setLoading(true)
       try {
         const result = await canUserSubmitVoice(thoughtId, userSession)
+        console.log('Permission check result for thought', thoughtId, ':', result)
         setCanSubmit(result.canSubmit)
         setSubmitMessage(result.reason || "")
       } catch (error) {
         console.error('Error checking user permission:', error)
         setCanSubmit(false)
-        setSubmitMessage("Error checking permissions")
+        setSubmitMessage("Error checking permissions. Please try again.")
       } finally {
         setLoading(false)
       }
