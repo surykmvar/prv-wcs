@@ -280,8 +280,8 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('myth')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-destructive/10 hover:scale-110 ${
-                    userVote === 'myth' ? 'ring-2 ring-red-500 bg-red-50' : ''
+                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-[#06AFE2]/10 hover:scale-110 ${
+                    userVote === 'myth' ? 'ring-2 ring-[#06AFE2] bg-[#06AFE2]/10' : ''
                   } ${animatingButton === 'myth' ? 'animate-pulse' : ''}`}
                 >
                   ⛓️‍💥
@@ -292,11 +292,11 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-              className={`text-sm font-medium transition-all duration-300 ${
+               className={`text-sm font-medium transition-all duration-300 ${
                 userVote === 'myth' 
-                  ? 'text-red-600 font-bold' 
+                  ? 'text-[#06AFE2] font-bold' 
                   : 'text-muted-foreground'
-              } ${animatingButton === 'myth' ? 'scale-125' : ''}`}
+               } ${animatingButton === 'myth' ? 'scale-125' : ''}`}
             >
               {mythVotes}
             </span>
@@ -310,8 +310,8 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('unclear')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-yellow-500/10 hover:scale-110 ${
-                    userVote === 'unclear' ? 'ring-2 ring-yellow-500 bg-yellow-50' : ''
+                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-destructive/10 hover:scale-110 ${
+                    userVote === 'unclear' ? 'ring-2 ring-red-500 bg-red-50' : ''
                   } ${animatingButton === 'unclear' ? 'animate-pulse' : ''}`}
                 >
                   ❓
@@ -322,11 +322,11 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-              className={`text-sm font-medium transition-all duration-300 ${
+               className={`text-sm font-medium transition-all duration-300 ${
                 userVote === 'unclear' 
-                  ? 'text-yellow-700 dark:text-yellow-500 font-bold' 
+                  ? 'text-red-600 font-bold' 
                   : 'text-muted-foreground'
-              } ${animatingButton === 'unclear' ? 'scale-125' : ''}`}
+               } ${animatingButton === 'unclear' ? 'scale-125' : ''}`}
             >
               {unclearVotes}
             </span>
