@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { VoicePlayer } from '@/components/VoicePlayer'
-import { User, MessageSquare, Volume2, TrendingUp, ThumbsUp, ThumbsDown, AlertCircle, Bookmark } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { User, MessageSquare, Volume2, TrendingUp, ThumbsUp, ThumbsDown, AlertCircle, Bookmark, BookmarkX } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface UserThought {
@@ -38,11 +39,23 @@ interface UserVoiceResponse {
   unclear_votes: number
 }
 
+interface SavedThought {
+  id: string
+  title: string
+  description: string
+  tags: string[]
+  created_at: string
+  expires_at: string
+  status: string
+  saved_at: string
+}
+
 export default function Profile() {
   const { user } = useAuth()
   const { profile, loading: profileLoading } = useProfile()
   const [userThoughts, setUserThoughts] = useState<UserThought[]>([])
   const [userVoiceResponses, setUserVoiceResponses] = useState<UserVoiceResponse[]>([])
+  const [savedThoughts, setSavedThoughts] = useState<SavedThought[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -58,20 +71,57 @@ export default function Profile() {
       setLoading(true)
 
       // Fetch user thoughts
-      const { data: thoughtsData } = await supabase
+      const { data: thoughtsData, error: thoughtsError } = await supabase
         .rpc('get_user_thoughts', { user_uuid: user.id })
 
-      setUserThoughts(thoughtsData || [])
+      if (thoughtsError) {
+        console.error('Error fetching user thoughts:', thoughtsError)
+      } else {
+        setUserThoughts(thoughtsData || [])
+      }
 
       // Fetch user voice responses
-      const { data: voiceResponsesData } = await supabase
+      const { data: voiceResponsesData, error: voiceResponsesError } = await supabase
         .rpc('get_user_voice_responses', { user_uuid: user.id })
 
-      setUserVoiceResponses(voiceResponsesData || [])
+      if (voiceResponsesError) {
+        console.error('Error fetching user voice responses:', voiceResponsesError)
+      } else {
+        setUserVoiceResponses(voiceResponsesData || [])
+      }
+
+      // Fetch saved thoughts
+      const { data: savedThoughtsData, error: savedThoughtsError } = await supabase
+        .rpc('get_user_saved_thoughts', { user_uuid: user.id })
+
+      if (savedThoughtsError) {
+        console.error('Error fetching saved thoughts:', savedThoughtsError)
+      } else {
+        setSavedThoughts(savedThoughtsData || [])
+      }
     } catch (error) {
       console.error('Error fetching user data:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleUnsaveThought = async (thoughtId: string) => {
+    if (!user) return
+
+    try {
+      const { error } = await supabase
+        .from('saved_thoughts')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('thought_id', thoughtId)
+
+      if (error) throw error
+
+      // Update local state
+      setSavedThoughts(prev => prev.filter(thought => thought.id !== thoughtId))
+    } catch (error) {
+      console.error('Error unsaving thought:', error)
     }
   }
 
@@ -161,15 +211,15 @@ export default function Profile() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="thoughts" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              My Thoughts
+              My Thoughts ({userThoughts.length})
             </TabsTrigger>
             <TabsTrigger value="woices" className="flex items-center gap-2">
               <Volume2 className="h-4 w-4" />
-              My Woices
+              My Woices ({userVoiceResponses.length})
             </TabsTrigger>
             <TabsTrigger value="saved" className="flex items-center gap-2">
               <Bookmark className="h-4 w-4" />
-              Saved
+              Saved ({savedThoughts.length})
             </TabsTrigger>
           </TabsList>
 
@@ -276,13 +326,52 @@ export default function Profile() {
           </TabsContent>
 
           <TabsContent value="saved" className="space-y-4">
-            <Card>
-              <CardContent className="text-center py-12">
-                <Bookmark className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">You haven't saved any thoughts or woices yet.</p>
-                <p className="text-sm text-muted-foreground mt-2">Save interesting content to easily find it later!</p>
-              </CardContent>
-            </Card>
+            {savedThoughts.length === 0 ? (
+              <Card>
+                <CardContent className="text-center py-12">
+                  <Bookmark className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">You haven't saved any thoughts yet.</p>
+                  <p className="text-sm text-muted-foreground mt-2">Save interesting thoughts to easily find them later!</p>
+                </CardContent>
+              </Card>
+            ) : (
+              savedThoughts.map((thought) => (
+                <Card key={thought.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{thought.title}</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={thought.status === 'active' ? 'default' : 'secondary'}>
+                          {thought.status}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleUnsaveThought(thought.id)}
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                        >
+                          <BookmarkX className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">{thought.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {thought.tags?.map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex justify-between items-center text-sm text-muted-foreground">
+                      <span>Saved {formatDistanceToNow(new Date(thought.saved_at))} ago</span>
+                      <span>Originally posted {formatDistanceToNow(new Date(thought.created_at))} ago</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </TabsContent>
         </Tabs>
       </div>

@@ -4,9 +4,12 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Play, Bookmark, BookmarkCheck } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
+import { useAuth } from "@/hooks/useAuth"
+import { supabase } from "@/integrations/supabase/client"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { ModernVoicePlayer } from "@/components/ModernVoicePlayer"
 import { VotingExplanationModal } from "@/components/VotingExplanationModal"
+import { ThoughtActionButton } from "@/components/ThoughtActionButton"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { formatTimeAgo } from "@/utils/timeUtils"
 
@@ -44,6 +47,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   const [savedThoughts, setSavedThoughts] = useState<Set<string>>(new Set())
   const [showVotingModal, setShowVotingModal] = useState(false)
   const { getThoughts } = useSupabase()
+  const { user } = useAuth()
 
   const loadThoughts = async () => {
     try {
@@ -59,12 +63,37 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
 
   useEffect(() => {
     loadThoughts()
-    // Load saved thoughts from localStorage
-    const saved = localStorage.getItem('savedThoughts')
-    if (saved) {
-      setSavedThoughts(new Set(JSON.parse(saved)))
+    loadSavedThoughts()
+  }, [user])
+
+  const loadSavedThoughts = async () => {
+    if (!user) {
+      // For anonymous users, load from localStorage
+      const saved = localStorage.getItem('savedThoughts')
+      if (saved) {
+        setSavedThoughts(new Set(JSON.parse(saved)))
+      }
+      return
     }
-  }, [])
+
+    try {
+      // For authenticated users, load from database
+      const { data, error } = await supabase
+        .from('saved_thoughts')
+        .select('thought_id')
+        .eq('user_id', user.id)
+
+      if (error) {
+        console.error('Error loading saved thoughts:', error)
+        return
+      }
+
+      const savedIds = new Set(data.map(item => item.thought_id))
+      setSavedThoughts(savedIds)
+    } catch (error) {
+      console.error('Error loading saved thoughts:', error)
+    }
+  }
 
   const handleRefresh = () => {
     loadThoughts()
@@ -95,15 +124,54 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
     setExpandedThoughts(newExpanded)
   }
 
-  const toggleSaved = (thoughtId: string) => {
-    const newSaved = new Set(savedThoughts)
-    if (newSaved.has(thoughtId)) {
-      newSaved.delete(thoughtId)
-    } else {
-      newSaved.add(thoughtId)
+  const toggleSaved = async (thoughtId: string) => {
+    if (!user) {
+      // For anonymous users, use localStorage
+      const newSaved = new Set(savedThoughts)
+      if (newSaved.has(thoughtId)) {
+        newSaved.delete(thoughtId)
+      } else {
+        newSaved.add(thoughtId)
+      }
+      setSavedThoughts(newSaved)
+      localStorage.setItem('savedThoughts', JSON.stringify(Array.from(newSaved)))
+      return
     }
-    setSavedThoughts(newSaved)
-    localStorage.setItem('savedThoughts', JSON.stringify(Array.from(newSaved)))
+
+    try {
+      const isSaved = savedThoughts.has(thoughtId)
+      
+      if (isSaved) {
+        // Remove from saved
+        const { error } = await supabase
+          .from('saved_thoughts')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('thought_id', thoughtId)
+
+        if (error) throw error
+
+        const newSaved = new Set(savedThoughts)
+        newSaved.delete(thoughtId)
+        setSavedThoughts(newSaved)
+      } else {
+        // Add to saved
+        const { error } = await supabase
+          .from('saved_thoughts')
+          .insert({
+            user_id: user.id,
+            thought_id: thoughtId
+          })
+
+        if (error) throw error
+
+        const newSaved = new Set(savedThoughts)
+        newSaved.add(thoughtId)
+        setSavedThoughts(newSaved)
+      }
+    } catch (error) {
+      console.error('Error toggling saved thought:', error)
+    }
   }
 
   if (recordingThoughtId) {
@@ -242,13 +310,10 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                         )}
                       </div>
                       
-                      <Button
-                        onClick={() => handleStartRecording(thought.id)}
-                        className="w-full sm:w-auto bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base h-9 sm:h-10"
-                      >
-                        <span className="sm:hidden">Record Woice Reply🎙️</span>
-                        <span className="hidden sm:inline">Record Your Woice Reply🎙️</span>
-                      </Button>
+                      <ThoughtActionButton 
+                        thoughtId={thought.id}
+                        onStartRecording={() => handleStartRecording(thought.id)}
+                      />
                     </div>
                   </div>
 

@@ -86,9 +86,13 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
               🎉 This Thought has received all its reviews!
             </div>
           ) : !canSubmit ? (
-            <div className="text-center text-sm text-amber-700 font-medium bg-amber-50 px-4 py-2 rounded-xl">
-              {submitMessage}
-            </div>
+            <Button
+              disabled
+              className="w-full sm:w-auto bg-muted text-muted-foreground rounded-xl px-4 py-2 cursor-not-allowed"
+            >
+              <Mic className="w-4 h-4 mr-2" />
+              {submitMessage || "Already responded"}
+            </Button>
           ) : (
             <Button
               onClick={() => onRecordResponse(thought.id)}

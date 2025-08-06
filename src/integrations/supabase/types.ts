@@ -50,6 +50,35 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_thoughts: {
+        Row: {
+          created_at: string | null
+          id: string
+          thought_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          thought_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          thought_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_thoughts_thought_id_fkey"
+            columns: ["thought_id"]
+            isOneToOne: false
+            referencedRelation: "thoughts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       thoughts: {
         Row: {
           created_at: string
@@ -185,6 +214,19 @@ export type Database = {
       evaluate_thought_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_user_saved_thoughts: {
+        Args: { user_uuid: string }
+        Returns: {
+          id: string
+          title: string
+          description: string
+          tags: string[]
+          created_at: string
+          expires_at: string
+          status: string
+          saved_at: string
+        }[]
       }
       get_user_thoughts: {
         Args: { user_uuid: string }

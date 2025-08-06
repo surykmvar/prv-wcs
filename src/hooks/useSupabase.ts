@@ -29,11 +29,20 @@ export function useSupabase() {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
       
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to post a thought.",
+          variant: "destructive"
+        })
+        return null
+      }
+      
       const { data, error } = await supabase
         .from('thoughts')
         .insert({
           ...thought,
-          user_id: user?.id || null,
+          user_id: user.id, // Always set user_id for authenticated users
           expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString() // 48 hours from now
         })
         .select()
@@ -175,7 +184,7 @@ export function useSupabase() {
   }
 
   // Check if user can submit a voice response
-  const canUserSubmitVoice = async (thoughtId: string, userSession: string) => {
+  const canUserSubmitVoice = async (thoughtId: string, userSession: string): Promise<{ canSubmit: boolean; reason: string | null }> => {
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
@@ -209,7 +218,9 @@ export function useSupabase() {
       if (user?.id) {
         existingVoiceQuery = existingVoiceQuery.eq('user_id', user.id)
       } else {
-        existingVoiceQuery = existingVoiceQuery.eq('user_session', userSession)
+        existingVoiceQuery = existingVoiceQuery
+          .eq('user_session', userSession)
+          .is('user_id', null)
       }
       
       const { data: existingVoice, error: voiceError } = await existingVoiceQuery.maybeSingle()
@@ -217,7 +228,7 @@ export function useSupabase() {
       if (voiceError && voiceError.code !== 'PGRST116') throw voiceError
       
       if (existingVoice) {
-        return { canSubmit: false, reason: 'You have already submitted a Woice for this thought.' }
+        return { canSubmit: false, reason: "You've already shared your voice on this thought" }
       }
 
       return { canSubmit: true, reason: null }
