@@ -105,11 +105,14 @@ export function useSupabase() {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
       
+      // Use upsert with the unique constraint to handle duplicates gracefully
       const { data, error } = await supabase
         .from('voice_responses')
-        .insert({
+        .upsert({
           ...voiceResponse,
           user_id: user?.id || null
+        }, {
+          onConflict: user?.id ? 'user_id,thought_id' : 'user_session,thought_id'
         })
         .select()
         .single()

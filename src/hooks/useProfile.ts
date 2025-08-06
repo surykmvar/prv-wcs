@@ -62,7 +62,9 @@ export function useProfile() {
 
         const { data: createdProfile, error: createError } = await supabase
           .from('profiles')
-          .insert(newProfile)
+          .upsert(newProfile, {
+            onConflict: 'user_id'
+          })
           .select()
           .single()
 
