@@ -251,7 +251,7 @@ export function VotingButtons({
                   onClick={() => handleVote('fact')}
                   disabled={loading}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-primary/10 hover:scale-110 ${
-                    userVote === 'fact' ? 'ring-2 ring-green-500 bg-green-50' : ''
+                    userVote === 'fact' ? 'ring-2 ring-green-500 bg-green-500/10' : ''
                   } ${animatingButton === 'fact' ? 'animate-pulse' : ''}`}
                 >
                   🎯
@@ -311,7 +311,7 @@ export function VotingButtons({
                   onClick={() => handleVote('unclear')}
                   disabled={loading}
                   className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-destructive/10 hover:scale-110 ${
-                    userVote === 'unclear' ? 'ring-2 ring-red-500 bg-red-50' : ''
+                    userVote === 'unclear' ? 'ring-2 ring-red-500 bg-red-500/10' : ''
                   } ${animatingButton === 'unclear' ? 'animate-pulse' : ''}`}
                 >
                   ❓
