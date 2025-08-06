@@ -63,9 +63,10 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
       <Card className="p-4 sm:p-6 rounded-xl shadow-lg">
         <CardHeader className="text-center p-0 mb-6">
           <CardTitle className="text-xl sm:text-2xl font-semibold">Record Your Woice</CardTitle>
-          <p className="text-sm text-muted-foreground mt-2 px-4">
-            *You can send only one thoughtful, respectful, and valuable Woice reply for this thought. Be kind and make your voice count! 😉
-          </p>
+          <div className="text-sm text-muted-foreground mt-2 px-4 space-y-1">
+            <p className="font-medium">📢 One reply only per thought</p>
+            <p>Be clear, kind & thoughtful - make it count!</p>
+          </div>
         </CardHeader>
         <CardContent className="text-center space-y-6 p-0">
           <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto relative">
