@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useProfile } from '@/hooks/useProfile'
 import { supabase } from '@/integrations/supabase/client'
 import { Header } from '@/components/Header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -39,10 +40,10 @@ interface UserVoiceResponse {
 
 export default function Profile() {
   const { user } = useAuth()
+  const { profile, loading: profileLoading } = useProfile()
   const [userThoughts, setUserThoughts] = useState<UserThought[]>([])
   const [userVoiceResponses, setUserVoiceResponses] = useState<UserVoiceResponse[]>([])
   const [loading, setLoading] = useState(true)
-  const [profile, setProfile] = useState<any>(null)
 
   useEffect(() => {
     if (user) {
@@ -54,14 +55,7 @@ export default function Profile() {
     if (!user) return
 
     try {
-      // Fetch user profile
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .single()
-
-      setProfile(profileData)
+      setLoading(true)
 
       // Fetch user thoughts
       const { data: thoughtsData } = await supabase
@@ -99,7 +93,7 @@ export default function Profile() {
     return { type: 'Unclear', icon: AlertCircle, color: 'text-yellow-500' }
   }
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
         <Header />

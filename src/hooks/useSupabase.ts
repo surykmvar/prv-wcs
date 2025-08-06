@@ -14,7 +14,7 @@ export function useSupabase() {
   const { toast } = useToast()
 
   // Create a new thought
-  const createThought = async (thought: Omit<NewThought, 'id' | 'created_at' | 'expires_at'>) => {
+  const createThought = async (thought: Omit<NewThought, 'id' | 'created_at' | 'expires_at' | 'user_id'>) => {
     if (!isSupabaseConfigured) {
       toast({
         title: "Supabase not configured",
@@ -26,10 +26,14 @@ export function useSupabase() {
     
     setLoading(true)
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser()
+      
       const { data, error } = await supabase
         .from('thoughts')
         .insert({
           ...thought,
+          user_id: user?.id || null,
           expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString() // 48 hours from now
         })
         .select()
@@ -95,12 +99,18 @@ export function useSupabase() {
   }
 
   // Create a voice response
-  const createVoiceResponse = async (voiceResponse: Omit<NewVoiceResponse, 'id' | 'created_at'>) => {
+  const createVoiceResponse = async (voiceResponse: Omit<NewVoiceResponse, 'id' | 'created_at' | 'user_id'>) => {
     setLoading(true)
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser()
+      
       const { data, error } = await supabase
         .from('voice_responses')
-        .insert(voiceResponse)
+        .insert({
+          ...voiceResponse,
+          user_id: user?.id || null
+        })
         .select()
         .single()
 
@@ -164,6 +174,9 @@ export function useSupabase() {
   // Check if user can submit a voice response
   const canUserSubmitVoice = async (thoughtId: string, userSession: string) => {
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser()
+      
       // Check if thought exists and get its max_woices_allowed
       const { data: thought, error: thoughtError } = await supabase
         .from('thoughts')
@@ -184,12 +197,19 @@ export function useSupabase() {
       }
 
       // Check if user already submitted a woice for this thought
-      const { data: existingVoice, error: voiceError } = await supabase
+      // Check by user_id if authenticated, otherwise by user_session
+      let existingVoiceQuery = supabase
         .from('voice_responses')
         .select('id')
         .eq('thought_id', thoughtId)
-        .eq('user_session', userSession)
-        .maybeSingle()
+      
+      if (user?.id) {
+        existingVoiceQuery = existingVoiceQuery.eq('user_id', user.id)
+      } else {
+        existingVoiceQuery = existingVoiceQuery.eq('user_session', userSession)
+      }
+      
+      const { data: existingVoice, error: voiceError } = await existingVoiceQuery.maybeSingle()
 
       if (voiceError && voiceError.code !== 'PGRST116') throw voiceError
       
