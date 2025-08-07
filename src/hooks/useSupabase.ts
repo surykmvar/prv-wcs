@@ -114,19 +114,40 @@ export function useSupabase() {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
       
+      // Ensure we always have a user_session value (required by database NOT NULL constraint)
+      let userSessionValue = voiceResponse.user_session
+      if (!userSessionValue && user?.id) {
+        // Generate a user-specific session for authenticated users
+        userSessionValue = `auth_${user.id}_${Date.now()}`
+      } else if (!userSessionValue) {
+        // This should not happen, but provide a fallback
+        userSessionValue = `fallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      }
+
+      console.log('Creating voice response with:', {
+        thought_id: voiceResponse.thought_id,
+        user_id: user?.id || null,
+        user_session: userSessionValue,
+        has_audio_url: !!voiceResponse.audio_url
+      })
+      
       // Use upsert with the unique constraint to handle duplicates gracefully
       const { data, error } = await supabase
         .from('voice_responses')
         .upsert({
           ...voiceResponse,
-          user_id: user?.id || null
+          user_id: user?.id || null,
+          user_session: userSessionValue
         }, {
           onConflict: user?.id ? 'user_id,thought_id' : 'user_session,thought_id'
         })
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Database error creating voice response:', error)
+        throw error
+      }
       
       toast({
         title: "Woice sent!",
