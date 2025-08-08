@@ -211,15 +211,12 @@ export default function Auth() {
         <Mail className="h-4 w-4" />
         Email
       </Button>
+{mode === 'signup' && (
       <Button 
         variant={authMethod === 'phone' ? 'default' : 'outline'}
         onClick={() => {
-          if (mode === 'signup') {
-            setComingSoon(true)
-            return
-          }
-          setAuthMethod('phone')
-          resetPhoneFlow()
+          setComingSoon(true)
+          return
         }}
         size="sm"
         className="flex items-center gap-2"
@@ -227,6 +224,7 @@ export default function Auth() {
         <Phone className="h-4 w-4" />
         Phone
       </Button>
+    )}
     </div>
   )
 
