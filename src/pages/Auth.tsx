@@ -409,7 +409,7 @@ export default function Auth() {
     <main className="w-full px-4 sm:px-6 py-6">
       <section className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-xl border bg-card shadow-sm md:grid-cols-2">
         {/* Left: Form */}
-        <article className="relative p-6 sm:p-10">
+        <article className="relative p-6 sm:p-10 md:order-2">
           <button
             aria-label="Close"
             onClick={() => navigate('/')}
@@ -456,7 +456,7 @@ export default function Auth() {
         </article>
 
         {/* Right: Visual */}
-        <aside className="hidden md:block relative bg-muted">
+        <aside className="hidden md:block relative bg-muted md:order-1">
           <img
             src={authOrb}
             alt="Glowing voice orb illustration"
