@@ -81,6 +81,8 @@ export type Database = {
       }
       thoughts: {
         Row: {
+          city: string | null
+          country_code: string | null
           created_at: string
           description: string | null
           expires_at: string
@@ -89,10 +91,13 @@ export type Database = {
           max_woices_allowed: number | null
           status: string
           tags: string[] | null
+          thought_scope: string
           title: string
           user_id: string | null
         }
         Insert: {
+          city?: string | null
+          country_code?: string | null
           created_at?: string
           description?: string | null
           expires_at?: string
@@ -101,10 +106,13 @@ export type Database = {
           max_woices_allowed?: number | null
           status?: string
           tags?: string[] | null
+          thought_scope?: string
           title: string
           user_id?: string | null
         }
         Update: {
+          city?: string | null
+          country_code?: string | null
           created_at?: string
           description?: string | null
           expires_at?: string
@@ -113,6 +121,7 @@ export type Database = {
           max_woices_allowed?: number | null
           status?: string
           tags?: string[] | null
+          thought_scope?: string
           title?: string
           user_id?: string | null
         }
