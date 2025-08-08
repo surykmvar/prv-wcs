@@ -135,7 +135,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
               {thoughtScope === "regional" && (
                 <li className="flex items-start gap-2">
                   <span aria-hidden>📍</span>
-                  <span>Please reply in region/country language (e.g., {countryCode || "IN, DE, FR"}) or in English for clarity.</span>
+                  <span>Please reply in region/country specific language for clarity (e.g., {countryCode || "IN, DE, FR"}), or in English.</span>
                 </li>
               )}
             </ul>
