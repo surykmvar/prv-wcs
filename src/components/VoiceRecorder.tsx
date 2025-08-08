@@ -116,16 +116,30 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
       <Card className="p-4 sm:p-6 rounded-xl shadow-lg">
         <CardHeader className="text-center p-0 mb-6">
           <CardTitle className="text-xl sm:text-2xl font-semibold">Record Your Woice</CardTitle>
-          <div className="text-sm text-muted-foreground mt-2 px-4 space-y-1">
-            <p className="font-medium">📢 You get one reply only per thought</p>
-            <p>Be clear, kind & thoughtful - make it count!</p>
+          <div className="mt-3 pr-4 sm:pr-6 pl-4 sm:pl-6">
+            <ul className="text-sm text-muted-foreground space-y-2 text-left">
+              <li className="flex items-start gap-2">
+                <span aria-hidden>🔁</span>
+                <span><span className="font-medium">One reply</span> per thought</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span aria-hidden>⏱️</span>
+                <span>Up to 60s — be clear, kind, and concise</span>
+              </li>
+              {thoughtScope === "global" && (
+                <li className="flex items-start gap-2">
+                  <span aria-hidden>🌐</span>
+                  <span>Please reply in English on Global Thoughts/Topics.</span>
+                </li>
+              )}
+              {thoughtScope === "regional" && (
+                <li className="flex items-start gap-2">
+                  <span aria-hidden>📍</span>
+                  <span>Please reply in region/country language (e.g., {countryCode || "IN, DE, FR"}) or in English for clarity.</span>
+                </li>
+              )}
+            </ul>
           </div>
-          {thoughtScope === "global" && (
-            <p className="text-xs text-muted-foreground mt-2">Please reply in English on Global Thoughts/Topics.</p>
-          )}
-          {thoughtScope === "regional" && (
-            <p className="text-xs text-muted-foreground mt-2">Please reply in region/country specific (e.g., {countryCode || "IN, DE, FR"}) or in English to convey your voice better.</p>
-          )}
         </CardHeader>
         <CardContent className="text-center space-y-6 p-0">
           <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto relative">
