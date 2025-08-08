@@ -397,7 +397,9 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {scope === 'global' ? 'Global: anyone can reply (please reply in English).' : 'Regional: only users in the same country can reply, in their local language.'}
+                  {scope === 'global'
+                    ? 'Global: anyone can reply (expect replies primarily in English).'
+                    : 'Regional: only users in the same country can reply; replies may be in the local language.'}
                 </p>
               </div>
 

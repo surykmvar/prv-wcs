@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mic, Square, Send, AlertCircle } from "lucide-react"
@@ -8,6 +9,7 @@ import { useUserSession } from "@/hooks/useUserSession"
 import { VoicePlayer } from "@/components/VoicePlayer"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/lib/supabase"
 
 interface VoiceRecorderProps {
   thoughtId: string
@@ -31,6 +33,30 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
   const { submitVoiceResponse, loading, canUserSubmitVoice } = useSupabase()
   const { userSession } = useUserSession()
   const { toast } = useToast()
+
+  const [thoughtScope, setThoughtScope] = useState<"global" | "regional" | null>(null)
+  const [countryCode, setCountryCode] = useState<string | null>(null)
+
+  useEffect(() => {
+    let isMounted = true
+    async function loadThoughtMeta() {
+      try {
+        const { data, error } = await supabase
+          .from("thoughts")
+          .select("thought_scope, country_code")
+          .eq("id", thoughtId)
+          .single()
+        if (!error && data && isMounted) {
+          setThoughtScope(data.thought_scope as "global" | "regional")
+          setCountryCode((data.country_code as string | null) || null)
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    loadThoughtMeta()
+    return () => { isMounted = false }
+  }, [thoughtId])
 
   const handleStartRecording = async () => {
     try {
@@ -94,6 +120,12 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
             <p className="font-medium">📢 You get one reply only per thought</p>
             <p>Be clear, kind & thoughtful - make it count!</p>
           </div>
+          {thoughtScope === "global" && (
+            <p className="text-xs text-muted-foreground mt-2">Please reply in English on Global Thoughts/Topics.</p>
+          )}
+          {thoughtScope === "regional" && (
+            <p className="text-xs text-muted-foreground mt-2">Please reply in region/country specific (e.g., {countryCode || "IN, DE, FR"}) or in English to convey your voice better.</p>
+          )}
         </CardHeader>
         <CardContent className="text-center space-y-6 p-0">
           <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto relative">
