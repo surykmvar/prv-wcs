@@ -9,9 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { VoicePlayer } from '@/components/VoicePlayer'
 import { Button } from '@/components/ui/button'
-import { User, MessageSquare, Volume2, Flower2, Trash2, AlertCircle, Bookmark, BookmarkX } from 'lucide-react'
+import { MessageSquare, Volume2, Flower2, Trash2, AlertCircle, Bookmark, BookmarkX, Wind } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import OutcomeIcon from '@/components/profile/OutcomeIcon'
+import ProfileHeader from '@/components/profile/ProfileHeader'
 
 interface UserThought {
   id: string
@@ -182,65 +185,30 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <Header />
+    <TooltipProvider delayDuration={150}>
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+        <Header />
       <div className="max-w-6xl mx-auto px-3 md:px-4 py-6 md:py-8">
-        <Card className="mb-8">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-              <Avatar className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20">
-                <AvatarFallback className="text-lg sm:text-xl md:text-2xl bg-gradient-to-br from-woices-violet to-woices-mint text-white">
-                  {profile?.display_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 w-full">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{profile?.display_name || 'Anonymous User'}</h1>
-                <p className="text-sm md:text-base text-muted-foreground">{user?.email}</p>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mt-4 md:mt-6">
-                  <div className="text-center p-2 md:p-3 rounded-lg bg-muted/30">
-                    <p className="text-base md:text-xl font-bold text-primary">{userThoughts.length}</p>
-                    <p className="text-[10px] md:text-xs text-muted-foreground">Thoughts</p>
-                  </div>
-                  <div className="text-center p-2 md:p-3 rounded-lg bg-muted/30">
-                    <p className="text-base md:text-xl font-bold text-primary">{userVoiceResponses.length}</p>
-                    <p className="text-[10px] md:text-xs text-muted-foreground">Woices</p>
-                  </div>
-                  <div className="text-center p-2 md:p-3 rounded-lg bg-muted/30">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <span className="text-sm md:text-lg">🎯</span>
-                      <p className="text-base md:text-lg font-bold text-green-500">{getVoteBreakdown().facts}</p>
-                    </div>
-                    <p className="text-[10px] md:text-xs text-muted-foreground">Facts</p>
-                  </div>
-                  <div className="text-center p-2 md:p-3 rounded-lg bg-muted/30">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <span className="text-sm md:text-lg">⛓️‍💥</span>
-                      <p className="text-base md:text-lg font-bold text-red-500">{getVoteBreakdown().myths}</p>
-                    </div>
-                    <p className="text-[10px] md:text-xs text-muted-foreground">Myths</p>
-                  </div>
-                  <div className="text-center p-2 md:p-3 rounded-lg bg-muted/30">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <span className="text-sm md:text-lg">❓</span>
-                      <p className="text-base md:text-lg font-bold text-yellow-500">{getVoteBreakdown().unclear}</p>
-                    </div>
-                    <p className="text-[10px] md:text-xs text-muted-foreground">Unclear</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <ProfileHeader
+          name={profile?.display_name || 'Anonymous User'}
+          email={user?.email || ''}
+          initial={(profile?.display_name?.charAt(0) || user?.email?.charAt(0) || 'U')}
+          thoughtsCount={userThoughts.length}
+          woicesCount={userVoiceResponses.length}
+          facts={getVoteBreakdown().facts}
+          myths={getVoteBreakdown().myths}
+          unclear={getVoteBreakdown().unclear}
+        />
 
         <Tabs defaultValue="woices" className="space-y-4 md:space-y-6">
           <TabsList className="grid w-full grid-cols-3 text-xs md:text-sm">
             <TabsTrigger value="thoughts" className="flex items-center gap-1.5 md:gap-2">
               <MessageSquare className="h-3 w-3 md:h-4 md:w-4" />
-              My Thoughts ({userThoughts.length})
+              Thoughts ({userThoughts.length})
             </TabsTrigger>
             <TabsTrigger value="woices" className="flex items-center gap-1.5 md:gap-2">
               <Volume2 className="h-3 w-3 md:h-4 md:w-4" />
-              My Woices ({userVoiceResponses.length})
+              Woices ({userVoiceResponses.length})
             </TabsTrigger>
             <TabsTrigger value="saved" className="flex items-center gap-1.5 md:gap-2">
               <Bookmark className="h-3 w-3 md:h-4 md:w-4" />
@@ -251,7 +219,7 @@ export default function Profile() {
           <TabsContent value="thoughts" className="space-y-4">
             {userThoughts.length === 0 ? (
               <Card>
-            <CardContent className="text-center py-8 md:py-12">
+            <CardContent className="text-center py-6 md:py-8">
                   <MessageSquare className="h-8 w-8 md:h-12 md:w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">You haven't posted any thoughts yet.</p>
                 </CardContent>
@@ -261,7 +229,7 @@ export default function Profile() {
                 <Card key={thought.id} className="hover:shadow-md transition-shadow">
                   <CardHeader>
                     <div className="flex justify-between items-start">
-                      <CardTitle className="text-base md:text-lg">{thought.title}</CardTitle>
+                      <CardTitle className="text-sm md:text-base">{thought.title}</CardTitle>
                       <Badge variant={thought.status === 'active' ? 'default' : 'secondary'}>
                         {thought.status}
                       </Badge>
@@ -291,7 +259,7 @@ export default function Profile() {
           <TabsContent value="woices" className="space-y-4">
             {userVoiceResponses.length === 0 ? (
               <Card>
-            <CardContent className="text-center py-8 md:py-12">
+            <CardContent className="text-center py-6 md:py-8">
                   <Volume2 className="h-8 w-8 md:h-12 md:w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">You haven't recorded any woices yet.</p>
                 </CardContent>
@@ -303,25 +271,14 @@ export default function Profile() {
                   <Card key={response.id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <div className="flex justify-between items-start">
-                        <CardTitle className="text-base md:text-lg">Response to: {response.thought_title}</CardTitle>
+                        <CardTitle className="text-sm md:text-base">Response to: {response.thought_title}</CardTitle>
                         <div className="flex items-center gap-2">
-                          {outcome.code === 'bloom' && (
-                            <span className="text-sm text-green-600 font-medium">{outcome.label}</span>
-                          )}
-                          {outcome.code === 'dust' && (
-                            <span className="text-sm text-destructive font-medium">{outcome.label}</span>
-                          )}
-                          {outcome.code === 'unclear' && (
-                            <span className="text-sm text-yellow-500 font-medium">{outcome.label}</span>
-                          )}
-                          {outcome.code === 'none' && (
-                            <span className="text-sm text-muted-foreground">No votes yet</span>
-                          )}
+                          <OutcomeIcon outcome={outcome.code} />
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         <VoicePlayer audioUrl={response.audio_url} duration={response.duration} />
 
                         {response.transcript && (
@@ -332,12 +289,12 @@ export default function Profile() {
                         )}
 
                         <div className="flex justify-between items-center">
-                          <div className="flex gap-4 text-sm">
+                          <div className="flex gap-3 text-xs md:text-sm">
                             <span className="flex items-center gap-1"><span>🎯</span>{response.fact_votes}</span>
                             <span className="flex items-center gap-1"><span>⛓️‍💥</span>{response.myth_votes}</span>
                             <span className="flex items-center gap-1"><span>❓</span>{response.unclear_votes}</span>
                           </div>
-                          <span className="text-sm text-muted-foreground">{formatDistanceToNow(new Date(response.created_at))} ago</span>
+                          <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(response.created_at))} ago</span>
                         </div>
 
                         {outcome.code === 'unclear' && !ignoredUnclear[response.id] && (
@@ -367,7 +324,7 @@ export default function Profile() {
           <TabsContent value="saved" className="space-y-4">
             {savedThoughts.length === 0 ? (
               <Card>
-                <CardContent className="text-center py-8 md:py-12">
+                <CardContent className="text-center py-6 md:py-8">
                   <Bookmark className="h-8 w-8 md:h-12 md:w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">You haven't saved any thoughts yet.</p>
                   <p className="text-sm text-muted-foreground mt-2">Save interesting thoughts to easily find them later!</p>
@@ -378,7 +335,7 @@ export default function Profile() {
                 <Card key={thought.id} className="hover:shadow-md transition-shadow">
                   <CardHeader>
                     <div className="flex justify-between items-start">
-                      <CardTitle className="text-base md:text-lg">{thought.title}</CardTitle>
+                      <CardTitle className="text-sm md:text-base">{thought.title}</CardTitle>
                       <div className="flex items-center gap-2">
                         <Badge variant={thought.status === 'active' ? 'default' : 'secondary'}>
                           {thought.status}
@@ -415,5 +372,6 @@ export default function Profile() {
         </Tabs>
       </div>
     </div>
+    </TooltipProvider>
   )
 }
