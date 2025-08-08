@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+// Removed Card components in favor of custom layout
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,6 +9,9 @@ import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { Eye, EyeOff, X, Mail, Phone } from 'lucide-react'
 import { isPasswordLeaked } from '@/utils/security'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import authOrb from '@/assets/auth-orb.webp'
 type AuthMode = 'signin' | 'signup'
 type AuthMethod = 'email' | 'phone'
 
@@ -29,6 +32,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
   const [comingSoon, setComingSoon] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -42,7 +46,30 @@ export default function Auth() {
       }
     }
     checkUser()
-  }, [navigate])
+  }, [navigate, redirectTarget])
+
+  // Basic SEO: title, description, canonical
+  useEffect(() => {
+    const pageTitle = mode === 'signin' ? 'Log in' : 'Register'
+    document.title = `${pageTitle} - Woices`
+
+    const desc = 'Sign in or create your Woices account to join thoughtful voice debates.'
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null
+    if (!meta) {
+      meta = document.createElement('meta')
+      meta.setAttribute('name', 'description')
+      document.head.appendChild(meta)
+    }
+    meta.setAttribute('content', desc)
+
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+    if (!link) {
+      link = document.createElement('link')
+      link.setAttribute('rel', 'canonical')
+      document.head.appendChild(link)
+    }
+    link.setAttribute('href', window.location.href)
+  }, [mode])
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -118,6 +145,26 @@ export default function Auth() {
       })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      toast({
+        title: 'Enter your email',
+        description: 'Please enter your account email above first.'
+      })
+      return
+    }
+    try {
+      const redirectUrl = `${window.location.origin}/auth`
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl
+      })
+      if (error) throw error
+      toast({ title: 'Password reset sent', description: 'Check your email for the reset link.' })
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Could not send reset email.', variant: 'destructive' })
     }
   }
 
@@ -198,33 +245,27 @@ export default function Auth() {
   )
 
   const renderAuthMethodToggle = () => (
-    <div className="flex justify-center gap-2 mb-4">
-      <Button 
-        variant={authMethod === 'email' ? 'default' : 'outline'}
-        onClick={() => {
-          setAuthMethod('email')
+    <div className="mb-4">
+      <Tabs
+        value={authMethod}
+        onValueChange={(v) => {
+          if (v === 'phone' && mode === 'signup') {
+            setComingSoon(true)
+            return
+          }
+          setAuthMethod(v as AuthMethod)
           resetPhoneFlow()
         }}
-        size="sm"
-        className="flex items-center gap-2"
       >
-        <Mail className="h-4 w-4" />
-        Email
-      </Button>
-{mode === 'signup' && (
-      <Button 
-        variant={authMethod === 'phone' ? 'default' : 'outline'}
-        onClick={() => {
-          setComingSoon(true)
-          return
-        }}
-        size="sm"
-        className="flex items-center gap-2"
-      >
-        <Phone className="h-4 w-4" />
-        Phone
-      </Button>
-    )}
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="email" className="flex items-center gap-2">
+            <Mail className="h-4 w-4" /> Email
+          </TabsTrigger>
+          <TabsTrigger value="phone" className="flex items-center gap-2" aria-disabled={mode === 'signup'}>
+            <Phone className="h-4 w-4" /> Phone
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
     </div>
   )
 
@@ -234,73 +275,43 @@ export default function Auth() {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="first-name">First Name</Label>
-            <Input
-              id="first-name"
-              type="text"
-              placeholder="John"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
+            <Input id="first-name" type="text" placeholder="John" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="last-name">Last Name</Label>
-            <Input
-              id="last-name"
-              type="text"
-              placeholder="Doe"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
+            <Input id="last-name" type="text" placeholder="Doe" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
           </div>
         </div>
       )}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="john@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <Input id="email" type="email" placeholder="john@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
         <div className="relative">
-          <Input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            placeholder={mode === 'signin' ? "Enter your password" : "Create a password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={mode === 'signup' ? 6 : undefined}
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
+          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder={mode === 'signin' ? 'Enter your password' : 'Create a password'} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={mode === 'signup' ? 6 : undefined} />
+          <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
         </div>
         {mode === 'signup' && (
-          <p className="text-xs text-muted-foreground">
-            Password must be at least 6 characters long
-          </p>
+          <p className="text-xs text-muted-foreground">Password must be at least 6 characters long</p>
         )}
       </div>
+
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox id="remember" checked={rememberMe} onCheckedChange={(v) => setRememberMe(Boolean(v))} />
+          <span>Remember me</span>
+        </label>
+        <Button type="button" variant="link" className="px-0" onClick={handleResetPassword}>
+          Forgot password?
+        </Button>
+      </div>
+
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? (mode === 'signin' ? "Signing in..." : "Creating account...") : (mode === 'signin' ? "Sign In" : "Sign Up")}
+        {loading ? (mode === 'signin' ? 'Signing in...' : 'Creating account...') : (mode === 'signin' ? 'Sign In' : 'Sign Up')}
       </Button>
     </form>
   )
@@ -395,41 +406,66 @@ export default function Auth() {
   )
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md relative">
-        {/* Back/Close Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('/')}
-          className="absolute right-4 top-4 h-8 w-8 p-0"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-        
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome to Woices</CardTitle>
-          <CardDescription>
-            Join the conversation and share your voice
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {renderTabButtons()}
-            {renderAuthMethodToggle()}
-            {authMethod === 'email' ? renderEmailForm() : renderPhoneForm()}
-          </div>
-        </CardContent>
-        {comingSoon && (
-          <div className="absolute inset-0 z-20 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
-            <div className="text-center space-y-2 px-6">
-              <p className="text-lg font-semibold">Phone sign up is coming soon</p>
-              <p className="text-sm text-muted-foreground">Please use email for now.</p>
-              <Button onClick={() => setComingSoon(false)} className="mt-2">Okay</Button>
+    <main className="w-full px-4 sm:px-6 py-6">
+      <section className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-xl border bg-card shadow-sm md:grid-cols-2">
+        {/* Left: Form */}
+        <article className="relative p-6 sm:p-10">
+          <button
+            aria-label="Close"
+            onClick={() => navigate('/')}
+            className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <header className="mb-6">
+            <div className="mb-2 flex gap-2">
+              <Button 
+                variant={mode === 'signin' ? 'default' : 'outline'}
+                onClick={() => navigate('/auth?mode=signin')}
+                size="sm"
+              >
+                Log In
+              </Button>
+              <Button 
+                variant={mode === 'signup' ? 'default' : 'outline'}
+                onClick={() => navigate('/auth?mode=signup')}
+                size="sm"
+              >
+                Register Now
+              </Button>
             </div>
-          </div>
-        )}
-      </Card>
-    </div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              {mode === 'signin' ? 'Welcome back' : 'Create your account'}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">Join the conversation and share your voice.</p>
+          </header>
+
+          {renderAuthMethodToggle()}
+          {authMethod === 'email' ? renderEmailForm() : renderPhoneForm()}
+
+          {comingSoon && (
+            <div className="absolute inset-0 z-20 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <div className="text-center space-y-2 px-6">
+                <p className="text-lg font-semibold">Phone sign up is coming soon</p>
+                <p className="text-sm text-muted-foreground">Please use email for now.</p>
+                <Button onClick={() => setComingSoon(false)} className="mt-2">Okay</Button>
+              </div>
+            </div>
+          )}
+        </article>
+
+        {/* Right: Visual */}
+        <aside className="hidden md:block relative bg-muted">
+          <img
+            src={authOrb}
+            alt="Glowing voice orb illustration"
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
+        </aside>
+      </section>
+    </main>
   )
 }
