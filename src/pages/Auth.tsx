@@ -11,7 +11,7 @@ import { Eye, EyeOff, X, Mail, Phone } from 'lucide-react'
 import { isPasswordLeaked } from '@/utils/security'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import authOrb from '@/assets/auth-orb.webp'
+import authOrb from '@/assets/auth-orb-bubbly.webp'
 type AuthMode = 'signin' | 'signup'
 type AuthMethod = 'email' | 'phone'
 
