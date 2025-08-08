@@ -11,7 +11,7 @@ import { Eye, EyeOff, X, Mail, Phone } from 'lucide-react'
 import { isPasswordLeaked } from '@/utils/security'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import authOrb from '@/assets/auth-orb-bubbly.webp'
+import authOrb from '@/assets/auth-orb-woices.webp'
 type AuthMode = 'signin' | 'signup'
 type AuthMethod = 'email' | 'phone'
 
@@ -459,7 +459,7 @@ export default function Auth() {
         <aside className="hidden md:block relative bg-muted md:order-1">
           <img
             src={authOrb}
-            alt="Glowing voice orb illustration"
+            alt="AI voice assistant orb with waveforms in Woices gradient"
             loading="lazy"
             className="h-full w-full object-cover"
           />
