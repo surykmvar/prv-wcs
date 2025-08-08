@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -120,7 +120,8 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
       } catch {}
     }
   }, [open])
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] sm:w-full sm:max-w-lg mx-auto p-4 sm:p-6 rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-center sm:text-left">
           <DialogTitle className="text-xl sm:text-2xl font-semibold text-center break-words px-2">
