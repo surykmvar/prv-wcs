@@ -14,6 +14,8 @@ type Thought = {
   created_at: string
   expires_at: string
   voice_responses?: { id: string }[]
+  thought_scope: string
+  country_code: string | null
 }
 
 export function ThoughtsFeed() {
