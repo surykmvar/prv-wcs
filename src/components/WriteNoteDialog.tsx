@@ -308,7 +308,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                       onClick={() => setMaxWoicesAllowed(num)}
                       className={`text-sm font-medium ${
                         maxWoicesAllowed === num 
-                          ? 'bg-woices-violet text-white' 
+                          ? 'bg-woices-violet text-white hover:bg-woices-violet/95 active:bg-woices-violet focus-visible:ring-0 focus:ring-0 ring-0 outline-none'
                           : 'hover:bg-woices-violet/10'
                       }`}
                     >
