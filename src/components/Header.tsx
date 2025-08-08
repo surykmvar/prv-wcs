@@ -23,7 +23,7 @@ export function Header() {
 
   return (
     <header className="w-full px-4 sm:px-6 py-3 sm:py-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-7xl mx-auto flex justify-between items-center mt-2 sm:mt-3 md:mt-4">
         <div 
           className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-woices-violet to-woices-mint bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity relative"
           onClick={(e) => {
