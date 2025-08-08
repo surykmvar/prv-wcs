@@ -406,7 +406,7 @@ export default function Auth() {
   )
 
   return (
-    <main className="w-full px-4 sm:px-6 py-6">
+    <main className="w-full px-4 sm:px-6 py-8 md:py-12 min-h-[85vh] flex items-center justify-center">
       <section className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-xl border bg-card shadow-sm md:grid-cols-2">
         {/* Left: Form */}
         <article className="relative p-6 sm:p-10 md:order-2">
