@@ -1,7 +1,7 @@
-import type { ComponentType } from 'react'
+import type { ReactNode } from 'react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
-import { MessageSquare, Volume2, Flower2, Wind, AlertCircle } from 'lucide-react'
+import { MessageSquare, Volume2 } from 'lucide-react'
 
 interface ProfileHeaderProps {
   name: string
@@ -14,10 +14,10 @@ interface ProfileHeaderProps {
   unclear: number
 }
 
-function StatPill({ icon: Icon, label, value }: { icon: ComponentType<any>; label: string; value: number }) {
+function StatPill({ icon, label, value }: { icon: ReactNode; label: string; value: number }) {
   return (
     <div className="flex items-center justify-center gap-1.5 rounded-md bg-muted/30 px-2 py-1">
-      <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+      <span className="inline-flex items-center justify-center">{icon}</span>
       <span className="text-xs font-medium text-foreground/90">{value}</span>
       <span className="sr-only">{label}</span>
     </div>
@@ -50,11 +50,11 @@ export default function ProfileHeader({
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5">
-          <StatPill icon={MessageSquare} label="Thoughts" value={thoughtsCount} />
-          <StatPill icon={Volume2} label="Woices" value={woicesCount} />
-          <StatPill icon={Flower2} label="Facts" value={facts} />
-          <StatPill icon={Wind} label="Myths" value={myths} />
-          <StatPill icon={AlertCircle} label="Unclear" value={unclear} />
+          <StatPill icon={<MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />} label="Thoughts" value={thoughtsCount} />
+          <StatPill icon={<Volume2 className="h-3.5 w-3.5 text-muted-foreground" />} label="Woices" value={woicesCount} />
+          <StatPill icon={<span className="text-[14px]" aria-hidden="true">🎯</span>} label="Facts" value={facts} />
+          <StatPill icon={<span className="text-[14px]" aria-hidden="true">⛓️‍💥</span>} label="Myths" value={myths} />
+          <StatPill icon={<span className="text-[14px]" aria-hidden="true">❓</span>} label="Unclear" value={unclear} />
         </div>
       </CardContent>
     </Card>
