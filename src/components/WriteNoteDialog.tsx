@@ -393,7 +393,9 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                     type="button"
                     variant={scope === 'global' ? 'default' : 'outline'}
                     onClick={() => setScope('global')}
-                    className={scope === 'global' ? 'bg-woices-violet text-white' : ''}
+                    className={scope === 'global' 
+                      ? 'bg-woices-violet text-white hover:bg-woices-violet/95 active:bg-woices-violet focus-visible:ring-0 focus:ring-0 ring-0 outline-none shadow-none'
+                      : 'hover:bg-woices-violet/10 focus-visible:ring-0 focus:ring-0 ring-0 outline-none'}
                   >
                     🌐 Global
                   </Button>
