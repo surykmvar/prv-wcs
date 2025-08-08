@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { supabase, STORAGE_BUCKETS, isSupabaseConfigured } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
-
+import { getBrowserCountryCode } from '@/utils/locale'
 // Use the integrated Supabase types
 type Database = import('@/integrations/supabase/types').Database
 type Thought = Database['public']['Tables']['thoughts']['Row']
@@ -208,10 +208,10 @@ export function useSupabase() {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
       
-      // Check if thought exists and get its max_woices_allowed
+      // Check if thought exists and get its details
       const { data: thought, error: thoughtError } = await supabase
         .from('thoughts')
-        .select('max_woices_allowed, voice_responses(id)')
+        .select('max_woices_allowed, voice_responses(id), thought_scope, country_code')
         .eq('id', thoughtId)
         .eq('status', 'active')
         .single()
@@ -231,6 +231,17 @@ export function useSupabase() {
       // Check if max woices reached
       if (currentCount >= maxWoices) {
         return { canSubmit: false, reason: 'This thought has reached the maximum number of Woice replies.' }
+      }
+
+      // Scope rules: regional requires same country
+      if (thought.thought_scope === 'regional') {
+        const userCountry = getBrowserCountryCode()
+        if (!userCountry || userCountry !== (thought.country_code || '').toUpperCase()) {
+          return { 
+            canSubmit: false, 
+            reason: 'Regional post: only users in the same country can reply.' 
+          }
+        }
       }
 
       // For authenticated users, check if they already submitted

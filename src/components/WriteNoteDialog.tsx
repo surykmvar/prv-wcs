@@ -11,6 +11,7 @@ import { X } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
+import { flagEmojiFromCountryCode, getBrowserCountryCode } from "@/utils/locale"
 
 interface WriteNoteDialogProps {
   open: boolean
@@ -29,6 +30,17 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
   const { user } = useAuth()
   
   const { createThought, loading } = useSupabase()
+
+  // Step 1 -> Step 2 flow
+  const [step, setStep] = useState<1 | 2>(1)
+  const [city, setCity] = useState("")
+  const [countryCode, setCountryCode] = useState<string>(getBrowserCountryCode() || "")
+  const [scope, setScope] = useState<'global' | 'regional'>('global')
+
+  const handleProceed = () => {
+    if (!title.trim()) return
+    setStep(2)
+  }
 
   const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -77,7 +89,10 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
         title,
         description,
         tags,
-        maxWoicesAllowed
+        maxWoicesAllowed,
+        city,
+        countryCode,
+        scope
       }
       try { localStorage.setItem('writeDraft', JSON.stringify(draft)) } catch {}
       navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
@@ -89,7 +104,10 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
         title: title.trim(),
         description: description.trim() || null,
         tags: tags.length > 0 ? tags : null,
-        max_woices_allowed: maxWoicesAllowed
+        max_woices_allowed: maxWoicesAllowed,
+        thought_scope: scope,
+        country_code: scope === 'regional' ? (countryCode?.toUpperCase() || null) : null,
+        city: scope === 'regional' && city.trim() ? city.trim() : null
       })
       
       // Reset form and clear draft
@@ -98,6 +116,10 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
       setTags([])
       setTagInput("")
       setMaxWoicesAllowed(10)
+      setCity("")
+      setCountryCode(getBrowserCountryCode() || "")
+      setScope('global')
+      setStep(1)
       try { localStorage.removeItem('writeDraft') } catch {}
       
       onOpenChange(false)
@@ -108,6 +130,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
   }
   useEffect(() => {
     if (open) {
+      setStep(1)
       try {
         const raw = localStorage.getItem('writeDraft')
         if (raw) {
@@ -116,6 +139,13 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
           setDescription(draft.description || '')
           setTags(Array.isArray(draft.tags) ? draft.tags : [])
           setMaxWoicesAllowed(draft.maxWoicesAllowed || 10)
+          setCity(draft.city || '')
+          setCountryCode(draft.countryCode || getBrowserCountryCode() || '')
+          setScope(draft.scope === 'regional' ? 'regional' : 'global')
+        } else {
+          setCity('')
+          setCountryCode(getBrowserCountryCode() || '')
+          setScope('global')
         }
       } catch {}
     }
@@ -230,13 +260,84 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
             </div>
           </div>
 
-          <Button 
-            onClick={handleSubmit}
-            className="w-full bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300 mt-6"
-            disabled={!title.trim() || loading}
-          >
-            {loading ? 'Posting...' : 'Post and Wait for Woices'}
-          </Button>
+          {step === 1 ? (
+            <Button 
+              onClick={handleProceed}
+              className="w-full bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300 mt-6"
+              disabled={!title.trim()}
+            >
+              Proceed
+            </Button>
+          ) : (
+            <div className="space-y-4 mt-2">
+              <div className="space-y-2">
+                <Label className="text-sm sm:text-base font-medium">Where are you right now?</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor="city" className="text-xs">City (optional)</Label>
+                    <Input
+                      id="city"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder="e.g., Berlin"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="country" className="text-xs">Country code</Label>
+                    <Input
+                      id="country"
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value.toUpperCase().slice(0,2))}
+                      placeholder="e.g., DE, IN, US"
+                      className="mt-1 uppercase"
+                      maxLength={2}
+                    />
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Detected: {flagEmojiFromCountryCode(countryCode)} {countryCode || 'Unknown'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm sm:text-base font-medium">Choose posting scope</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    type="button"
+                    variant={scope === 'regional' ? 'default' : 'outline'}
+                    onClick={() => setScope('regional')}
+                    className={scope === 'regional' ? 'bg-woices-violet text-white' : ''}
+                  >
+                    🏘️ Regional
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={scope === 'global' ? 'default' : 'outline'}
+                    onClick={() => setScope('global')}
+                    className={scope === 'global' ? 'bg-woices-violet text-white' : ''}
+                  >
+                    🌐 Global
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {scope === 'global' ? 'Global: anyone can reply (please reply in English).' : 'Regional: only users in the same country can reply, in their local language.'}
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button variant="outline" className="w-1/3" onClick={() => setStep(1)}>Back</Button>
+                <Button 
+                  onClick={handleSubmit}
+                  className="w-2/3 bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300"
+                  disabled={loading || (scope === 'regional' && !countryCode)}
+                >
+                  {loading ? 'Posting...' : 'Post and Wait for Woices'}
+                </Button>
+              </div>
+            </div>
+          )}
+
         </div>
       </DialogContent>
     </Dialog>

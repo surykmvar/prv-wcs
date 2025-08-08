@@ -6,6 +6,7 @@ import { formatTimeAgo } from "@/utils/timeUtils"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useUserSession } from "@/hooks/useUserSession"
 import { useState, useEffect } from "react"
+import { flagEmojiFromCountryCode } from "@/utils/locale"
 
 type Thought = {
   id: string
@@ -16,6 +17,8 @@ type Thought = {
   expires_at: string
   max_woices_allowed?: number
   voice_responses?: { id: string }[]
+  thought_scope: string
+  country_code: string | null
 }
 
 interface ThoughtCardProps {
@@ -72,6 +75,9 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
             ))}
           </div>
         )}
+        <div className="mt-2 text-xs text-muted-foreground">
+          Posted for: {thought.thought_scope === 'regional' ? `${flagEmojiFromCountryCode(thought.country_code)} ${thought.country_code || ''}` : '🌍 Global'}
+        </div>
       </CardHeader>
       
       <CardContent className="p-0">
