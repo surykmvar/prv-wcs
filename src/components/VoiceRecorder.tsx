@@ -7,6 +7,7 @@ import { useSupabase } from "@/hooks/useSupabase"
 import { useUserSession } from "@/hooks/useUserSession"
 import { VoicePlayer } from "@/components/VoicePlayer"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useToast } from "@/hooks/use-toast"
 
 interface VoiceRecorderProps {
   thoughtId: string
@@ -29,6 +30,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
   
   const { submitVoiceResponse, loading, canUserSubmitVoice } = useSupabase()
   const { userSession } = useUserSession()
+  const { toast } = useToast()
 
   const handleStartRecording = async () => {
     try {
@@ -41,6 +43,11 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
   const handleSendRecording = async () => {
     if (!audioBlob || audioBlob.size === 0 || duration === 0) {
       console.error('Cannot send empty recording')
+      toast({
+        title: 'Nothing to send',
+        description: 'Please record your Woice before sending.',
+        variant: 'destructive'
+      })
       return
     }
     
@@ -51,7 +58,11 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
       if (!permissionCheck.canSubmit) {
         console.error('Permission denied:', permissionCheck.reason)
         // Show error to user
-        alert(permissionCheck.reason || 'You cannot submit a voice response for this thought')
+        toast({
+          title: 'Cannot submit Woice',
+          description: permissionCheck.reason || 'You cannot submit a voice response for this thought',
+          variant: 'destructive'
+        })
         onClose()
         return
       }
@@ -62,7 +73,11 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
       onClose()
     } catch (error) {
       console.error('Failed to send recording:', error)
-      alert('Failed to send recording. Please try again.')
+      toast({
+        title: 'Failed to send recording',
+        description: 'Please try again.',
+        variant: 'destructive'
+      })
     }
   }
 

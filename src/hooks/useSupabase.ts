@@ -131,15 +131,13 @@ export function useSupabase() {
         has_audio_url: !!voiceResponse.audio_url
       })
       
-      // Use upsert with the unique constraint to handle duplicates gracefully
+      // Insert a new voice response (avoid upsert since no unique constraint exists)
       const { data, error } = await supabase
         .from('voice_responses')
-        .upsert({
+        .insert({
           ...voiceResponse,
           user_id: user?.id || null,
           user_session: userSessionValue
-        }, {
-          onConflict: user?.id ? 'user_id,thought_id' : 'user_session,thought_id'
         })
         .select()
         .single()
