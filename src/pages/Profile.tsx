@@ -9,8 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { VoicePlayer } from '@/components/VoicePlayer'
 import { Button } from '@/components/ui/button'
-import { User, MessageSquare, Volume2, TrendingUp, ThumbsUp, ThumbsDown, AlertCircle, Bookmark, BookmarkX } from 'lucide-react'
+import { User, MessageSquare, Volume2, Flower2, Trash2, AlertCircle, Bookmark, BookmarkX } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { useToast } from '@/hooks/use-toast'
 
 interface UserThought {
   id: string
@@ -57,6 +58,8 @@ export default function Profile() {
   const [userVoiceResponses, setUserVoiceResponses] = useState<UserVoiceResponse[]>([])
   const [savedThoughts, setSavedThoughts] = useState<SavedThought[]>([])
   const [loading, setLoading] = useState(true)
+  const [ignoredUnclear, setIgnoredUnclear] = useState<Record<string, boolean>>({})
+  const { toast } = useToast()
 
   useEffect(() => {
     if (user) {
@@ -70,30 +73,24 @@ export default function Profile() {
     try {
       setLoading(true)
 
-      // Fetch user thoughts
       const { data: thoughtsData, error: thoughtsError } = await supabase
         .rpc('get_user_thoughts', { user_uuid: user.id })
-
       if (thoughtsError) {
         console.error('Error fetching user thoughts:', thoughtsError)
       } else {
         setUserThoughts(thoughtsData || [])
       }
 
-      // Fetch user voice responses
       const { data: voiceResponsesData, error: voiceResponsesError } = await supabase
         .rpc('get_user_voice_responses', { user_uuid: user.id })
-
       if (voiceResponsesError) {
         console.error('Error fetching user voice responses:', voiceResponsesError)
       } else {
         setUserVoiceResponses(voiceResponsesData || [])
       }
 
-      // Fetch saved thoughts
       const { data: savedThoughtsData, error: savedThoughtsError } = await supabase
         .rpc('get_user_saved_thoughts', { user_uuid: user.id })
-
       if (savedThoughtsError) {
         console.error('Error fetching saved thoughts:', savedThoughtsError)
       } else {
@@ -118,7 +115,6 @@ export default function Profile() {
 
       if (error) throw error
 
-      // Update local state
       setSavedThoughts(prev => prev.filter(thought => thought.id !== thoughtId))
     } catch (error) {
       console.error('Error unsaving thought:', error)
@@ -133,15 +129,46 @@ export default function Profile() {
     }), { facts: 0, myths: 0, unclear: 0 })
   }
 
-  const getTopVoteType = (response: UserVoiceResponse) => {
-    const { myth_votes, fact_votes, unclear_votes } = response
-    const max = Math.max(myth_votes, fact_votes, unclear_votes)
-    
-    if (max === 0) return { type: 'No votes', icon: AlertCircle, color: 'text-muted-foreground' }
-    if (max === fact_votes) return { type: 'Fact', icon: ThumbsUp, color: 'text-green-500' }
-    if (max === myth_votes) return { type: 'Myth', icon: ThumbsDown, color: 'text-red-500' }
-    return { type: 'Unclear', icon: AlertCircle, color: 'text-yellow-500' }
+  const computeOutcome = (r: UserVoiceResponse) => {
+    const total = (r.fact_votes || 0) + (r.myth_votes || 0) + (r.unclear_votes || 0)
+    if (total === 0) return { label: 'No votes', code: 'none' as const, total, factP: 0, mythP: 0, unclearP: 0 }
+
+    const factP = r.fact_votes / total
+    const mythP = r.myth_votes / total
+    const unclearP = r.unclear_votes / total
+
+    if (factP > 0.5 || r.fact_votes > (r.myth_votes + r.unclear_votes)) {
+      return { label: 'Bloom 🌱', code: 'bloom' as const, total, factP, mythP, unclearP }
+    }
+    if (mythP > 0.5 || r.myth_votes > (r.fact_votes + r.unclear_votes)) {
+      return { label: 'Dust 💨', code: 'dust' as const, total, factP, mythP, unclearP }
+    }
+    if (unclearP > 0.5) {
+      return { label: 'Unclear ❓', code: 'unclear' as const, total, factP, mythP, unclearP }
+    }
+    // Default to top vote if no strict majority
+    if (r.fact_votes >= r.myth_votes && r.fact_votes >= r.unclear_votes) {
+      return { label: 'Bloom 🌱', code: 'bloom' as const, total, factP, mythP, unclearP }
+    }
+    if (r.myth_votes >= r.fact_votes && r.myth_votes >= r.unclear_votes) {
+      return { label: 'Dust 💨', code: 'dust' as const, total, factP, mythP, unclearP }
+    }
+    return { label: 'Unclear ❓', code: 'unclear' as const, total, factP, mythP, unclearP }
   }
+
+  const handleDeleteVoiceResponse = async (id: string) => {
+    try {
+      const { error } = await supabase.from('voice_responses').delete().eq('id', id)
+      if (error) throw error
+      setUserVoiceResponses(prev => prev.filter(v => v.id !== id))
+      toast({ title: 'Woice deleted', description: 'Your voice reply was removed.' })
+    } catch (e) {
+      console.error('Delete failed', e)
+      toast({ title: 'Delete failed', description: 'Unable to delete this Woice.', variant: 'destructive' })
+    }
+  }
+
+  const handleIgnoreUnclear = (id: string) => setIgnoredUnclear(prev => ({ ...prev, [id]: true }))
 
   if (loading || profileLoading) {
     return (
@@ -158,7 +185,6 @@ export default function Profile() {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Profile Header */}
         <Card className="mb-8">
           <CardContent className="pt-6">
             <div className="flex items-center space-x-4">
@@ -206,8 +232,7 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        {/* Content Tabs */}
-        <Tabs defaultValue="thoughts" className="space-y-6">
+        <Tabs defaultValue="woices" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="thoughts" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
@@ -273,24 +298,32 @@ export default function Profile() {
               </Card>
             ) : (
               userVoiceResponses.map((response) => {
-                const topVote = getTopVoteType(response)
-                const TopVoteIcon = topVote.icon
-                
+                const outcome = computeOutcome(response)
                 return (
                   <Card key={response.id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <CardTitle className="text-lg">Response to: {response.thought_title}</CardTitle>
                         <div className="flex items-center gap-2">
-                          <TopVoteIcon className={`h-4 w-4 ${topVote.color}`} />
-                          <span className={`text-sm ${topVote.color}`}>{topVote.type}</span>
+                          {outcome.code === 'bloom' && (
+                            <span className="text-sm text-green-600 font-medium">{outcome.label}</span>
+                          )}
+                          {outcome.code === 'dust' && (
+                            <span className="text-sm text-destructive font-medium">{outcome.label}</span>
+                          )}
+                          {outcome.code === 'unclear' && (
+                            <span className="text-sm text-yellow-500 font-medium">{outcome.label}</span>
+                          )}
+                          {outcome.code === 'none' && (
+                            <span className="text-sm text-muted-foreground">No votes yet</span>
+                          )}
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <VoicePlayer audioUrl={response.audio_url} duration={response.duration} />
-                        
+
                         {response.transcript && (
                           <div className="bg-muted/50 p-3 rounded-lg">
                             <p className="text-sm text-muted-foreground mb-1">Transcript:</p>
@@ -300,23 +333,29 @@ export default function Profile() {
 
                         <div className="flex justify-between items-center">
                           <div className="flex gap-4 text-sm">
-                            <span className="flex items-center gap-1">
-                              <span>🎯</span>
-                              {response.fact_votes}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <span>⛓️‍💥</span>
-                              {response.myth_votes}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <span>❓</span>
-                              {response.unclear_votes}
-                            </span>
+                            <span className="flex items-center gap-1"><span>🎯</span>{response.fact_votes}</span>
+                            <span className="flex items-center gap-1"><span>⛓️‍💥</span>{response.myth_votes}</span>
+                            <span className="flex items-center gap-1"><span>❓</span>{response.unclear_votes}</span>
                           </div>
-                          <span className="text-sm text-muted-foreground">
-                            {formatDistanceToNow(new Date(response.created_at))} ago
-                          </span>
+                          <span className="text-sm text-muted-foreground">{formatDistanceToNow(new Date(response.created_at))} ago</span>
                         </div>
+
+                        {outcome.code === 'unclear' && !ignoredUnclear[response.id] && (
+                          <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-3">
+                            <p className="text-sm mb-2">Others found your reply unclear. What would you like to do?</p>
+                            <div className="flex flex-wrap gap-2">
+                              <Button size="sm" variant="secondary" onClick={() => toast({ title: 'Re-record', description: 'Re-record flow coming soon.' })}>
+                                Re-record
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDeleteVoiceResponse(response.id)}>
+                                <Trash2 className="h-4 w-4 mr-1" /> Delete
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={() => handleIgnoreUnclear(response.id)}>
+                                Ignore
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>

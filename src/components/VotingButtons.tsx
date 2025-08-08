@@ -120,104 +120,87 @@ export function VotingButtons({
       navigate('/auth')
       return
     }
-    
+
+    // Optimistic UI update for instant feedback
+    const prevVote = userVote
+    const prevCounts = { myth: mythVotes, fact: factVotes, unclear: unclearVotes }
+
+    const applyOptimistic = (next: string | null) => {
+      // reset to previous
+      setMythVotes(prevCounts.myth)
+      setFactVotes(prevCounts.fact)
+      setUnclearVotes(prevCounts.unclear)
+
+      if (next === null) return
+
+      // decrement previous vote if existed
+      if (prevVote === 'myth') setMythVotes(v => Math.max(0, v - 1))
+      if (prevVote === 'fact') setFactVotes(v => Math.max(0, v - 1))
+      if (prevVote === 'unclear') setUnclearVotes(v => Math.max(0, v - 1))
+
+      // increment new vote
+      if (next === 'myth') setMythVotes(v => v + 1)
+      if (next === 'fact') setFactVotes(v => v + 1)
+      if (next === 'unclear') setUnclearVotes(v => v + 1)
+    }
+
     setLoading(true)
     setAnimatingButton(voteType)
-    
+
     try {
       if (userVote === voteType) {
-        // Remove vote if clicking same button
+        // Unvote
+        applyOptimistic(null)
+        setUserVote(null)
+
         let deleteQuery = supabase
           .from('user_votes')
           .delete()
           .eq('voice_response_id', voiceResponseId)
-        
-        if (user?.id) {
-          deleteQuery = deleteQuery.eq('user_id', user.id)
-        } else {
-          deleteQuery = deleteQuery.eq('user_session', userSession)
-        }
-        
+
+        if (user?.id) deleteQuery = deleteQuery.eq('user_id', user.id)
+        else deleteQuery = deleteQuery.eq('user_session', userSession)
+
         const { error } = await deleteQuery
-        
         if (error) throw error
-        
-        // Immediately update local state for better UX
-        setUserVote(null)
-        // Decrease the count for the removed vote
-        if (voteType === 'myth') {
-          setMythVotes(prev => Math.max(0, prev - 1))
-        } else if (voteType === 'fact') {
-          setFactVotes(prev => Math.max(0, prev - 1))
-        } else if (voteType === 'unclear') {
-          setUnclearVotes(prev => Math.max(0, prev - 1))
-        }
-        
-        toast({
-          title: "Vote removed",
-          description: "Your vote has been removed.",
-          duration: 1500
-        })
+
+        toast({ title: 'Vote removed', description: 'Your vote has been removed.', duration: 1500 })
       } else {
-        // Change vote or add new vote
+        // Cast or change vote
+        applyOptimistic(voteType)
+        setUserVote(voteType)
+
         const voteData = {
           voice_response_id: voiceResponseId,
           user_id: user?.id || null,
           user_session: userSession,
           vote_type: voteType
         }
-        
-        // For authenticated users, use user_id conflict resolution
-        // For anonymous users, we'll handle duplicates manually since user_session isn't unique in constraints
+
+        const conflict = user?.id ? 'voice_response_id,user_id' : 'voice_response_id,user_session'
+
+        // Replace any existing vote then insert to avoid constraint issues
         if (user?.id) {
-          const { error } = await supabase
+          await supabase
             .from('user_votes')
-            .upsert(voteData, {
-              onConflict: 'user_id,voice_response_id'
-            })
-          if (error) throw error
+            .delete()
+            .eq('voice_response_id', voiceResponseId)
+            .eq('user_id', user.id)
         } else {
-          // For anonymous users, first delete any existing vote, then insert new one
           await supabase
             .from('user_votes')
             .delete()
             .eq('voice_response_id', voiceResponseId)
             .eq('user_session', userSession)
-          
-          const { error } = await supabase
-            .from('user_votes')
-            .insert(voteData)
-          if (error) throw error
         }
-        
-        const previousVote = userVote
-        
-        // Immediately update local state for better UX
-        if (previousVote) {
-          // Remove previous vote count
-          if (previousVote === 'myth') {
-            setMythVotes(prev => Math.max(0, prev - 1))
-          } else if (previousVote === 'fact') {
-            setFactVotes(prev => Math.max(0, prev - 1))
-          } else if (previousVote === 'unclear') {
-            setUnclearVotes(prev => Math.max(0, prev - 1))
-          }
-        }
-        
-        // Add new vote count
-        if (voteType === 'myth') {
-          setMythVotes(prev => prev + 1)
-        } else if (voteType === 'fact') {
-          setFactVotes(prev => prev + 1)
-        } else if (voteType === 'unclear') {
-          setUnclearVotes(prev => prev + 1)
-        }
-        
-        setUserVote(voteType)
-        
+
+        const { error } = await supabase
+          .from('user_votes')
+          .insert(voteData)
+
+
         const voteLabels = { myth: '⛓️‍💥 Myth', fact: '🎯 Fact', unclear: '❓ Unclear' }
-        const actionText = previousVote ? 'changed to' : 'reacted'
-        
+        const actionText = prevVote ? 'changed to' : 'reacted'
         toast({
           title: `Vote ${actionText}`,
           description: `You ${actionText} ${voteLabels[voteType]} to this voice note`,
@@ -226,10 +209,16 @@ export function VotingButtons({
       }
     } catch (error) {
       console.error('Error voting:', error)
+      // Revert on error
+      setMythVotes(prevCounts.myth)
+      setFactVotes(prevCounts.fact)
+      setUnclearVotes(prevCounts.unclear)
+      setUserVote(prevVote)
+
       toast({
-        title: "Error",
-        description: "Failed to cast vote. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to cast vote. Please try again.',
+        variant: 'destructive'
       })
     } finally {
       setLoading(false)
