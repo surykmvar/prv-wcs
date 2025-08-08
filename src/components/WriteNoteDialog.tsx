@@ -407,11 +407,11 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                 </p>
               </div>
 
-              <div className="flex gap-2">
-                <Button variant="outline" className="w-1/3" onClick={() => setStep(1)}>Back</Button>
+              <div className="flex flex-col gap-2 mt-4">
+                <Button variant="outline" className="w-full" onClick={() => setStep(1)}>Back</Button>
                 <Button 
                   onClick={handleSubmit}
-                  className="w-2/3 bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300"
+                  className="w-full hover-scale bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300"
                   disabled={loading || !city.trim() || !countryCode}
                 >
                   {loading ? 'Posting...' : 'Post and Wait for Woices'}
