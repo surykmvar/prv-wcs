@@ -29,6 +29,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
+  const [comingSoon, setComingSoon] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -213,6 +214,10 @@ export default function Auth() {
       <Button 
         variant={authMethod === 'phone' ? 'default' : 'outline'}
         onClick={() => {
+          if (mode === 'signup') {
+            setComingSoon(true)
+            return
+          }
           setAuthMethod('phone')
           resetPhoneFlow()
         }}
@@ -417,6 +422,15 @@ export default function Auth() {
             {authMethod === 'email' ? renderEmailForm() : renderPhoneForm()}
           </div>
         </CardContent>
+        {comingSoon && (
+          <div className="absolute inset-0 z-20 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
+            <div className="text-center space-y-2 px-6">
+              <p className="text-lg font-semibold">Phone sign up is coming soon</p>
+              <p className="text-sm text-muted-foreground">Please use email for now.</p>
+              <Button onClick={() => setComingSoon(false)} className="mt-2">Okay</Button>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   )
