@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mic, Plus } from "lucide-react"
@@ -8,11 +8,14 @@ import { WriteNoteDialog } from "@/components/WriteNoteDialog"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
 import { useSupabase } from "@/hooks/useSupabase"
+import { useAuth } from "@/hooks/useAuth"
 
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
   const [showRandomRecorder, setShowRandomRecorder] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user } = useAuth()
 
   // Reset state when navigating back to home page
   useEffect(() => {
@@ -54,7 +57,13 @@ export function MainActions() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-woices-violet/20 cursor-pointer p-4 sm:p-6 rounded-xl" 
-              onClick={() => setShowRandomRecorder(true)}>
+              onClick={() => {
+                if (!user) {
+                  navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=record')}`)
+                } else {
+                  setShowRandomRecorder(true)
+                }
+              }}>
           <CardHeader className="text-center pb-4 p-0">
             <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-br from-woices-violet to-woices-bloom rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <Mic className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -67,7 +76,13 @@ export function MainActions() {
         </Card>
 
         <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-woices-mint/20 cursor-pointer p-4 sm:p-6 rounded-xl" 
-              onClick={() => setShowWriteNote(true)}>
+              onClick={() => {
+                if (!user) {
+                  navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
+                } else {
+                  setShowWriteNote(true)
+                }
+              }}>
           <CardHeader className="text-center pb-4 p-0">
             <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-br from-woices-mint to-woices-sky rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <Plus className="w-6 h-6 sm:w-8 sm:h-8 text-white" />

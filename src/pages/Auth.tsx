@@ -8,7 +8,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { Eye, EyeOff, X, Mail, Phone } from 'lucide-react'
-
+import { isPasswordLeaked } from '@/utils/security'
 type AuthMode = 'signin' | 'signup'
 type AuthMethod = 'email' | 'phone'
 
@@ -16,6 +16,8 @@ export default function Auth() {
   const [searchParams] = useSearchParams()
   const urlMode = searchParams.get('mode')
   const mode: AuthMode = (urlMode === 'signup' || urlMode === 'signin') ? urlMode : 'signin'
+  const redirectParam = searchParams.get('redirect') || '/'
+  const redirectTarget = decodeURIComponent(redirectParam)
   
   const [authMethod, setAuthMethod] = useState<AuthMethod>('email')
   const [email, setEmail] = useState('')
@@ -35,7 +37,7 @@ export default function Auth() {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        navigate('/')
+        navigate(redirectTarget)
       }
     }
     checkUser()
@@ -46,7 +48,19 @@ export default function Auth() {
     setLoading(true)
 
     try {
-      const redirectUrl = `${window.location.origin}/`
+      // Security: check leaked passwords before attempting signup
+      const leakedCount = await isPasswordLeaked(password)
+      if (leakedCount > 0) {
+        toast({
+          title: "Choose a safer password",
+          description: "This password has appeared in known data breaches. Please use a different, stronger password.",
+          variant: "destructive"
+        })
+        setLoading(false)
+        return
+      }
+
+      const redirectUrl = `${window.location.origin}${redirectTarget}`
       
       const { error } = await supabase.auth.signUp({
         email,
@@ -94,7 +108,7 @@ export default function Auth() {
         description: "You've successfully signed in.",
       })
       
-      navigate('/')
+      navigate(redirectTarget)
     } catch (error: any) {
       toast({
         title: "Error",
@@ -145,7 +159,7 @@ export default function Auth() {
           description: "You've successfully authenticated.",
         })
         
-        navigate('/')
+        navigate(redirectTarget)
       }
     } catch (error: any) {
       toast({

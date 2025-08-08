@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { X } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
 
 interface WriteNoteDialogProps {
   open: boolean
@@ -23,6 +25,8 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
   const [tags, setTags] = useState<string[]>([])
   const [maxWoicesAllowed, setMaxWoicesAllowed] = useState(10)
   const [tagError, setTagError] = useState("")
+  const navigate = useNavigate()
+  const { user } = useAuth()
   
   const { createThought, loading } = useSupabase()
 
@@ -66,6 +70,19 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
 
   const handleSubmit = async () => {
     if (!title.trim()) return
+
+    // Require authentication: if not logged in, save draft and redirect
+    if (!user) {
+      const draft = {
+        title,
+        description,
+        tags,
+        maxWoicesAllowed
+      }
+      try { localStorage.setItem('writeDraft', JSON.stringify(draft)) } catch {}
+      navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
+      return
+    }
     
     try {
       const thought = await createThought({
@@ -75,12 +92,13 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
         max_woices_allowed: maxWoicesAllowed
       })
       
-      // Reset form
+      // Reset form and clear draft
       setTitle("")
       setDescription("")
       setTags([])
       setTagInput("")
       setMaxWoicesAllowed(10)
+      try { localStorage.removeItem('writeDraft') } catch {}
       
       onOpenChange(false)
       onSuccess?.(thought.id)
@@ -88,8 +106,20 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
       console.error('Failed to create thought:', error)
     }
   }
-
-  return (
+  useEffect(() => {
+    if (open) {
+      try {
+        const raw = localStorage.getItem('writeDraft')
+        if (raw) {
+          const draft = JSON.parse(raw)
+          setTitle(draft.title || '')
+          setDescription(draft.description || '')
+          setTags(Array.isArray(draft.tags) ? draft.tags : [])
+          setMaxWoicesAllowed(draft.maxWoicesAllowed || 10)
+        }
+      } catch {}
+    }
+  }, [open])
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] sm:w-full sm:max-w-lg mx-auto p-4 sm:p-6 rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-center sm:text-left">
