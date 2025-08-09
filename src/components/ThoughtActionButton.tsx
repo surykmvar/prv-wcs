@@ -97,8 +97,8 @@ export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActi
       className="w-full sm:w-auto rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base h-9 sm:h-10"
     >
       <Mic className="w-4 h-4 mr-2" />
-      <span className="sm:hidden">Record Woice 🎙️</span>
-      <span className="hidden sm:inline">Record Your Woice Reply 🎙️</span>
+      <span className="sm:hidden">Record Woice</span>
+      <span className="hidden sm:inline">Record Your Woice Reply</span>
     </Button>
   )
 }

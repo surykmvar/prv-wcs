@@ -107,7 +107,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
               <Mic className="w-4 h-4 mr-2" />
               Record Woice
             </Button>
-          )
+          )}
         </div>
         
         <div className="text-xs text-muted-foreground mt-2">

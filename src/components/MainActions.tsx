@@ -56,30 +56,14 @@ export function MainActions() {
         </p>
       </div>
 
-      <Card className="p-4 sm:p-5 rounded-xl animate-fade-in">
-        <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center font-medium">
-            {(user?.email?.charAt(0)?.toUpperCase() || 'U')}
+      <Card className="p-4 sm:p-6 rounded-xl animate-fade-in">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="text-xs sm:text-sm text-muted-foreground">
+            Share a 60 second Woice or a quick thought
           </div>
-          <button
-            type="button"
-            className="flex-1 text-left bg-muted/50 hover:bg-muted/70 rounded-xl px-4 py-3 text-sm text-muted-foreground"
-            onClick={() => {
-              if (!user) {
-                navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
-              } else {
-                setShowWriteNote(true)
-              }
-            }}
-          >
-            What's happening?
-          </button>
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <div className="pl-14 text-xs text-muted-foreground">Share a 60s Woice or a quick thought</div>
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
+              variant="gradientWrite"
               onClick={() => {
                 if (!user) {
                   navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
@@ -88,9 +72,10 @@ export function MainActions() {
                 }
               }}
             >
-              <Plus className="h-4 w-4 mr-2" /> Write
+              <Plus className="h-4 w-4 mr-2" /> Write Thought
             </Button>
             <Button
+              variant="gradientRecord"
               onClick={() => {
                 if (!user) {
                   navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=record')}`)
@@ -99,7 +84,7 @@ export function MainActions() {
                 }
               }}
             >
-              <Mic className="h-4 w-4 mr-2" /> Record
+              <Mic className="h-4 w-4 mr-2" /> Record Woice
             </Button>
           </div>
         </div>

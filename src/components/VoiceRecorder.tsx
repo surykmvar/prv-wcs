@@ -124,7 +124,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
               </li>
               <li className="flex items-start gap-2">
                 <span aria-hidden>⏱️</span>
-                <span>Up to 60s — be clear, kind, and concise</span>
+                <span>Up to 60 seconds — be clear, kind, and concise</span>
               </li>
               {thoughtScope === "global" && (
                 <li className="flex items-start gap-2">

@@ -317,30 +317,32 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                     </div>
                   </div>
 
-                  {responseCount > 0 && isExpanded && (
-                    <Collapsible open={isExpanded}>
-                      <CollapsibleContent className="mt-3 sm:mt-4 space-y-2 sm:space-y-3 border-t pt-3 sm:pt-4">
-                        {thought.voice_responses
-                          ?.filter((response) => response.duration > 0 && response.audio_url) // Only show valid recordings
-                          ?.map((response) => (
-                          <div key={response.id} className="space-y-1 sm:space-y-2">
-                            <ModernVoicePlayer 
-                              voiceResponseId={response.id}
-                              audioUrl={response.audio_url} 
-                              duration={response.duration}
-                              mythVotes={response.myth_votes || 0}
-                              factVotes={response.fact_votes || 0}
-                              unclearVotes={response.unclear_votes || 0}
-                            />
-                            <div className="text-xs text-muted-foreground pl-2 sm:pl-4">
-                              {formatTimeAgo(response.created_at)}
-                            </div>
+                    {responseCount > 0 && isExpanded && (
+                      <Collapsible open={isExpanded}>
+                        <CollapsibleContent className="mt-3 sm:mt-4 border-t pt-3 sm:pt-4">
+                          <div className="pl-3 sm:pl-5 border-l border-muted/60 space-y-2 sm:space-y-3">
+                            {thought.voice_responses
+                              ?.filter((response) => response.duration > 0 && response.audio_url)
+                              ?.map((response) => (
+                              <div key={response.id} className="ml-3 sm:ml-4 space-y-1 sm:space-y-2">
+                                <ModernVoicePlayer 
+                                  voiceResponseId={response.id}
+                                  audioUrl={response.audio_url} 
+                                  duration={response.duration}
+                                  mythVotes={response.myth_votes || 0}
+                                  factVotes={response.fact_votes || 0}
+                                  unclearVotes={response.unclear_votes || 0}
+                                />
+                                <div className="text-xs text-muted-foreground pl-2 sm:pl-4">
+                                  {formatTimeAgo(response.created_at)}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </CollapsibleContent>
-                    </Collapsible>
-                  )}
-                </CardContent>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )}
+                 </CardContent>
               </Card>
             )
           })}
