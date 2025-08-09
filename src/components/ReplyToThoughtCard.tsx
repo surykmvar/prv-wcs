@@ -130,7 +130,7 @@ export function ReplyToThoughtCard({ onClose }: ReplyToThoughtCardProps) {
               <CardContent className="p-0 space-y-4">
                 <Button
                   onClick={() => setShowRecorder(true)}
-                  className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white font-medium rounded-xl shadow-md transition-all duration-300"
+                  className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg font-medium rounded-xl"
                 >
                   <Mic className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Start Recording Your Woice

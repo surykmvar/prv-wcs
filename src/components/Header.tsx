@@ -60,18 +60,18 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => navigate('/auth?mode=signup')}
-                className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md"
-              >
-                Register for free
-              </Button>
+               <Button 
+                 variant="outline" 
+                 size="sm" 
+                 onClick={() => navigate('/auth?mode=signup')}
+                 className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md"
+               >
+                 Register for free
+               </Button>
               <Button 
                 size="sm" 
                 onClick={() => navigate('/auth?mode=signin')}
-                className="bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md"
+                className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md"
               >
                 Login
               </Button>

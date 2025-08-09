@@ -320,7 +320,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
 
               <Button 
                 onClick={handleProceed}
-                className="w-full bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300 mt-6"
+                className="w-full py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl mt-6"
                 disabled={!title.trim()}
               >
                 Proceed
@@ -411,7 +411,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                 <Button variant="outline" className="w-full" onClick={() => setStep(1)}>Back</Button>
                 <Button 
                   onClick={handleSubmit}
-                  className="w-full hover-scale bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300"
+                  className="w-full py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl"
                   disabled={loading || !city.trim() || !countryCode}
                 >
                   {loading ? 'Posting...' : 'Post and Wait for Woices'}

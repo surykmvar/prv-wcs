@@ -165,16 +165,16 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
           )}
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4">
-            {!isRecording && !audioBlob && (
-              <Button
-                onClick={handleStartRecording}
-                disabled={loading}
-                className="mx-auto w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl shadow-md transition-all duration-300"
-              >
-                <Mic className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Start Recording
-              </Button>
-            )}
+              {!isRecording && !audioBlob && (
+                <Button
+                  onClick={handleStartRecording}
+                  disabled={loading}
+                  className="mx-auto w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg rounded-xl"
+                >
+                  <Mic className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  Start Recording
+                </Button>
+              )}
 
             {isRecording && (
               <Button
@@ -200,7 +200,7 @@ export function VoiceRecorder({ thoughtId, onClose, onSuccess }: VoiceRecorderPr
                 <Button
                   onClick={handleSendRecording}
                   disabled={loading}
-                  className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg bg-gradient-to-r from-woices-mint to-woices-sky hover:from-woices-mint/90 hover:to-woices-sky/90 text-white rounded-xl shadow-md"
+                  className="w-full sm:w-auto max-w-xs px-4 py-2 text-base sm:text-lg rounded-xl"
                 >
                   <Send className="w-4 h-4 mr-2" />
                   {loading ? 'Sending...' : 'Send Woice'}
