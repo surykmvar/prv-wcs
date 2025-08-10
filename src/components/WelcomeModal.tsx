@@ -67,7 +67,7 @@ export function WelcomeModal() {
         <div className="flex justify-center pt-4">
           <Button 
             onClick={handleClose}
-            className="rounded-xl px-8"
+            className="bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white rounded-xl px-8"
           >
             ✅ Got it, Start Listening
           </Button>

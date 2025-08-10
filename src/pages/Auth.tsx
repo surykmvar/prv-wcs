@@ -71,11 +71,6 @@ export default function Auth() {
     link.setAttribute('href', window.location.href)
   }, [mode])
 
-  useEffect(() => {
-    // Ensure phone auth is disabled for both login and registration flows
-    setAuthMethod('email')
-  }, [mode])
-
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -254,7 +249,7 @@ export default function Auth() {
       <Tabs
         value={authMethod}
         onValueChange={(v) => {
-          if (v === 'phone') {
+          if (v === 'phone' && mode === 'signup') {
             setComingSoon(true)
             return
           }
@@ -266,7 +261,7 @@ export default function Auth() {
           <TabsTrigger value="email" className="flex items-center gap-2">
             <Mail className="h-4 w-4" /> Email
           </TabsTrigger>
-          <TabsTrigger value="phone" className="flex items-center gap-2" aria-disabled={true}>
+          <TabsTrigger value="phone" className="flex items-center gap-2" aria-disabled={mode === 'signup'}>
             <Phone className="h-4 w-4" /> Phone
           </TabsTrigger>
         </TabsList>
