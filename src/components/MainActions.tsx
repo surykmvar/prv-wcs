@@ -5,6 +5,8 @@ import { Mic, Plus, Star } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
 import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
 import { useAuth } from "@/hooks/useAuth"
+import { motion } from "framer-motion"
+import { SparkleField } from "@/components/SparkleField"
 
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
@@ -54,112 +56,136 @@ export function MainActions() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 sm:mb-10 items-stretch justify-items-center">
-        <button
-          type="button"
-          onClick={() => {
-            if (!user) {
-              navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=record')}`)
-            } else {
-              const isLarge = typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches
-              if (isLarge) {
-                setSplash('record')
-                setTimeout(() => {
+      <div className="relative">
+        <SparkleField className="absolute inset-0 -z-10 opacity-80" density={26} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 sm:mb-10 items-stretch justify-items-center">
+          <button
+            type="button"
+            onClick={() => {
+              if (!user) {
+                navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=record')}`)
+              } else {
+                const isLarge = typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches
+                if (isLarge) {
+                  setSplash('record')
+                  setTimeout(() => {
+                    setShowRandomRecorder(true)
+                    setSplash(null)
+                  }, 280)
+                } else {
                   setShowRandomRecorder(true)
-                  setSplash(null)
-                }, 280)
-              } else {
-                setShowRandomRecorder(true)
+                }
               }
-            }
-          }}
-          className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-4 bg-card/90 starry-surface border border-border hover:shadow-lg transition-all"
-          aria-label="Break the ice and record a 60 second voice reply"
-        >
-          <div className="relative">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-              <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+            }}
+            className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-6 bg-secondary/60 dark:bg-secondary/40 supports-[backdrop-filter]:backdrop-blur-md border border-border hover:shadow-lg transition-all min-h-[164px]"
+            aria-label="Break the ice and record a 60 second voice reply"
+          >
+            <div className="relative">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                {/* Soft ripple rings */}
+                <motion.span
+                  className="absolute inset-0 rounded-full ring-2 ring-primary/20"
+                  initial={{ scale: 0.8, opacity: 0.35 }}
+                  animate={{ scale: 1.15, opacity: 0 }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+                />
+                <motion.span
+                  className="absolute -inset-2 rounded-full ring-2 ring-primary/15"
+                  initial={{ scale: 0.8, opacity: 0.25 }}
+                  animate={{ scale: 1.25, opacity: 0 }}
+                  transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
+                />
+                <motion.span
+                  className="absolute -inset-4 rounded-full ring-2 ring-primary/10"
+                  initial={{ scale: 0.8, opacity: 0.2 }}
+                  animate={{ scale: 1.35, opacity: 0 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
+                />
+              </div>
             </div>
-            {/* Ambient stars */}
-            <Star size={12} className="ambient-star cs1 text-woices-bloom" />
-            <Star size={12} className="ambient-star cs2 text-woices-violet" />
-            <Star size={12} className="ambient-star cs3 text-woices-sky" />
-            <Star size={12} className="ambient-star cs4 text-woices-mint" />
-            <Star size={12} className="ambient-star cs5 text-woices-bloom" />
-            <Star size={12} className="ambient-star cs6 text-woices-sky" />
-          </div>
 
-          {splash === 'record' && (
-            <div className="star-splash">
-              <Star className="splash-star i1 text-woices-violet" />
-              <Star className="splash-star i2 text-woices-bloom" />
-              <Star className="splash-star i3 text-woices-sky" />
-              <Star className="splash-star i4 text-woices-mint" />
-              <Star className="splash-star i5 text-woices-bloom" />
-              <Star className="splash-star i6 text-woices-violet" />
-              <Star className="splash-star i7 text-woices-sky" />
-              <Star className="splash-star i8 text-woices-mint" />
-            </div>
-          )}
+            {splash === 'record' && (
+              <div className="star-splash">
+                <Star className="splash-star i1 text-woices-violet" />
+                <Star className="splash-star i2 text-woices-bloom" />
+                <Star className="splash-star i3 text-woices-sky" />
+                <Star className="splash-star i4 text-woices-mint" />
+                <Star className="splash-star i5 text-woices-bloom" />
+                <Star className="splash-star i6 text-woices-violet" />
+                <Star className="splash-star i7 text-woices-sky" />
+                <Star className="splash-star i8 text-woices-mint" />
+              </div>
+            )}
 
-          <h3 className="mt-3 text-base sm:text-lg font-semibold">Break the ice. Speak your Woice.</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Reply with your 60 second voice to a thought that matters.
-          </p>
-        </button>
+            <h3 className="mt-3 text-base sm:text-lg font-semibold">Break the ice. Speak your Woice.</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Reply with your 60 second voice to a thought that matters.
+            </p>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => {
-            if (!user) {
-              navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
-            } else {
-              const isLarge = typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches
-              if (isLarge) {
-                setSplash('write')
-                setTimeout(() => {
+          <button
+            type="button"
+            onClick={() => {
+              if (!user) {
+                navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
+              } else {
+                const isLarge = typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches
+                if (isLarge) {
+                  setSplash('write')
+                  setTimeout(() => {
+                    setShowWriteNote(true)
+                    setSplash(null)
+                  }, 280)
+                } else {
                   setShowWriteNote(true)
-                  setSplash(null)
-                }, 280)
-              } else {
-                setShowWriteNote(true)
+                }
               }
-            }
-          }}
-          className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-4 bg-card/90 starry-surface border border-border hover:shadow-lg transition-all"
-          aria-label="Write a thought or topic"
-        >
-          <div className="relative">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-mint to-woices-sky flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-              <Plus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+            }}
+            className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-6 bg-secondary/60 dark:bg-secondary/40 supports-[backdrop-filter]:backdrop-blur-md border border-border hover:shadow-lg transition-all min-h-[164px]"
+            aria-label="Write a thought or topic"
+          >
+            <div className="relative">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-mint to-woices-sky flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                <motion.div
+                  animate={{ rotate: [-6, 0, 6, 0] }}
+                  transition={{ duration: 3, ease: "easeInOut", repeat: Infinity }}
+                >
+                  <Plus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                </motion.div>
+                {/* "Questioning" accent */}
+                <motion.span
+                  className="absolute -top-1 -right-1 size-2 rounded-full bg-primary"
+                  animate={{ scale: [1, 1.25, 1], opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.span
+                  className="absolute -top-3 -right-3 size-6 rounded-full border border-primary/30"
+                  animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.4, 0.25] }}
+                  transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                />
+              </div>
             </div>
-            {/* Ambient stars */}
-            <Star size={12} className="ambient-star cs1 text-woices-sky" />
-            <Star size={12} className="ambient-star cs2 text-woices-mint" />
-            <Star size={12} className="ambient-star cs3 text-woices-bloom" />
-            <Star size={12} className="ambient-star cs4 text-woices-violet" />
-            <Star size={12} className="ambient-star cs5 text-woices-sky" />
-            <Star size={12} className="ambient-star cs6 text-woices-mint" />
-          </div>
 
-          {splash === 'write' && (
-            <div className="star-splash">
-              <Star className="splash-star i1 text-woices-mint" />
-              <Star className="splash-star i2 text-woices-sky" />
-              <Star className="splash-star i3 text-woices-bloom" />
-              <Star className="splash-star i4 text-woices-violet" />
-              <Star className="splash-star i5 text-woices-sky" />
-              <Star className="splash-star i6 text-woices-mint" />
-              <Star className="splash-star i7 text-woices-bloom" />
-              <Star className="splash-star i8 text-woices-violet" />
-            </div>
-          )}
+            {splash === 'write' && (
+              <div className="star-splash">
+                <Star className="splash-star i1 text-woices-mint" />
+                <Star className="splash-star i2 text-woices-sky" />
+                <Star className="splash-star i3 text-woices-bloom" />
+                <Star className="splash-star i4 text-woices-violet" />
+                <Star className="splash-star i5 text-woices-sky" />
+                <Star className="splash-star i6 text-woices-mint" />
+                <Star className="splash-star i7 text-woices-bloom" />
+                <Star className="splash-star i8 text-woices-violet" />
+              </div>
+            )}
 
-          <h3 className="mt-3 text-base sm:text-lg font-semibold">Write a thought or topic</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Ask for honest 60 second voice replies from Humans.
-          </p>
-        </button>
+            <h3 className="mt-3 text-base sm:text-lg font-semibold">Write a thought or topic</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Ask for honest 60 second voice replies from Humans.
+            </p>
+          </button>
+        </div>
       </div>
 
       <WriteNoteDialog 

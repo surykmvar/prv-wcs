@@ -100,6 +100,10 @@
   .panel {
     @apply rounded-3xl border border-border/70 bg-card/90 supports-[backdrop-filter]:backdrop-blur-xl shadow-2xl;
   }
+  .surface-elevated {
+    /* Slightly stronger separation from background in both themes */
+    @apply bg-card/95 border-border shadow-[0_10px_30px_-10px_hsl(var(--ring)/0.15)];
+  }
 }
 
 @layer utilities {
