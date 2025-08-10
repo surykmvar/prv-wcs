@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Play, Bookmark, BookmarkCheck } from "lucide-react"
+import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Bookmark, BookmarkCheck } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useAuth } from "@/hooks/useAuth"
 import { supabase } from "@/integrations/supabase/client"
@@ -10,7 +9,7 @@ import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { ModernVoicePlayer } from "@/components/ModernVoicePlayer"
 import { VotingExplanationModal } from "@/components/VotingExplanationModal"
 import { ThoughtActionButton } from "@/components/ThoughtActionButton"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+
 import { formatTimeAgo } from "@/utils/timeUtils"
 
 type VoiceResponse = {
@@ -220,7 +219,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
           </p>
         </div>
       ) : (
-        <div className="space-y-4 sm:space-y-6">
+        <ul className="divide-y divide-border">
           {thoughts.map((thought) => {
             const responseCount = thought.voice_responses?.filter(response => response.duration > 0 && response.audio_url)?.length || 0
             const timeLeft = new Date(thought.expires_at).getTime() - Date.now()
@@ -229,122 +228,117 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
             const isSaved = savedThoughts.has(thought.id)
 
             return (
-              <Card key={thought.id} className="p-3 sm:p-6 hover:shadow-lg transition-all duration-300">
-                <CardHeader className="p-0 mb-3 sm:mb-4">
-                  <div className="flex justify-between items-start gap-3">
-                    <CardTitle className="text-base sm:text-xl font-semibold leading-tight flex-1">
-                      {thought.title}
-                    </CardTitle>
-                    <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleSaved(thought.id)}
-                        className="h-7 w-7 sm:h-8 sm:w-8 p-0"
-                      >
-                        {isSaved ? (
-                          <BookmarkCheck className="w-3 h-3 sm:w-4 sm:h-4 text-woices-violet" />
-                        ) : (
-                          <Bookmark className="w-3 h-3 sm:w-4 sm:h-4" />
-                        )}
-                      </Button>
-                      <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
-                        <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">{hoursLeft}h left</span>
-                        <span className="sm:hidden">{hoursLeft}h</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {thought.description && (
-                    <p className="text-xs sm:text-base text-muted-foreground mt-2 sm:mt-3 leading-relaxed">
-                      {thought.description}
-                    </p>
-                  )}
-                  
-                  {thought.tags && thought.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-3">
-                      {thought.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs px-1.5 py-0.5">
-                          #{tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </CardHeader>
-                
-                <CardContent className="p-0">
-                  {/* Mobile-first layout */}
-                  <div className="space-y-3">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                        <div className="text-xs text-muted-foreground">
-                          {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
-                          {thought.final_status !== 'pending' && (
-                            <Badge variant="outline" className="ml-2 text-xs">
-                              {thought.final_status === 'bloomed' ? '🌸 Bloomed' : 
-                               thought.final_status === 'bricked' ? '🧱 Bricked' : 
-                               '🤔 Unclear'}
-                            </Badge>
+              <li key={thought.id} className="py-4 sm:py-6">
+                <article className="grid grid-cols-[28px,1fr] sm:grid-cols-[32px,1fr] gap-3 sm:gap-4">
+                  <aside className="pt-1">
+                    <div className="size-7 sm:size-8 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom shadow-md" />
+                  </aside>
+
+                  <div className="min-w-0">
+                    <header className="flex items-start justify-between gap-3">
+                      <h3 className="text-base sm:text-lg font-semibold leading-tight flex-1">
+                        {thought.title}
+                      </h3>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleSaved(thought.id)}
+                          className="h-7 w-7 sm:h-8 sm:w-8 p-0"
+                          aria-label={isSaved ? "Unsave" : "Save"}
+                        >
+                          {isSaved ? (
+                            <BookmarkCheck className="w-3 h-3 sm:w-4 sm:h-4 text-woices-violet" />
+                          ) : (
+                            <Bookmark className="w-3 h-3 sm:w-4 sm:h-4" />
                           )}
+                        </Button>
+                        <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span className="hidden sm:inline">{hoursLeft}h left</span>
+                          <span className="sm:hidden">{hoursLeft}h</span>
                         </div>
+                      </div>
+                    </header>
+
+                    {thought.description && (
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-2 leading-relaxed">
+                        {thought.description}
+                      </p>
+                    )}
+
+                    {thought.tags && thought.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
+                        {thought.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-[10px] sm:text-xs px-1.5 py-0.5">
+                            #{tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <span>
+                          {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
+                        </span>
+                        {thought.final_status !== 'pending' && (
+                          <Badge variant="outline" className="text-xs">
+                            {thought.final_status === 'bloomed' ? '🌸 Bloomed' :
+                             thought.final_status === 'bricked' ? '🧱 Bricked' :
+                             '🤔 Unclear'}
+                          </Badge>
+                        )}
                         {responseCount > 0 && (
-                          <Collapsible>
-                            <CollapsibleTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => toggleExpanded(thought.id)}
-                                className="flex items-center gap-1 text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3"
-                              >
-                                <span className="hidden sm:inline">View Replies</span>
-                                <span className="sm:hidden">Replies</span>
-                                {isExpanded ? (
-                                  <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
-                                ) : (
-                                  <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
-                                )}
-                              </Button>
-                            </CollapsibleTrigger>
-                          </Collapsible>
+                          <button
+                            type="button"
+                            onClick={() => toggleExpanded(thought.id)}
+                            className="inline-flex items-center gap-1 text-foreground hover:underline text-xs sm:text-sm"
+                            aria-expanded={isExpanded}
+                          >
+                            {isExpanded ? 'Hide replies' : 'View replies'}
+                            {isExpanded ? (
+                              <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                            ) : (
+                              <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                            )}
+                          </button>
                         )}
                       </div>
-                      
-                      <ThoughtActionButton 
+
+                      <ThoughtActionButton
                         thoughtId={thought.id}
                         onStartRecording={() => handleStartRecording(thought.id)}
                       />
                     </div>
-                  </div>
 
-                  {responseCount > 0 && isExpanded && (
-                    <Collapsible open={isExpanded}>
-                      <CollapsibleContent className="mt-3 sm:mt-4 space-y-2 sm:space-y-3 border-t pt-3 sm:pt-4">
+                    {responseCount > 0 && isExpanded && (
+                      <div className="mt-3 sm:mt-4 pl-4 sm:pl-5 border-l border-border space-y-2 sm:space-y-3">
                         {thought.voice_responses
-                          ?.filter((response) => response.duration > 0 && response.audio_url) // Only show valid recordings
+                          ?.filter((response) => response.duration > 0 && response.audio_url)
                           ?.map((response) => (
-                          <div key={response.id} className="space-y-1 sm:space-y-2">
-                            <ModernVoicePlayer 
-                              voiceResponseId={response.id}
-                              audioUrl={response.audio_url} 
-                              duration={response.duration}
-                              mythVotes={response.myth_votes || 0}
-                              factVotes={response.fact_votes || 0}
-                              unclearVotes={response.unclear_votes || 0}
-                            />
-                            <div className="text-xs text-muted-foreground pl-2 sm:pl-4">
-                              {formatTimeAgo(response.created_at)}
+                            <div key={response.id} className="space-y-1 sm:space-y-2">
+                              <ModernVoicePlayer
+                                voiceResponseId={response.id}
+                                audioUrl={response.audio_url}
+                                duration={response.duration}
+                                mythVotes={response.myth_votes || 0}
+                                factVotes={response.fact_votes || 0}
+                                unclearVotes={response.unclear_votes || 0}
+                              />
+                              <div className="text-xs text-muted-foreground pl-1">
+                                {formatTimeAgo(response.created_at)}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </CollapsibleContent>
-                    </Collapsible>
-                  )}
-                </CardContent>
-              </Card>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              </li>
             )
           })}
-        </div>
+        </ul>
       )}
     </div>
   )

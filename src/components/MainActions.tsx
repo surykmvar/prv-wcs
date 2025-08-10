@@ -36,7 +36,7 @@ export function MainActions() {
   // Show random thought recorder when "Break the ice" is clicked
   if (showRandomRecorder) {
     return (
-      <div className="panel p-3 sm:p-6 relative z-10">
+      <div className="relative z-10">
         <RandomThoughtRecorder
           onBack={handleBack}
           onSuccess={handleRandomRecorderSuccess}
