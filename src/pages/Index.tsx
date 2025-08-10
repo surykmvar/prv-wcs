@@ -16,9 +16,9 @@ const Index = () => {
         <Header />
         <main className="py-6 sm:py-8 md:py-12">
           <div className="container px-4">
-            <div className="rounded-3xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-xl">
-              <MainActions />
-            </div>
+              <div className="rounded-3xl border border-border/70 bg-card/90 supports-[backdrop-filter]:backdrop-blur-xl shadow-2xl">
+                <MainActions />
+              </div>
           </div>
         </main>
       </div>

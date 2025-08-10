@@ -33,10 +33,12 @@ export function MainActions() {
   // Show random thought recorder when "Break the ice" is clicked
   if (showRandomRecorder) {
     return (
-      <RandomThoughtRecorder
-        onBack={handleBack}
-        onSuccess={handleRandomRecorderSuccess}
-      />
+      <div className="panel p-3 sm:p-6 relative z-10">
+        <RandomThoughtRecorder
+          onBack={handleBack}
+          onSuccess={handleRandomRecorderSuccess}
+        />
+      </div>
     )
   }
 
@@ -61,13 +63,17 @@ export function MainActions() {
               setShowRandomRecorder(true)
             }
           }}
-          className="group flex flex-col items-center text-center rounded-2xl p-6 bg-card/60 backdrop-blur-md border border-border hover:shadow-lg transition-all"
+          className="group flex flex-col items-center text-center rounded-2xl p-4 bg-card/90 border border-border hover:shadow-lg transition-all"
           aria-label="Break the ice and record a 60 second voice reply"
         >
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-            <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          <div className="relative sparkle-wrapper">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+              <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+            </div>
+            <span aria-hidden className="sparkle-dot sparkle-1" />
+            <span aria-hidden className="sparkle-dot sparkle-2" />
           </div>
-          <h3 className="mt-4 text-base sm:text-lg font-semibold">Break the ice. Speak your Woice.</h3>
+          <h3 className="mt-3 text-base sm:text-lg font-semibold">Break the ice. Speak your Woice.</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             Reply with your 60 second voice to a thought that matters.
           </p>
@@ -82,13 +88,17 @@ export function MainActions() {
               setShowWriteNote(true)
             }
           }}
-          className="group flex flex-col items-center text-center rounded-2xl p-6 bg-card/60 backdrop-blur-md border border-border hover:shadow-lg transition-all"
+          className="group flex flex-col items-center text-center rounded-2xl p-4 bg-card/90 border border-border hover:shadow-lg transition-all"
           aria-label="Write a thought or topic"
         >
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-mint to-woices-sky flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-            <Plus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          <div className="relative sparkle-wrapper">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-mint to-woices-sky flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+              <Plus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+            </div>
+            <span aria-hidden className="sparkle-dot sparkle-1" />
+            <span aria-hidden className="sparkle-dot sparkle-2" />
           </div>
-          <h3 className="mt-4 text-base sm:text-lg font-semibold">Write a thought or topic</h3>
+          <h3 className="mt-3 text-base sm:text-lg font-semibold">Write a thought or topic</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             Ask for honest 60 second voice replies from Humans.
           </p>

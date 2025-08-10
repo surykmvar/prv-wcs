@@ -185,7 +185,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-3 sm:px-6">
+    <div className="relative z-10 w-full max-w-4xl mx-auto px-3 sm:px-6">
       <VotingExplanationModal 
         isOpen={showVotingModal} 
         onClose={() => setShowVotingModal(false)} 
