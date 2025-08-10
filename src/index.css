@@ -103,6 +103,7 @@
 }
 
 @layer utilities {
+  /* Subtle float for dots (kept for legacy) */
   @keyframes sparkle-float {
     0% { transform: translateY(0) scale(1); opacity: 0.8; }
     50% { transform: translateY(-6px) scale(1.05); opacity: 1; }
@@ -112,4 +113,45 @@
   .sparkle-dot { @apply absolute block rounded-full opacity-70; width: 6px; height: 6px; background: radial-gradient(circle at center, hsl(var(--ring)) 0%, transparent 70%); animation: sparkle-float 2.8s ease-in-out infinite; }
   .sparkle-1 { top: -6px; right: -8px; animation-delay: 0.1s; }
   .sparkle-2 { bottom: -6px; left: -8px; animation-delay: 1s; }
+
+  /* Starry minimal surface */
+  .starry-surface {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 1.5px);
+    background-size: 24px 24px;
+    background-position: 0 0;
+  }
+
+  /* Ambient twinkling stars around buttons */
+  @keyframes twinkle {
+    0% { opacity: .35; transform: scale(.9); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: .35; transform: scale(.9); }
+  }
+  .ambient-star { @apply absolute; width: 10px; height: 10px; animation: twinkle 2.4s ease-in-out infinite; }
+  .cs1 { top: -8px; left: 50%; transform: translateX(-50%); }
+  .cs2 { top: 12%; right: -10px; }
+  .cs3 { bottom: -10px; left: 40%; }
+  .cs4 { left: -10px; top: 30%; }
+  .cs5 { right: 4px; bottom: 16%; }
+  .cs6 { left: 6px; top: 70%; }
+
+  /* Star burst splash on click (desktop/tablet) */
+  @keyframes star-burst {
+    0% { transform: translate(0,0) scale(0.8); opacity: 0; }
+    60% { opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+  }
+  .star-splash { @apply absolute inset-0 pointer-events-none; }
+  .splash-star {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+    width: 12px; height: 12px; animation: star-burst 280ms ease-out forwards;
+  }
+  .i1 { --tx: -12px; --ty: -28px; }
+  .i2 { --tx: 14px; --ty: -22px; }
+  .i3 { --tx: 22px; --ty: -4px; }
+  .i4 { --tx: 18px; --ty: 16px; }
+  .i5 { --tx: -6px; --ty: 22px; }
+  .i6 { --tx: -20px; --ty: 12px; }
+  .i7 { --tx: -26px; --ty: -8px; }
+  .i8 { --tx: 6px; --ty: 26px; }
 }
