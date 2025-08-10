@@ -1,13 +1,9 @@
 
 import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mic, Plus } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
-import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
-import { useSupabase } from "@/hooks/useSupabase"
 import { useAuth } from "@/hooks/useAuth"
 
 export function MainActions() {
@@ -55,44 +51,48 @@ export function MainActions() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-woices-violet/20 cursor-pointer p-4 sm:p-6 rounded-xl" 
-              onClick={() => {
-                if (!user) {
-                  navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=record')}`)
-                } else {
-                  setShowRandomRecorder(true)
-                }
-              }}>
-          <CardHeader className="text-center pb-4 p-0">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-br from-woices-violet to-woices-bloom rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <Mic className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-            </div>
-            <CardTitle className="text-lg sm:text-xl font-semibold">Break the ice. Speak your Woice.</CardTitle>
-            <CardDescription className="text-sm sm:text-base text-muted-foreground">
-              Reply with your 60-second voice to a thought that matters.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 sm:mb-10">
+        <button
+          type="button"
+          onClick={() => {
+            if (!user) {
+              navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=record')}`)
+            } else {
+              setShowRandomRecorder(true)
+            }
+          }}
+          className="group flex flex-col items-center text-center rounded-2xl p-6 bg-card/60 backdrop-blur-md border border-border hover:shadow-lg transition-all"
+          aria-label="Break the ice and record a 60 second voice reply"
+        >
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+            <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          </div>
+          <h3 className="mt-4 text-base sm:text-lg font-semibold">Break the ice. Speak your Woice.</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Reply with your 60 second voice to a thought that matters.
+          </p>
+        </button>
 
-        <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-woices-mint/20 cursor-pointer p-4 sm:p-6 rounded-xl" 
-              onClick={() => {
-                if (!user) {
-                  navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
-                } else {
-                  setShowWriteNote(true)
-                }
-              }}>
-          <CardHeader className="text-center pb-4 p-0">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-br from-woices-mint to-woices-sky rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <Plus className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-            </div>
-            <CardTitle className="text-lg sm:text-xl font-semibold">Write a thought or topic</CardTitle>
-            <CardDescription className="text-sm sm:text-base text-muted-foreground">
-              Ask for honest 60-second voice replies from Humans.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <button
+          type="button"
+          onClick={() => {
+            if (!user) {
+              navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
+            } else {
+              setShowWriteNote(true)
+            }
+          }}
+          className="group flex flex-col items-center text-center rounded-2xl p-6 bg-card/60 backdrop-blur-md border border-border hover:shadow-lg transition-all"
+          aria-label="Write a thought or topic"
+        >
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-mint to-woices-sky flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+            <Plus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          </div>
+          <h3 className="mt-4 text-base sm:text-lg font-semibold">Write a thought or topic</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Ask for honest 60 second voice replies from Humans.
+          </p>
+        </button>
       </div>
 
       <WriteNoteDialog 
