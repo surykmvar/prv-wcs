@@ -15,11 +15,7 @@ const Index = () => {
       <div className="relative">
         <Header />
         <main className="py-6 sm:py-8 md:py-12">
-          <div className="container px-4">
-              <div className="panel surface-elevated">
-                <MainActions />
-              </div>
-          </div>
+          <MainActions />
         </main>
       </div>
       <VotingExplanationModal />
