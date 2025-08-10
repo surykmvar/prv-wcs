@@ -157,4 +157,15 @@
   .i6 { --tx: -20px; --ty: 12px; }
   .i7 { --tx: -26px; --ty: -8px; }
   .i8 { --tx: 6px; --ty: 26px; }
+
+  /* Smooth ripple rings for mic button */
+  @keyframes ripple-wave {
+    0% { transform: scale(0.85); opacity: 0.7; }
+    70% { opacity: 0.2; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+  .ring-pulse { position: absolute; inset: 0; border-radius: 9999px; will-change: transform, opacity; pointer-events: none; }
+  .ring-pulse.r1 { border: 4px solid hsl(var(--foreground) / 0.55); animation: ripple-wave 2000ms ease-out infinite; filter: drop-shadow(0 0 12px hsl(var(--foreground) / 0.25)); }
+  .ring-pulse.r2 { inset: -12px; border: 3px solid hsl(var(--foreground) / 0.45); animation: ripple-wave 2400ms ease-out infinite; animation-delay: 300ms; filter: drop-shadow(0 0 10px hsl(var(--foreground) / 0.2)); }
+  .ring-pulse.r3 { inset: -24px; border: 2px solid hsl(var(--foreground) / 0.35); animation: ripple-wave 2800ms ease-out infinite; animation-delay: 600ms; filter: drop-shadow(0 0 8px hsl(var(--foreground) / 0.15)); }
 }

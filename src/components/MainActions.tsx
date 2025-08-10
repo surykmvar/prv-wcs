@@ -83,25 +83,10 @@ export function MainActions() {
             <div className="relative">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform" style={{ filter: 'drop-shadow(0 0 18px hsl(var(--foreground)/0.35))' }}>
                 <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-                {/* Stronger, theme-aware ripple rings */}
-                <motion.span
-                  className="absolute inset-0 rounded-full ring-4 ring-foreground/50 dark:ring-foreground/70"
-                  initial={{ scale: 0.8, opacity: 0.7 }}
-                  animate={{ scale: 1.15, opacity: 0 }}
-                  transition={{ duration: 2.0, repeat: Infinity, ease: "easeOut" }}
-                />
-                <motion.span
-                  className="absolute -inset-3 rounded-full ring-[3px] ring-foreground/35 dark:ring-foreground/60"
-                  initial={{ scale: 0.8, opacity: 0.55 }}
-                  animate={{ scale: 1.25, opacity: 0 }}
-                  transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
-                />
-                <motion.span
-                  className="absolute -inset-6 rounded-full ring-2 ring-foreground/25 dark:ring-foreground/50"
-                  initial={{ scale: 0.8, opacity: 0.45 }}
-                  animate={{ scale: 1.35, opacity: 0 }}
-                  transition={{ duration: 2.8, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
-                />
+                {/* Smooth CSS-driven ripple rings (GPU-friendly) */}
+                <span className="ring-pulse r1" />
+                <span className="ring-pulse r2" />
+                <span className="ring-pulse r3" />
               </div>
             </div>
 
