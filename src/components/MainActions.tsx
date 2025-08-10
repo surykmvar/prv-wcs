@@ -77,7 +77,7 @@ export function MainActions() {
                 }
               }
             }}
-            className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-6 bg-secondary/60 dark:bg-secondary/40 supports-[backdrop-filter]:backdrop-blur-md border border-border hover:shadow-lg transition-all min-h-[164px]"
+            className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-6 panel surface-elevated supports-[backdrop-filter]:backdrop-blur-md hover:shadow-lg transition-all min-h-[180px]"
             aria-label="Break the ice and record a 60 second voice reply"
           >
             <div className="relative">
@@ -85,20 +85,20 @@ export function MainActions() {
                 <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 {/* Soft ripple rings */}
                 <motion.span
-                  className="absolute inset-0 rounded-full ring-2 ring-primary/20"
-                  initial={{ scale: 0.8, opacity: 0.35 }}
+                  className="absolute inset-0 rounded-full ring-2 ring-foreground/30"
+                  initial={{ scale: 0.8, opacity: 0.45 }}
                   animate={{ scale: 1.15, opacity: 0 }}
                   transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
                 />
                 <motion.span
-                  className="absolute -inset-2 rounded-full ring-2 ring-primary/15"
-                  initial={{ scale: 0.8, opacity: 0.25 }}
+                  className="absolute -inset-2 rounded-full ring-2 ring-foreground/20"
+                  initial={{ scale: 0.8, opacity: 0.35 }}
                   animate={{ scale: 1.25, opacity: 0 }}
                   transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
                 />
                 <motion.span
-                  className="absolute -inset-4 rounded-full ring-2 ring-primary/10"
-                  initial={{ scale: 0.8, opacity: 0.2 }}
+                  className="absolute -inset-4 rounded-full ring-2 ring-foreground/15"
+                  initial={{ scale: 0.8, opacity: 0.3 }}
                   animate={{ scale: 1.35, opacity: 0 }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
                 />
@@ -142,7 +142,7 @@ export function MainActions() {
                 }
               }
             }}
-            className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-6 bg-secondary/60 dark:bg-secondary/40 supports-[backdrop-filter]:backdrop-blur-md border border-border hover:shadow-lg transition-all min-h-[164px]"
+            className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-6 panel surface-elevated supports-[backdrop-filter]:backdrop-blur-md hover:shadow-lg transition-all min-h-[180px]"
             aria-label="Write a thought or topic"
           >
             <div className="relative">
@@ -155,12 +155,12 @@ export function MainActions() {
                 </motion.div>
                 {/* "Questioning" accent */}
                 <motion.span
-                  className="absolute -top-1 -right-1 size-2 rounded-full bg-primary"
+                  className="absolute -top-1 -right-1 size-2 rounded-full bg-foreground"
                   animate={{ scale: [1, 1.25, 1], opacity: [0.6, 1, 0.6] }}
                   transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <motion.span
-                  className="absolute -top-3 -right-3 size-6 rounded-full border border-primary/30"
+                  className="absolute -top-3 -right-3 size-6 rounded-full border border-foreground/30"
                   animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.4, 0.25] }}
                   transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
                 />

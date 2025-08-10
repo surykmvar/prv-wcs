@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 96%;
+    --foreground: 222.2 84% 3.2%;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -30,8 +30,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 84%;
+    --input: 214.3 31.8% 84%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
@@ -98,11 +98,10 @@
 
 @layer components {
   .panel {
-    @apply rounded-3xl border border-border/70 bg-card/90 supports-[backdrop-filter]:backdrop-blur-xl shadow-2xl;
+    @apply rounded-3xl border border-border bg-card supports-[backdrop-filter]:backdrop-blur-xl shadow-2xl;
   }
   .surface-elevated {
-    /* Slightly stronger separation from background in both themes */
-    @apply bg-card/95 border-border shadow-[0_10px_30px_-10px_hsl(var(--ring)/0.15)];
+    @apply bg-card border-border shadow-[0_18px_40px_-16px_hsl(var(--ring)/0.18)];
   }
 }
 
@@ -120,7 +119,7 @@
 
   /* Starry minimal surface */
   .starry-surface {
-    background-image: radial-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 1.5px);
+    background-image: radial-gradient(hsl(var(--foreground) / 0.07) 1px, transparent 1.5px);
     background-size: 24px 24px;
     background-position: 0 0;
   }

@@ -7,7 +7,7 @@ interface SparkleFieldProps {
 }
 
 // Lightweight sparkle background using framer-motion
-export const SparkleField = memo(function SparkleField({ className = "", density = 28 }: SparkleFieldProps) {
+  export const SparkleField = memo(function SparkleField({ className = "", density = 28 }: SparkleFieldProps) {
   const items = useMemo(() =>
     Array.from({ length: density }).map((_, i) => {
       const seed = i + 1
@@ -28,10 +28,10 @@ export const SparkleField = memo(function SparkleField({ className = "", density
         {items.map(({ key, left, top, size, duration, y, delay }) => (
           <motion.span
             key={key}
-            className="absolute rounded-full bg-foreground/40 shadow-[0_0_8px_hsl(var(--ring)/0.25)]"
+            className="absolute rounded-full bg-foreground/70 dark:bg-foreground/30 shadow-[0_0_8px_hsl(var(--ring)/0.25)]"
             style={{ left, top, width: size, height: size }}
-            initial={{ opacity: 0.25, y: 0, scale: 0.95 }}
-            animate={{ opacity: [0.25, 0.6, 0.25], y: [0, -y, 0, y, 0], scale: [0.95, 1, 0.95] }}
+            initial={{ opacity: 0.45, y: 0, scale: 0.95 }}
+            animate={{ opacity: [0.35, 0.7, 0.35], y: [0, -y, 0, y, 0], scale: [0.95, 1, 0.95] }}
             transition={{ duration, ease: "easeInOut", repeat: Infinity, delay, repeatType: "mirror" }}
           />
         ))}
