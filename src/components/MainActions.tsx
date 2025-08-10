@@ -81,26 +81,26 @@ export function MainActions() {
             aria-label="Break the ice and record a 60 second voice reply"
           >
             <div className="relative">
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform" style={{ filter: 'drop-shadow(0 0 18px hsl(var(--foreground)/0.35))' }}>
                 <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-                {/* Soft ripple rings */}
+                {/* Stronger, theme-aware ripple rings */}
                 <motion.span
-                  className="absolute inset-0 rounded-full ring-2 ring-foreground/30"
-                  initial={{ scale: 0.8, opacity: 0.45 }}
+                  className="absolute inset-0 rounded-full ring-4 ring-foreground/50 dark:ring-foreground/70"
+                  initial={{ scale: 0.8, opacity: 0.7 }}
                   animate={{ scale: 1.15, opacity: 0 }}
-                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+                  transition={{ duration: 2.0, repeat: Infinity, ease: "easeOut" }}
                 />
                 <motion.span
-                  className="absolute -inset-2 rounded-full ring-2 ring-foreground/20"
-                  initial={{ scale: 0.8, opacity: 0.35 }}
+                  className="absolute -inset-3 rounded-full ring-[3px] ring-foreground/35 dark:ring-foreground/60"
+                  initial={{ scale: 0.8, opacity: 0.55 }}
                   animate={{ scale: 1.25, opacity: 0 }}
-                  transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
+                  transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
                 />
                 <motion.span
-                  className="absolute -inset-4 rounded-full ring-2 ring-foreground/15"
-                  initial={{ scale: 0.8, opacity: 0.3 }}
+                  className="absolute -inset-6 rounded-full ring-2 ring-foreground/25 dark:ring-foreground/50"
+                  initial={{ scale: 0.8, opacity: 0.45 }}
                   animate={{ scale: 1.35, opacity: 0 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
                 />
               </div>
             </div>
@@ -146,7 +146,7 @@ export function MainActions() {
             aria-label="Write a thought or topic"
           >
             <div className="relative">
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-mint to-woices-sky flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-mint to-woices-sky flex items-center justify-center shadow-md group-hover:scale-105 transition-transform" style={{ filter: 'drop-shadow(0 0 18px hsl(var(--foreground)/0.35))' }}>
                 <motion.div
                   animate={{ rotate: [-6, 0, 6, 0] }}
                   transition={{ duration: 3, ease: "easeInOut", repeat: Infinity }}
@@ -160,7 +160,7 @@ export function MainActions() {
                   transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <motion.span
-                  className="absolute -top-3 -right-3 size-6 rounded-full border border-foreground/30"
+                  className="absolute -top-3 -right-3 size-6 rounded-full border border-foreground/50 dark:border-foreground/70"
                   animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.4, 0.25] }}
                   transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
                 />

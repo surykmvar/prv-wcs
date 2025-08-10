@@ -10,22 +10,12 @@ export function DynamicBackground() {
         <span className="absolute -bottom-[15%] left-1/3 w-[45vw] h-[45vw] rounded-full bg-gradient-to-br from-woices-bloom to-woices-violet blur-3xl opacity-10 animate-[float3_22s_ease-in-out_infinite]" />
       </div>
 
-      {/* Gentle moving wave hint (voice vibe) */}
-      <svg
-        className="absolute inset-x-0 bottom-0 w-[200%] h-[40vh] opacity-[0.08] animate-[drift_30s_linear_infinite]"
-        viewBox="0 0 800 200"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="currentColor" />
-            <stop offset="100%" stopColor="currentColor" />
-          </linearGradient>
-        </defs>
-        <g style={{ color: 'hsl(var(--primary))' }}>
-          <path d="M0,100 C150,50 250,150 400,100 C550,50 650,150 800,100 L800,200 L0,200 Z" fill="currentColor" />
-        </g>
-      </svg>
+      {/* Subtle aurora ribbons (theme-aware, modern) */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <span className="absolute left-[-20%] top-1/4 w-[140vw] h-[22vh] bg-gradient-to-r from-primary/10 via-transparent to-primary/10 dark:from-foreground/20 dark:to-foreground/20 blur-2xl opacity-70 animate-[pan_28s_ease-in-out_infinite]" style={{ transform: 'rotate(-6deg)' }} />
+        <span className="absolute right-[-25%] top-1/2 w-[160vw] h-[18vh] bg-gradient-to-r from-woices-bloom/10 via-transparent to-woices-sky/10 dark:from-foreground/15 dark:to-foreground/15 blur-2xl opacity-60 animate-[pan_32s_ease-in-out_infinite]" style={{ transform: 'rotate(4deg)' }} />
+        <span className="absolute -left-[15%] bottom-[12%] w-[120vw] h-[16vh] bg-gradient-to-r from-woices-violet/10 via-transparent to-woices-mint/10 dark:from-foreground/15 dark:to-foreground/15 blur-3xl opacity-50 animate-[pan_36s_ease-in-out_infinite]" style={{ transform: 'rotate(-2deg)' }} />
+      </div>
 
       {/* Local keyframes for subtle motion */}
       <style>{`
@@ -47,6 +37,11 @@ export function DynamicBackground() {
         @keyframes drift {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
+        }
+        @keyframes pan {
+          0% { transform: translateX(-8%); }
+          50% { transform: translateX(8%); }
+          100% { transform: translateX(-8%); }
         }
       `}</style>
     </div>
