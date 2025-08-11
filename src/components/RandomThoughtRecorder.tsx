@@ -9,7 +9,7 @@ import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { ModernVoicePlayer } from "@/components/ModernVoicePlayer"
 import { VotingExplanationModal } from "@/components/VotingExplanationModal"
 import { ThoughtActionButton } from "@/components/ThoughtActionButton"
-
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { formatTimeAgo } from "@/utils/timeUtils"
 
 type VoiceResponse = {
@@ -24,6 +24,7 @@ type VoiceResponse = {
 
 type Thought = {
   id: string
+  user_id?: string
   title: string
   description: string | null
   tags: string[] | null
@@ -45,14 +46,43 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   const [expandedThoughts, setExpandedThoughts] = useState<Set<string>>(new Set())
   const [savedThoughts, setSavedThoughts] = useState<Set<string>>(new Set())
   const [showVotingModal, setShowVotingModal] = useState(false)
+  const [profiles, setProfiles] = useState<Record<string, any>>({})
   const { getThoughts } = useSupabase()
   const { user } = useAuth()
+
+  const getProfileInitials = (userId?: string) => {
+    const p = userId ? profiles[userId] : undefined
+    if (!p) return 'U'
+    const dn = (p.display_name as string | undefined)?.trim()
+    if (dn && dn.length) {
+      const parts = dn.split(/\s+/).filter(Boolean)
+      return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase()
+    }
+    const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || ''))
+    return (initials || 'U').toUpperCase()
+  }
 
   const loadThoughts = async () => {
     try {
       setLoading(true)
       const data = await getThoughts()
       setThoughts(data || [])
+      try {
+        const userIds = Array.from(new Set((data || []).map((t: any) => t.user_id).filter(Boolean)))
+        if (userIds.length > 0) {
+          const { data: profs, error: profErr } = await supabase
+            .from('profiles')
+            .select('user_id, display_name, first_name, last_name')
+            .in('user_id', userIds)
+          if (!profErr && profs) {
+            const map: Record<string, any> = {}
+            for (const p of profs) map[p.user_id] = p
+            setProfiles(map)
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load profiles:', e)
+      }
     } catch (error) {
       console.error('Failed to load thoughts:', error)
     } finally {
@@ -231,7 +261,9 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
               <li key={thought.id} className="py-3 sm:py-6">
                 <article className="grid grid-cols-[28px,1fr] sm:grid-cols-[32px,1fr] gap-3 sm:gap-4">
                   <aside className="pt-1">
-                    <div className="size-6 sm:size-8 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom shadow-md" />
+                    <Avatar className="h-6 w-6 sm:h-8 sm:w-8 shadow-md" aria-label="Author avatar">
+                      <AvatarFallback className="text-[10px] sm:text-xs">{getProfileInitials(thought.user_id)}</AvatarFallback>
+                    </Avatar>
                   </aside>
 
                   <div className="min-w-0">
