@@ -195,7 +195,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Back</span>
           </Button>
-          <h2 className="text-lg sm:text-2xl font-bold">Break the Ice</h2>
+          <h2 className="text-base sm:text-2xl font-bold">Break the Ice</h2>
         </div>
         <Button
           variant="outline"
@@ -210,11 +210,11 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
 
       {loading && thoughts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">Loading thoughts...</p>
+          <p className="text-muted-foreground text-base sm:text-lg">Loading thoughts...</p>
         </div>
       ) : thoughts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-base sm:text-lg">
             No active thoughts yet. Create one first!
           </p>
         </div>
@@ -228,15 +228,15 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
             const isSaved = savedThoughts.has(thought.id)
 
             return (
-              <li key={thought.id} className="py-4 sm:py-6">
+              <li key={thought.id} className="py-3 sm:py-6">
                 <article className="grid grid-cols-[28px,1fr] sm:grid-cols-[32px,1fr] gap-3 sm:gap-4">
                   <aside className="pt-1">
-                    <div className="size-7 sm:size-8 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom shadow-md" />
+                    <div className="size-6 sm:size-8 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom shadow-md" />
                   </aside>
 
                   <div className="min-w-0">
                     <header className="flex items-start justify-between gap-3">
-                      <h3 className="text-base sm:text-lg font-semibold leading-tight flex-1">
+                      <h3 className="text-sm sm:text-lg font-semibold leading-tight flex-1">
                         {thought.title}
                       </h3>
                       <div className="flex items-center gap-2 flex-shrink-0">
