@@ -239,7 +239,7 @@ export function useSupabase() {
         if (!userCountry || userCountry !== (thought.country_code || '').toUpperCase()) {
           return { 
             canSubmit: false, 
-            reason: 'Regional post: only users in the same country can reply.' 
+            reason: 'Regional: Users from the same country can reply.' 
           }
         }
       }
