@@ -30,8 +30,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 84%;
-    --input: 214.3 31.8% 84%;
+    --border: 214.3 31.8% 80%;
+    --input: 214.3 31.8% 80%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
@@ -57,10 +57,10 @@
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222.2 50% 7.2%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222.2 50% 7.2%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
@@ -119,9 +119,15 @@
 
   /* Starry minimal surface */
   .starry-surface {
-    background-image: radial-gradient(hsl(var(--foreground) / 0.07) 1px, transparent 1.5px);
-    background-size: 24px 24px;
+    background-image: radial-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 2px);
+    background-size: 26px 26px;
     background-position: 0 0;
+  }
+
+  /* Dark mode: make stars more subtle */
+  .dark .starry-surface {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.05) 1px, transparent 2.4px);
+    background-size: 28px 28px;
   }
 
   /* Ambient twinkling stars around buttons */

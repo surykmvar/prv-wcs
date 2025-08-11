@@ -70,8 +70,10 @@ export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActi
         <Button
           disabled={!isAlreadyUploaded}
           onClick={isAlreadyUploaded ? () => setShowInfoModal(true) : undefined}
-          className={`w-full sm:w-auto bg-muted text-muted-foreground rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base h-9 sm:h-10 ${
-            isAlreadyUploaded ? "cursor-pointer hover:bg-muted/80" : "cursor-not-allowed"
+          className={`w-full sm:w-auto rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base h-9 sm:h-10 border border-border disabled:opacity-100 disabled:text-foreground ${
+            isAlreadyUploaded 
+              ? "bg-secondary text-foreground hover:bg-secondary/80"
+              : "bg-secondary/70 text-foreground cursor-not-allowed"
           }`}
         >
           <Mic className="w-4 h-4 mr-2" />

@@ -3,14 +3,14 @@ import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { Mic, Plus, Star } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
-import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
+// import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
 import { useAuth } from "@/hooks/useAuth"
 import { motion } from "framer-motion"
 import { SparkleField } from "@/components/SparkleField"
 
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
-  const [showRandomRecorder, setShowRandomRecorder] = useState(false)
+  // const [showRandomRecorder, setShowRandomRecorder] = useState(false)
   const [splash, setSplash] = useState<null | 'record' | 'write'>(null)
   const location = useLocation()
   const navigate = useNavigate()
@@ -20,30 +20,30 @@ export function MainActions() {
   useEffect(() => {
     console.log('MainActions route changed:', location.pathname); // Debug log
     if (location.pathname === '/') {
-      setShowRandomRecorder(false)
+      // setShowRandomRecorder(false)
       setShowWriteNote(false)
     }
   }, [location.pathname])
 
   const handleRandomRecorderSuccess = () => {
-    setShowRandomRecorder(false)
+    // setShowRandomRecorder(false)
   }
 
   const handleBack = () => {
-    setShowRandomRecorder(false)
+    // setShowRandomRecorder(false)
   }
 
   // Show random thought recorder when "Break the ice" is clicked
-  if (showRandomRecorder) {
-    return (
-      <div className="relative z-10">
-        <RandomThoughtRecorder
-          onBack={handleBack}
-          onSuccess={handleRandomRecorderSuccess}
-        />
-      </div>
-    )
-  }
+  // if (showRandomRecorder) {
+  //   return (
+  //     <div className="relative z-10">
+  //       <RandomThoughtRecorder
+  //         onBack={handleBack}
+  //         onSuccess={handleRandomRecorderSuccess}
+  //       />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-6xl mx-auto flex flex-col gap-6 mt-6 sm:mt-8 md:mt-10">
@@ -63,17 +63,17 @@ export function MainActions() {
             type="button"
             onClick={() => {
               if (!user) {
-                navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=record')}`)
+                navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/feed')}`)
               } else {
                 const isLarge = typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches
                 if (isLarge) {
                   setSplash('record')
                   setTimeout(() => {
-                    setShowRandomRecorder(true)
+                    navigate('/feed')
                     setSplash(null)
                   }, 280)
                 } else {
-                  setShowRandomRecorder(true)
+                  navigate('/feed')
                 }
               }
             }}

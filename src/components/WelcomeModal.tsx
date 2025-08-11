@@ -21,7 +21,7 @@ export function WelcomeModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-md border border-border/50">
+      <DialogContent className="sm:max-w-md bg-card/95 backdrop-blur-md border border-border">
         <DialogHeader className="text-center space-y-4">
           <div className="mx-auto text-4xl">🎧</div>
           <DialogTitle className="text-xl font-semibold">

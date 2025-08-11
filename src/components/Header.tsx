@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { useAuth } from '@/hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User } from 'lucide-react'
+import { LogOut, User, Mic } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +36,9 @@ export function Header() {
           Woices
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/feed')} className="hidden sm:inline-flex">
+            Feed
+          </Button>
           <ThemeToggle />
           
           {user ? (
@@ -47,6 +50,10 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => navigate('/feed')}>
+                  <Mic className="mr-2 h-4 w-4" />
+                  Feed
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   My Profile
@@ -60,6 +67,14 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/feed')}
+                className="sm:hidden"
+              >
+                Feed
+              </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
