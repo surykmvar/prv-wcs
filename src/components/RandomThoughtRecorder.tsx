@@ -279,30 +279,32 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
 
                     <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                        <span>
-                          {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
-                        </span>
+                        <div className="inline-flex items-center gap-2 whitespace-nowrap">
+                          <span>
+                            {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
+                          </span>
+                          {responseCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => toggleExpanded(thought.id)}
+                              className="inline-flex items-center gap-1 text-foreground hover:underline text-xs sm:text-sm"
+                              aria-expanded={isExpanded}
+                            >
+                              {isExpanded ? 'Hide replies' : 'View replies'}
+                              {isExpanded ? (
+                                <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                              ) : (
+                                <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                              )}
+                            </button>
+                          )}
+                        </div>
                         {thought.final_status !== 'pending' && (
                           <Badge variant="outline" className="text-xs">
                             {thought.final_status === 'bloomed' ? '🌸 Bloomed' :
                              thought.final_status === 'bricked' ? '🧱 Bricked' :
                              '🤔 Unclear'}
                           </Badge>
-                        )}
-                        {responseCount > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => toggleExpanded(thought.id)}
-                            className="inline-flex items-center gap-1 text-foreground hover:underline text-xs sm:text-sm"
-                            aria-expanded={isExpanded}
-                          >
-                            {isExpanded ? 'Hide replies' : 'View replies'}
-                            {isExpanded ? (
-                              <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
-                            ) : (
-                              <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
-                            )}
-                          </button>
                         )}
                       </div>
 
