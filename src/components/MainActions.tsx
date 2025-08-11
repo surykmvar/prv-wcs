@@ -81,7 +81,7 @@ export function MainActions() {
             aria-label="Break the ice and record a 60 second voice reply"
           >
             <div className="relative">
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform" style={{ filter: 'drop-shadow(0 0 18px hsl(var(--foreground)/0.35))' }}>
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-woices-violet to-woices-bloom flex items-center justify-center shadow-md group-hover:scale-105 transition-transform" style={{ filter: 'drop-shadow(0 0 18px hsl(var(--foreground)/0.35))' }}>
                 <Mic className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 {/* Smooth CSS-driven ripple rings (GPU-friendly) */}
                 <span className="ring-pulse r1" />
