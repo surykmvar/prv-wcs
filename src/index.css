@@ -164,14 +164,14 @@
   .i7 { --tx: -26px; --ty: -8px; }
   .i8 { --tx: 6px; --ty: 26px; }
 
-  /* Smooth ripple rings for mic button (reduced, contained) */
+  /* Smooth ripple rings for mic button (contained, visible) */
   @keyframes ripple-wave {
-    0% { transform: scale(0.95); opacity: 0.6; }
+    0% { transform: scale(0.9); opacity: 0.6; }
     70% { opacity: 0.25; }
-    100% { transform: scale(1.05); opacity: 0; }
+    100% { transform: scale(1.2); opacity: 0; }
   }
   .ring-pulse { position: absolute; inset: 0; border-radius: 9999px; will-change: transform, opacity; pointer-events: none; }
-  .ring-pulse.r1 { border: 3px solid hsl(var(--foreground) / 0.4); animation: ripple-wave 1600ms ease-out infinite; filter: drop-shadow(0 0 8px hsl(var(--foreground) / 0.2)); }
-  .ring-pulse.r2 { inset: 0; border: 2px solid hsl(var(--foreground) / 0.35); animation: ripple-wave 1900ms ease-out infinite; animation-delay: 200ms; filter: drop-shadow(0 0 6px hsl(var(--foreground) / 0.15)); }
-  .ring-pulse.r3 { inset: 0; border: 1px solid hsl(var(--foreground) / 0.3); animation: ripple-wave 2200ms ease-out infinite; animation-delay: 400ms; filter: drop-shadow(0 0 4px hsl(var(--foreground) / 0.12)); }
+  .ring-pulse.r1 { border: 3px solid hsl(var(--foreground) / 0.4); animation: ripple-wave 2000ms ease-out infinite; filter: drop-shadow(0 0 8px hsl(var(--foreground) / 0.2)); }
+  .ring-pulse.r2 { inset: 0; border: 2px solid hsl(var(--foreground) / 0.35); animation: ripple-wave 2300ms ease-out infinite; animation-delay: 200ms; filter: drop-shadow(0 0 6px hsl(var(--foreground) / 0.15)); }
+  .ring-pulse.r3 { inset: 0; border: 1px solid hsl(var(--foreground) / 0.3); animation: ripple-wave 2600ms ease-out infinite; animation-delay: 400ms; filter: drop-shadow(0 0 4px hsl(var(--foreground) / 0.12)); }
 }
