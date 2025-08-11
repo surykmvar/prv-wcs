@@ -40,7 +40,16 @@ export function Header() {
             Feed
           </Button>
           <ThemeToggle />
-          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/feed')}
+            className="sm:hidden"
+            aria-label="Feed"
+            title="Feed"
+          >
+            <Mic className="h-5 w-5" />
+          </Button>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -67,14 +76,6 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/feed')}
-                className="sm:hidden"
-              >
-                Feed
-              </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
