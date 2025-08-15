@@ -233,6 +233,21 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_public_voice_responses_for_feed: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          audio_url: string
+          classification: string
+          created_at: string
+          duration: number
+          fact_votes: number
+          id: string
+          myth_votes: number
+          thought_id: string
+          transcript: string
+          unclear_votes: number
+        }[]
+      }
       get_user_saved_thoughts: {
         Args: { user_uuid: string }
         Returns: {

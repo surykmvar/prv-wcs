@@ -166,29 +166,32 @@ export function useSupabase() {
     }
   }
 
-  // Get thoughts with their voice responses
+  // Get thoughts with their voice responses using secure function
   const getThoughts = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase
+      // First get active thoughts
+      const { data: thoughts, error: thoughtsError } = await supabase
         .from('thoughts')
-        .select(`
-          *,
-          voice_responses (
-            id,
-            audio_url,
-            duration,
-            created_at,
-            myth_votes,
-            fact_votes,
-            unclear_votes
-          )
-        `)
+        .select('*')
         .eq('status', 'active')
         .order('created_at', { ascending: false })
 
-      if (error) throw error
-      return data
+      if (thoughtsError) throw thoughtsError
+
+      // Then get voice responses using secure function
+      const { data: voiceResponses, error: voicesError } = await supabase
+        .rpc('get_public_voice_responses_for_feed')
+
+      if (voicesError) throw voicesError
+
+      // Combine the data
+      const thoughtsWithVoices = thoughts?.map(thought => ({
+        ...thought,
+        voice_responses: voiceResponses?.filter(voice => voice.thought_id === thought.id) || []
+      })) || []
+
+      return thoughtsWithVoices
     } catch (error) {
       console.error('Error fetching thoughts:', error)
       toast({
