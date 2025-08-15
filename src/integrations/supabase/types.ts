@@ -217,7 +217,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_display: {
+        Row: {
+          display_name: string | null
+          first_name: string | null
+          last_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          display_name?: string | null
+          first_name?: string | null
+          last_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          display_name?: string | null
+          first_name?: string | null
+          last_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       evaluate_thought_status: {
