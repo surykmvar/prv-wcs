@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -227,44 +227,44 @@ export type Database = {
       get_user_saved_thoughts: {
         Args: { user_uuid: string }
         Returns: {
-          id: string
-          title: string
-          description: string
-          tags: string[]
           created_at: string
+          description: string
           expires_at: string
-          status: string
+          id: string
           saved_at: string
+          status: string
+          tags: string[]
+          title: string
         }[]
       }
       get_user_thoughts: {
         Args: { user_uuid: string }
         Returns: {
-          id: string
-          title: string
-          description: string
-          tags: string[]
           created_at: string
+          description: string
           expires_at: string
-          status: string
           final_status: string
+          id: string
           max_woices_allowed: number
+          status: string
+          tags: string[]
+          title: string
           voice_response_count: number
         }[]
       }
       get_user_voice_responses: {
         Args: { user_uuid: string }
         Returns: {
-          id: string
-          thought_id: string
-          thought_title: string
+          audio_url: string
+          classification: string
           created_at: string
           duration: number
-          audio_url: string
-          transcript: string
-          classification: string
-          myth_votes: number
           fact_votes: number
+          id: string
+          myth_votes: number
+          thought_id: string
+          thought_title: string
+          transcript: string
           unclear_votes: number
         }[]
       }
