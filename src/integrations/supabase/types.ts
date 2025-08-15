@@ -241,6 +241,7 @@ export type Database = {
           created_at: string
           description: string
           expires_at: string
+          final_status: string
           id: string
           max_woices_allowed: number
           status: string
