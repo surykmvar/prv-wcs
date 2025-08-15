@@ -37,13 +37,30 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
-          <Button variant="ghost" size="sm" onClick={() => navigate('/feed')} className="hidden sm:inline-flex">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => {
+              if (!user) {
+                navigate('/auth?mode=signup&redirect=' + encodeURIComponent('/feed'))
+              } else {
+                navigate('/feed')
+              }
+            }} 
+            className="hidden sm:inline-flex"
+          >
             Feed
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/feed')}
+            onClick={() => {
+              if (!user) {
+                navigate('/auth?mode=signup&redirect=' + encodeURIComponent('/feed'))
+              } else {
+                navigate('/feed')
+              }
+            }}
             className="sm:hidden"
             aria-label="Feed"
             title="Feed"
