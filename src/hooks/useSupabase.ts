@@ -166,20 +166,17 @@ export function useSupabase() {
     }
   }
 
-  // Get thoughts with their voice responses using secure function
+  // Get thoughts with their voice responses using secure functions
   const getThoughts = async () => {
     setLoading(true)
     try {
-      // First get active thoughts
+      // Use secure function to get thoughts without exposing user data
       const { data: thoughts, error: thoughtsError } = await supabase
-        .from('thoughts')
-        .select('*')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
+        .rpc('get_public_thoughts_for_feed')
 
       if (thoughtsError) throw thoughtsError
 
-      // Then get voice responses using secure function
+      // Get voice responses using secure function
       const { data: voiceResponses, error: voicesError } = await supabase
         .rpc('get_public_voice_responses_for_feed')
 

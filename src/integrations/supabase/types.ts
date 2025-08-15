@@ -233,6 +233,23 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_public_thoughts_for_feed: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          city: string
+          country_code: string
+          created_at: string
+          description: string
+          expires_at: string
+          id: string
+          max_woices_allowed: number
+          status: string
+          tags: string[]
+          thought_scope: string
+          title: string
+          voice_response_count: number
+        }[]
+      }
       get_public_voice_responses_for_feed: {
         Args: Record<PropertyKey, never>
         Returns: {
