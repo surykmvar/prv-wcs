@@ -71,9 +71,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
         const userIds = Array.from(new Set((data || []).map((t: any) => t.user_id).filter(Boolean)))
         if (userIds.length > 0) {
           const { data: profs, error: profErr } = await supabase
-            .from('profiles')
-            .select('user_id, display_name, first_name, last_name')
-            .in('user_id', userIds)
+            .rpc('get_profile_display_info', { user_ids: userIds })
           if (!profErr && profs) {
             const map: Record<string, any> = {}
             for (const p of profs) map[p.user_id] = p
