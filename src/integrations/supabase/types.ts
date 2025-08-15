@@ -217,32 +217,21 @@ export type Database = {
       }
     }
     Views: {
-      profile_display: {
-        Row: {
-          display_name: string | null
-          first_name: string | null
-          last_name: string | null
-          user_id: string | null
-        }
-        Insert: {
-          display_name?: string | null
-          first_name?: string | null
-          last_name?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          display_name?: string | null
-          first_name?: string | null
-          last_name?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       evaluate_thought_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_profile_display_info: {
+        Args: { user_ids: string[] }
+        Returns: {
+          display_name: string
+          first_name: string
+          last_name: string
+          user_id: string
+        }[]
       }
       get_user_saved_thoughts: {
         Args: { user_uuid: string }
