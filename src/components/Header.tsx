@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import { useAuth } from '@/hooks/useAuth'
 import { useAdminRole } from '@/hooks/useAdminRole'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User, Mic, Shield } from 'lucide-react'
+import { LogOut, User, Mic, Shield, GitBranch } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -87,10 +87,17 @@ export function Header() {
                   My Profile
                 </DropdownMenuItem>
                 {isAdmin && (
-                  <DropdownMenuItem onClick={() => navigate('/admin')}>
-                    <Shield className="mr-2 h-4 w-4" />
-                    Admin Panel
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/admin')}>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin Panel
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/system-flow')}>
+                      <GitBranch className="mr-2 h-4 w-4" />
+                      System Flow
+                    </DropdownMenuItem>
+                  </>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>

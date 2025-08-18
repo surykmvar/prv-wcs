@@ -1,3 +1,4 @@
+
 import { useCallback, useState } from 'react';
 import { 
   ReactFlow, 
@@ -8,7 +9,6 @@ import {
   useNodesState, 
   useEdgesState,
   Connection,
-  Edge,
   MarkerType
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -16,116 +16,117 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import { AdminGuard } from '@/components/AdminGuard';
 
 const initialNodes = [
-  // Auth Flow
+  // Auth Flow - Neutral blue-gray
   {
     id: 'auth-1',
     type: 'input',
     position: { x: 50, y: 50 },
     data: { label: '🔐 Authentication' },
-    style: { background: '#e3f2fd', border: '2px solid #1976d2' }
+    style: { background: '#f8fafc', border: '2px solid #64748b', color: '#334155' }
   },
   {
     id: 'auth-2',
     position: { x: 250, y: 50 },
     data: { label: '👤 Profile Creation' },
-    style: { background: '#e8f5e8', border: '2px solid #388e3c' }
+    style: { background: '#f1f5f9', border: '2px solid #64748b', color: '#334155' }
   },
 
-  // Referral Flow
+  // Referral Flow - Muted amber
   {
     id: 'referral-1',
     position: { x: 50, y: 180 },
     data: { label: '🎫 Referral Codes' },
-    style: { background: '#fff3e0', border: '2px solid #f57c00' }
+    style: { background: '#fefce8', border: '2px solid #a3a3a3', color: '#525252' }
   },
   {
     id: 'referral-2',
     position: { x: 250, y: 180 },
     data: { label: '🔗 User Referrals' },
-    style: { background: '#fff3e0', border: '2px solid #f57c00' }
+    style: { background: '#fefce8', border: '2px solid #a3a3a3', color: '#525252' }
   },
 
-  // Content Flow
+  // Content Flow - Soft purple-gray
   {
     id: 'content-1',
     position: { x: 450, y: 50 },
     data: { label: '💭 Thoughts' },
-    style: { background: '#f3e5f5', border: '2px solid #7b1fa2' }
+    style: { background: '#faf7ff', border: '2px solid #9ca3af', color: '#374151' }
   },
   {
     id: 'content-2',
     position: { x: 650, y: 50 },
     data: { label: '🎤 Voice Responses' },
-    style: { background: '#f3e5f5', border: '2px solid #7b1fa2' }
+    style: { background: '#faf7ff', border: '2px solid #9ca3af', color: '#374151' }
   },
   {
     id: 'content-3',
     position: { x: 850, y: 50 },
     data: { label: '🗳️ User Votes' },
-    style: { background: '#f3e5f5', border: '2px solid #7b1fa2' }
+    style: { background: '#faf7ff', border: '2px solid #9ca3af', color: '#374151' }
   },
 
-  // Admin Flow
+  // Admin Flow - Soft red-gray
   {
     id: 'admin-1',
     position: { x: 450, y: 180 },
     data: { label: '👨‍💼 User Roles' },
-    style: { background: '#ffebee', border: '2px solid #d32f2f' }
+    style: { background: '#fef2f2', border: '2px solid #9ca3af', color: '#374151' }
   },
   {
     id: 'admin-2',
     position: { x: 650, y: 180 },
     data: { label: '📊 Admin Panel' },
-    style: { background: '#ffebee', border: '2px solid #d32f2f' }
+    style: { background: '#fef2f2', border: '2px solid #9ca3af', color: '#374151' }
   },
 
-  // Membership Flow
+  // Membership Flow - Soft green-gray
   {
     id: 'membership-1',
     position: { x: 850, y: 180 },
     data: { label: '💎 Membership Plans' },
-    style: { background: '#f1f8e9', border: '2px solid #689f38' }
+    style: { background: '#f7fdf7', border: '2px solid #9ca3af', color: '#374151' }
   },
   {
     id: 'membership-2',
     position: { x: 1050, y: 180 },
     data: { label: '👥 Subscribers' },
-    style: { background: '#f1f8e9', border: '2px solid #689f38' }
+    style: { background: '#f7fdf7', border: '2px solid #9ca3af', color: '#374151' }
   },
 
-  // Storage
+  // Storage - Neutral gray
   {
     id: 'storage-1',
     position: { x: 450, y: 310 },
     data: { label: '🗄️ Voice Storage' },
-    style: { background: '#fafafa', border: '2px solid #616161' }
+    style: { background: '#f9fafb', border: '2px solid #6b7280', color: '#374151' }
   }
 ];
 
 const initialEdges = [
   // Auth Flow
-  { id: 'e1', source: 'auth-1', target: 'auth-2', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e2', source: 'auth-2', target: 'content-1', markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: 'e1', source: 'auth-1', target: 'auth-2', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#64748b' } },
+  { id: 'e2', source: 'auth-2', target: 'content-1', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#64748b' } },
 
   // Referral Flow
-  { id: 'e3', source: 'auth-1', target: 'referral-1', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e4', source: 'referral-1', target: 'referral-2', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e5', source: 'referral-2', target: 'auth-2', markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: 'e3', source: 'auth-1', target: 'referral-1', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#a3a3a3' } },
+  { id: 'e4', source: 'referral-1', target: 'referral-2', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#a3a3a3' } },
+  { id: 'e5', source: 'referral-2', target: 'auth-2', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#a3a3a3' } },
 
   // Content Flow
-  { id: 'e6', source: 'content-1', target: 'content-2', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e7', source: 'content-2', target: 'content-3', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e8', source: 'content-2', target: 'storage-1', markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: 'e6', source: 'content-1', target: 'content-2', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#9ca3af' } },
+  { id: 'e7', source: 'content-2', target: 'content-3', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#9ca3af' } },
+  { id: 'e8', source: 'content-2', target: 'storage-1', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#6b7280' } },
 
   // Admin Flow
-  { id: 'e9', source: 'auth-2', target: 'admin-1', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e10', source: 'admin-1', target: 'admin-2', markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: 'e9', source: 'auth-2', target: 'admin-1', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#9ca3af' } },
+  { id: 'e10', source: 'admin-1', target: 'admin-2', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#9ca3af' } },
 
   // Membership Flow
-  { id: 'e11', source: 'admin-2', target: 'membership-1', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e12', source: 'membership-1', target: 'membership-2', markerEnd: { type: MarkerType.ArrowClosed } }
+  { id: 'e11', source: 'admin-2', target: 'membership-1', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#9ca3af' } },
+  { id: 'e12', source: 'membership-1', target: 'membership-2', markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#9ca3af' } }
 ];
 
 export default function SystemFlow() {
@@ -143,10 +144,10 @@ export default function SystemFlow() {
     setHighlightPath(path);
     
     const pathColors = {
-      auth: '#1976d2',
-      referrals: '#f57c00',
-      content: '#7b1fa2',
-      memberships: '#689f38'
+      auth: '#64748b',
+      referrals: '#a3a3a3',
+      content: '#9ca3af',
+      memberships: '#9ca3af'
     };
 
     const pathNodeIds = {
@@ -162,12 +163,8 @@ export default function SystemFlow() {
         style: {
           ...node.style,
           boxShadow: pathNodeIds[path as keyof typeof pathNodeIds]?.includes(node.id)
-            ? `0 0 10px ${pathColors[path as keyof typeof pathColors]}`
-            : 'none',
-          transform: pathNodeIds[path as keyof typeof pathNodeIds]?.includes(node.id)
-            ? 'scale(1.1)'
-            : 'scale(1)',
-          transition: 'all 0.3s ease'
+            ? `0 0 8px ${pathColors[path as keyof typeof pathColors]}`
+            : 'none'
         }
       }))
     );
@@ -180,16 +177,14 @@ export default function SystemFlow() {
         ...node,
         style: {
           ...node.style,
-          boxShadow: 'none',
-          transform: 'scale(1)',
-          transition: 'all 0.3s ease'
+          boxShadow: 'none'
         }
       }))
     );
   };
 
   return (
-    <>
+    <AdminGuard>
       <Helmet>
         <title>System Flow - Woices Architecture</title>
         <meta name="description" content="Interactive visualization of the Woices application architecture and data flow" />
@@ -208,28 +203,28 @@ export default function SystemFlow() {
         <div className="absolute top-4 right-4 z-10 flex gap-2 flex-wrap">
           <Badge 
             variant={highlightPath === 'auth' ? 'default' : 'outline'}
-            className="cursor-pointer hover:bg-blue-100"
+            className="cursor-pointer"
             onClick={() => highlightPath === 'auth' ? clearHighlight() : highlightPathNodes('auth')}
           >
             🔐 Auth Flow
           </Badge>
           <Badge 
             variant={highlightPath === 'referrals' ? 'default' : 'outline'}
-            className="cursor-pointer hover:bg-orange-100"
+            className="cursor-pointer"
             onClick={() => highlightPath === 'referrals' ? clearHighlight() : highlightPathNodes('referrals')}
           >
             🎫 Referrals
           </Badge>
           <Badge 
             variant={highlightPath === 'content' ? 'default' : 'outline'}
-            className="cursor-pointer hover:bg-purple-100"
+            className="cursor-pointer"
             onClick={() => highlightPath === 'content' ? clearHighlight() : highlightPathNodes('content')}
           >
             💭 Content
           </Badge>
           <Badge 
             variant={highlightPath === 'memberships' ? 'default' : 'outline'}
-            className="cursor-pointer hover:bg-green-100"
+            className="cursor-pointer"
             onClick={() => highlightPath === 'memberships' ? clearHighlight() : highlightPathNodes('memberships')}
           >
             💎 Memberships
@@ -248,11 +243,11 @@ export default function SystemFlow() {
           fitView
           attributionPosition="bottom-left"
         >
-          <Background />
+          <Background color="#e2e8f0" />
           <Controls />
-          <MiniMap />
+          <MiniMap nodeColor="#f1f5f9" maskColor="rgba(240, 240, 240, 0.6)" />
         </ReactFlow>
       </div>
-    </>
+    </AdminGuard>
   );
 }

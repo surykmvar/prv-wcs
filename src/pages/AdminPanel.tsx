@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdminRole } from '@/hooks/useAdminRole';
 import { supabase } from '@/integrations/supabase/client';
+import { AdminGuard } from '@/components/AdminGuard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,12 +11,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Users, MessageSquare, Mic, Plus, Edit, Trash, Download, Search, Filter } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 export default function AdminPanel() {
   const navigate = useNavigate();
-  const { isAdmin, loading: roleLoading } = useAdminRole();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [thoughts, setThoughts] = useState([]);
@@ -48,15 +47,8 @@ export default function AdminPanel() {
   });
 
   useEffect(() => {
-    if (roleLoading) return;
-    
-    if (!isAdmin) {
-      navigate('/');
-      return;
-    }
-
     loadAdminData();
-  }, [isAdmin, roleLoading, navigate]);
+  }, []);
 
   const loadAdminData = async () => {
     try {
@@ -280,20 +272,18 @@ export default function AdminPanel() {
     user.email.toLowerCase().includes(userSearch.toLowerCase())
   );
 
-  if (roleLoading || loading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
+      <AdminGuard>
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminGuard>
     );
   }
 
-  if (!isAdmin) {
-    return null;
-  }
-
   return (
-    <>
+    <AdminGuard>
       <Helmet>
         <title>Admin Panel - Woices</title>
         <meta name="description" content="Admin panel for managing users, referrals, and membership plans" />
@@ -302,9 +292,14 @@ export default function AdminPanel() {
       <div className="container mx-auto p-6 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <Button onClick={() => navigate('/')} variant="outline">
-            Back to App
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate('/system-flow')} variant="outline">
+              System Flow
+            </Button>
+            <Button onClick={() => navigate('/')} variant="outline">
+              Back to App
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
@@ -654,6 +649,6 @@ export default function AdminPanel() {
           </TabsContent>
         </Tabs>
       </div>
-    </>
+    </AdminGuard>
   );
 }
