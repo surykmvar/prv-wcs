@@ -26,22 +26,22 @@ export function VoiceReplyInfoModal({ open, onOpenChange }: VoiceReplyInfoModalP
           </DialogTitle>
           <DialogDescription className="text-center space-y-3 mt-4">
             <p className="text-muted-foreground">
-              You have already uploaded your Woice reply to this thought. Each user can only submit one voice response per thought.
+              You've already submitted your Woice reply. Only one voice response per user is allowed.
             </p>
             
-            <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+            <div className="bg-muted/50 rounded-lg p-3 space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <RotateCcw className="w-4 h-4" />
-                <span className="font-medium">Want to change your reply?</span>
+                <span className="font-medium">Want to change it?</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                You can modify your voice reply if it gets voted as "Unclear" by other users and the thought poster.
+                You can re-record if your reply gets voted "Unclear".
               </p>
             </div>
             
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Users className="w-4 h-4" />
-              <span>Thank you for contributing to this thought!</span>
+              <span>Thanks for contributing!</span>
             </div>
           </DialogDescription>
         </DialogHeader>

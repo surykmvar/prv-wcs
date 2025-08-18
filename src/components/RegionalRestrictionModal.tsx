@@ -26,22 +26,22 @@ export function RegionalRestrictionModal({ open, onOpenChange }: RegionalRestric
           </DialogTitle>
           <DialogDescription className="text-center space-y-3 mt-4">
             <p className="text-muted-foreground">
-              This thought was posted to receive voice replies from users in a specific region only. Since you're not from that region, you cannot record a reply.
+              This thought is for users from a specific region only. You're not eligible to record a reply.
             </p>
             
-            <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+            <div className="bg-muted/50 rounded-lg p-3 space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Globe className="w-4 h-4" />
-                <span className="font-medium">Why regional restrictions?</span>
+                <span className="font-medium">Why regional only?</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Some thoughts are created to gather perspectives from people in specific regions, as local context and cultural understanding are important for meaningful responses.
+                Local context and cultural perspective matter for this topic.
               </p>
             </div>
             
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Info className="w-4 h-4" />
-              <span>You can still listen to replies from regional users!</span>
+              <span>You can still listen to regional replies!</span>
             </div>
           </DialogDescription>
         </DialogHeader>
