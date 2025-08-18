@@ -10,8 +10,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search } from 'lucide-react';
+import { format } from 'date-fns';
+import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search, CalendarIcon } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 export default function AdminPanel() {
@@ -33,7 +36,7 @@ export default function AdminPanel() {
   const [newCode, setNewCode] = useState({
     code: '',
     maxUses: '',
-    expiresAt: '',
+    expiresAt: undefined as Date | undefined,
     assignedTo: ''
   });
 
@@ -123,7 +126,7 @@ export default function AdminPanel() {
         .insert({
           code: newCode.code,
           max_uses: newCode.maxUses ? parseInt(newCode.maxUses) : null,
-          expires_at: newCode.expiresAt || null,
+          expires_at: newCode.expiresAt ? newCode.expiresAt.toISOString() : null,
           assigned_to: newCode.assignedTo || null
         });
 
@@ -134,7 +137,7 @@ export default function AdminPanel() {
         description: "Referral code created successfully"
       });
 
-      setNewCode({ code: '', maxUses: '', expiresAt: '', assignedTo: '' });
+      setNewCode({ code: '', maxUses: '', expiresAt: undefined, assignedTo: '' });
       loadAdminData();
     } catch (error) {
       console.error('Error creating referral code:', error);
@@ -447,12 +450,26 @@ export default function AdminPanel() {
                     </div>
                     <div>
                       <Label htmlFor="expiresAt">Expires At (optional)</Label>
-                      <Input
-                        id="expiresAt"
-                        type="datetime-local"
-                        value={newCode.expiresAt}
-                        onChange={(e) => setNewCode({...newCode, expiresAt: e.target.value})}
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full justify-start text-left font-normal"
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {newCode.expiresAt ? format(newCode.expiresAt, "PPP p") : "Pick a date and time"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={newCode.expiresAt}
+                            onSelect={(date) => setNewCode({...newCode, expiresAt: date})}
+                            initialFocus
+                            className="p-3 pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div>
                       <Label htmlFor="assignedTo">Assign to User ID (optional)</Label>
