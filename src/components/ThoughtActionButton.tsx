@@ -4,6 +4,7 @@ import { Mic } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useUserSession } from "@/hooks/useUserSession"
 import { VoiceReplyInfoModal } from "@/components/VoiceReplyInfoModal"
+import { RegionalRestrictionModal } from "@/components/RegionalRestrictionModal"
 
 interface ThoughtActionButtonProps {
   thoughtId: string
@@ -17,6 +18,7 @@ export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActi
   const [submitMessage, setSubmitMessage] = useState("")
   const [loading, setLoading] = useState(true)
   const [showInfoModal, setShowInfoModal] = useState(false)
+  const [showRegionalModal, setShowRegionalModal] = useState(false)
 
   const checkUserPermission = useCallback(async () => {
     if (sessionLoading) {
@@ -64,14 +66,24 @@ export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActi
 
   if (!canSubmit) {
     const isAlreadyUploaded = submitMessage.includes("already")
+    const isRegionalRestriction = submitMessage.toLowerCase().includes("regional") || submitMessage.toLowerCase().includes("region")
+    const isClickable = isAlreadyUploaded || isRegionalRestriction
+    
+    const handleClick = () => {
+      if (isAlreadyUploaded) {
+        setShowInfoModal(true)
+      } else if (isRegionalRestriction) {
+        setShowRegionalModal(true)
+      }
+    }
     
     return (
       <>
         <Button
-          disabled={!isAlreadyUploaded}
-          onClick={isAlreadyUploaded ? () => setShowInfoModal(true) : undefined}
+          disabled={!isClickable}
+          onClick={isClickable ? handleClick : undefined}
           className={`w-full sm:w-auto bg-muted text-muted-foreground rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base h-9 sm:h-10 ${
-            isAlreadyUploaded ? "cursor-pointer hover:bg-muted/80" : "cursor-not-allowed"
+            isClickable ? "cursor-pointer hover:bg-muted/80" : "cursor-not-allowed"
           }`}
         >
           <Mic className="w-4 h-4 mr-2" />
@@ -86,6 +98,11 @@ export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActi
         <VoiceReplyInfoModal 
           open={showInfoModal}
           onOpenChange={setShowInfoModal}
+        />
+        
+        <RegionalRestrictionModal 
+          open={showRegionalModal}
+          onOpenChange={setShowRegionalModal}
         />
       </>
     )
