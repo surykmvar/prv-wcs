@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Users, MessageSquare, Mic, Plus, Edit, Trash } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mic, Plus, Edit, Trash, Download, Search, Filter } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 export default function AdminPanel() {
@@ -23,6 +23,12 @@ export default function AdminPanel() {
   const [voiceResponses, setVoiceResponses] = useState([]);
   const [referralCodes, setReferralCodes] = useState([]);
   const [membershipPlans, setMembershipPlans] = useState([]);
+  const [userReferrals, setUserReferrals] = useState([]);
+  const [userProfiles, setUserProfiles] = useState([]);
+  
+  // Filters
+  const [codeFilter, setCodeFilter] = useState('all');
+  const [userSearch, setUserSearch] = useState('');
   
   // New referral code form
   const [newCode, setNewCode] = useState({
@@ -87,11 +93,25 @@ export default function AdminPanel() {
         .select('*');
       if (plansError) throw plansError;
 
+      // Load user referrals
+      const { data: referralsData, error: referralsError } = await supabase
+        .from('user_referrals')
+        .select('*');
+      if (referralsError) throw referralsError;
+
+      // Load user profiles
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('user_id, display_name, first_name, last_name');
+      if (profilesError) throw profilesError;
+
       setUsers(usersData || []);
       setThoughts(thoughtsData || []);
       setVoiceResponses(voiceData || []);
       setReferralCodes(codesData || []);
       setMembershipPlans(plansData || []);
+      setUserReferrals(referralsData || []);
+      setUserProfiles(profilesData || []);
     } catch (error) {
       console.error('Error loading admin data:', error);
       toast({
@@ -192,6 +212,74 @@ export default function AdminPanel() {
     }
   };
 
+  const exportReferralsCSV = () => {
+    const csvContent = [
+      ['Code', 'Uses', 'Max Uses', 'Active', 'Expires', 'Created', 'Assigned To'].join(','),
+      ...referralCodes.map((code: any) => [
+        code.code,
+        code.current_uses,
+        code.max_uses || 'Unlimited',
+        code.is_active ? 'Yes' : 'No',
+        code.expires_at ? new Date(code.expires_at).toISOString() : 'Never',
+        new Date(code.created_at).toISOString(),
+        code.assigned_to || 'Unassigned'
+      ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `referral-codes-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const assignCodeToUser = async (codeId: string, userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('referral_codes')
+        .update({ assigned_to: userId })
+        .eq('id', codeId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Code assigned successfully"
+      });
+
+      loadAdminData();
+    } catch (error) {
+      console.error('Error assigning code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to assign code",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const filteredCodes = referralCodes.filter((code: any) => {
+    if (codeFilter === 'active') return code.is_active;
+    if (codeFilter === 'inactive') return !code.is_active;
+    if (codeFilter === 'expired') return code.expires_at && new Date(code.expires_at) < new Date();
+    return true;
+  });
+
+  const getUserReferralCounts = (userId: string) => {
+    const sentCount = userReferrals.filter((r: any) => r.referrer_id === userId).length;
+    const receivedCount = userReferrals.filter((r: any) => r.referred_id === userId).length;
+    return { sent: sentCount, received: receivedCount };
+  };
+
+  const filteredUsers = users.filter((user: any) => 
+    userSearch === '' || 
+    user.email.toLowerCase().includes(userSearch.toLowerCase())
+  );
+
   if (roleLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -279,30 +367,59 @@ export default function AdminPanel() {
                 <CardDescription>View and manage registered users</CardDescription>
               </CardHeader>
               <CardContent>
+                <div className="mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search users by email..."
+                      value={userSearch}
+                      onChange={(e) => setUserSearch(e.target.value)}
+                      className="pl-8"
+                    />
+                  </div>
+                </div>
                 <div className="space-y-4">
-                  {users.map((user: any) => (
-                    <div key={user.user_id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <div className="font-medium">{user.email}</div>
-                        <div className="text-sm text-muted-foreground">
-                          Joined: {new Date(user.created_at).toLocaleDateString()}
-                        </div>
-                        {user.last_sign_in_at && (
+                  {filteredUsers.map((user: any) => {
+                    const referralCounts = getUserReferralCounts(user.user_id);
+                    const profile = userProfiles.find((p: any) => p.user_id === user.user_id);
+                    return (
+                      <div key={user.user_id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <div className="font-medium">{user.email}</div>
+                          {profile && (
+                            <div className="text-sm text-muted-foreground">
+                              {profile.display_name || `${profile.first_name || ''} ${profile.last_name || ''}`.trim()}
+                            </div>
+                          )}
                           <div className="text-sm text-muted-foreground">
-                            Last login: {new Date(user.last_sign_in_at).toLocaleDateString()}
+                            Joined: {new Date(user.created_at).toLocaleDateString()}
                           </div>
-                        )}
+                          {user.last_sign_in_at && (
+                            <div className="text-sm text-muted-foreground">
+                              Last login: {new Date(user.last_sign_in_at).toLocaleDateString()}
+                            </div>
+                          )}
+                          <div className="text-xs text-muted-foreground mt-1">
+                            ID: {user.user_id}
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="secondary">
+                            {thoughts.filter((t: any) => t.user_id === user.user_id).length} thoughts
+                          </Badge>
+                          <Badge variant="secondary">
+                            {voiceResponses.filter((v: any) => v.user_id === user.user_id).length} responses
+                          </Badge>
+                          <Badge variant="outline">
+                            {referralCounts.sent} referrals sent
+                          </Badge>
+                          <Badge variant="outline">
+                            {referralCounts.received > 0 ? '1 referral received' : 'Not referred'}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Badge variant="secondary">
-                          {thoughts.filter((t: any) => t.user_id === user.user_id).length} thoughts
-                        </Badge>
-                        <Badge variant="secondary">
-                          {voiceResponses.filter((v: any) => v.user_id === user.user_id).length} responses
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -360,34 +477,64 @@ export default function AdminPanel() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Referral Codes</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Referral Codes</CardTitle>
+                    </div>
+                    <div className="flex gap-2">
+                      <select 
+                        value={codeFilter}
+                        onChange={(e) => setCodeFilter(e.target.value)}
+                        className="px-3 py-1 border rounded-md text-sm"
+                      >
+                        <option value="all">All Codes</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="expired">Expired</option>
+                      </select>
+                      <Button variant="outline" size="sm" onClick={exportReferralsCSV}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Export CSV
+                      </Button>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {referralCodes.map((code: any) => (
-                      <div key={code.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
-                          <div className="font-mono font-bold">{code.code}</div>
-                          <div className="text-sm text-muted-foreground">
-                            Uses: {code.current_uses}{code.max_uses ? ` / ${code.max_uses}` : ' (unlimited)'}
-                          </div>
-                          {code.expires_at && (
+                     {filteredCodes.map((code: any) => {
+                      const assignedUser = users.find((u: any) => u.user_id === code.assigned_to);
+                      return (
+                        <div key={code.id} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div>
+                            <div className="font-mono font-bold">{code.code}</div>
                             <div className="text-sm text-muted-foreground">
-                              Expires: {new Date(code.expires_at).toLocaleDateString()}
+                              Uses: {code.current_uses}{code.max_uses ? ` / ${code.max_uses}` : ' (unlimited)'}
                             </div>
-                          )}
+                            {code.expires_at && (
+                              <div className="text-sm text-muted-foreground">
+                                Expires: {new Date(code.expires_at).toLocaleDateString()}
+                              </div>
+                            )}
+                            {assignedUser ? (
+                              <div className="text-sm text-muted-foreground">
+                                Assigned to: {assignedUser.email}
+                              </div>
+                            ) : (
+                              <div className="text-sm text-red-500">Unassigned</div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant={code.is_active ? "default" : "secondary"}>
+                              {code.is_active ? "Active" : "Inactive"}
+                            </Badge>
+                            <Switch
+                              checked={code.is_active}
+                              onCheckedChange={() => toggleCodeStatus(code.id, code.is_active)}
+                            />
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={code.is_active ? "default" : "secondary"}>
-                            {code.is_active ? "Active" : "Inactive"}
-                          </Badge>
-                          <Switch
-                            checked={code.is_active}
-                            onCheckedChange={() => toggleCodeStatus(code.id, code.is_active)}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>

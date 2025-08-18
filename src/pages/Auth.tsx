@@ -116,14 +116,36 @@ export default function Auth() {
         try {
           const { data: session } = await supabase.auth.getSession()
           if (session?.session) {
-            const { data: referralData, error: referralError } = await supabase.functions.invoke('apply-referral', {
+            const response = await supabase.functions.invoke('apply-referral', {
               body: { referralCode: referralCode.trim() }
             });
-            
-            if (referralData?.success) {
+
+            if (response.error) {
+              console.error('Error applying referral:', response.error);
+              return;
+            }
+
+            const result = response.data;
+            if (result.success) {
               toast({
                 title: "Referral Applied!",
-                description: "Your referral code has been applied successfully.",
+                description: "Your referral code has been applied successfully! 🎉"
+              });
+            } else {
+              // Handle specific error codes with better messages
+              const errorMessages = {
+                'ALREADY_REFERRED': 'You have already been referred by someone else.',
+                'INVALID_CODE': 'This referral code is invalid or has been deactivated.',
+                'EXPIRED_CODE': 'This referral code has expired.',
+                'MAX_USES_REACHED': 'This referral code has reached its usage limit.',
+                'SELF_REFERRAL': 'You cannot use your own referral code.'
+              };
+              
+              const message = errorMessages[result.code as keyof typeof errorMessages] || result.message || 'Unknown error occurred';
+              toast({
+                title: "Referral Code Issue",
+                description: message,
+                variant: "destructive"
               });
             }
           }

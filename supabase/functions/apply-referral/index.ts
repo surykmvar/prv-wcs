@@ -38,8 +38,13 @@ serve(async (req) => {
       .single();
 
     if (existingReferral) {
+      console.log(`User ${userData.user.id} already referred, rejecting duplicate referral attempt`);
       return new Response(
-        JSON.stringify({ success: false, message: 'User has already been referred' }),
+        JSON.stringify({ 
+          success: false, 
+          message: 'User has already been referred',
+          code: 'ALREADY_REFERRED' 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
@@ -53,32 +58,52 @@ serve(async (req) => {
       .single();
 
     if (codeError || !codeData) {
+      console.log(`Invalid referral code attempt: ${referralCode}, error: ${codeError?.message}`);
       return new Response(
-        JSON.stringify({ success: false, message: 'Invalid or inactive referral code' }),
+        JSON.stringify({ 
+          success: false, 
+          message: 'Invalid or inactive referral code',
+          code: 'INVALID_CODE' 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
     // Check if code has expired
     if (codeData.expires_at && new Date(codeData.expires_at) < new Date()) {
+      console.log(`Expired referral code used: ${referralCode}, expired at: ${codeData.expires_at}`);
       return new Response(
-        JSON.stringify({ success: false, message: 'Referral code has expired' }),
+        JSON.stringify({ 
+          success: false, 
+          message: 'Referral code has expired',
+          code: 'EXPIRED_CODE' 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
     // Check if code has reached max uses
     if (codeData.max_uses && codeData.current_uses >= codeData.max_uses) {
+      console.log(`Max uses reached for code: ${referralCode}, ${codeData.current_uses}/${codeData.max_uses}`);
       return new Response(
-        JSON.stringify({ success: false, message: 'Referral code has reached maximum uses' }),
+        JSON.stringify({ 
+          success: false, 
+          message: 'Referral code has reached maximum uses',
+          code: 'MAX_USES_REACHED' 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
     // Check if user is trying to use their own code
     if (codeData.assigned_to === userData.user.id) {
+      console.log(`User ${userData.user.id} attempted to use their own referral code: ${referralCode}`);
       return new Response(
-        JSON.stringify({ success: false, message: 'Cannot use your own referral code' }),
+        JSON.stringify({ 
+          success: false, 
+          message: 'Cannot use your own referral code',
+          code: 'SELF_REFERRAL' 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
@@ -110,9 +135,18 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error applying referral code:', error);
+    console.error('Error applying referral code:', {
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString(),
+      userId: userData?.user?.id || 'unknown'
+    });
     return new Response(
-      JSON.stringify({ success: false, message: error.message }),
+      JSON.stringify({ 
+        success: false, 
+        message: 'Internal server error',
+        code: 'INTERNAL_ERROR' 
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }

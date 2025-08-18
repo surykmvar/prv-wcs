@@ -2,8 +2,9 @@
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { useAuth } from '@/hooks/useAuth'
+import { useAdminRole } from '@/hooks/useAdminRole'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User, Mic } from 'lucide-react'
+import { LogOut, User, Mic, Shield } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
 
 export function Header() {
   const { user, signOut } = useAuth()
+  const { isAdmin } = useAdminRole()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -84,6 +86,12 @@ export function Header() {
                   <User className="mr-2 h-4 w-4" />
                   My Profile
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => navigate('/admin')}>
+                    <Shield className="mr-2 h-4 w-4" />
+                    Admin Panel
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />

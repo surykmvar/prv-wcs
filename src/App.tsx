@@ -14,6 +14,7 @@ import Profile from './pages/Profile'
 import AdminPanel from './pages/AdminPanel'
 import NotFound from "./pages/NotFound";
 import Feed from './pages/Feed'
+import SystemFlow from './pages/SystemFlow'
 
 const queryClient = new QueryClient();
 
@@ -44,14 +45,12 @@ const App = () => (
                     </AuthGuard>
                   } 
                 />
-                <Route 
-                  path="/admin" 
-                  element={
-                    <AuthGuard requireAuth={true}>
-                      <AdminPanel />
-                    </AuthGuard>
-                  } 
-                />
+                <Route path="/admin" element={
+                  <AuthGuard requireAuth={true}>
+                    <AdminPanel />
+                  </AuthGuard>
+                } />
+                <Route path="/system-flow" element={<SystemFlow />} />
                 <Route path="/feed" element={<Feed />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
