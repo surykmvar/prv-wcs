@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
@@ -474,20 +475,21 @@ export default function AdminPanel() {
                       <CardTitle>Referral Codes</CardTitle>
                     </div>
                     <div className="flex gap-2">
-                      <select 
-                        value={codeFilter}
-                        onChange={(e) => setCodeFilter(e.target.value)}
-                        className="px-3 py-1 border rounded-md text-sm"
-                      >
-                        <option value="all">All Codes</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="expired">Expired</option>
-                      </select>
-                      <Button variant="outline" size="sm" onClick={exportReferralsCSV}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Export CSV
-                      </Button>
+<Select value={codeFilter} onValueChange={setCodeFilter}>
+  <SelectTrigger className="w-[180px]">
+    <SelectValue placeholder="Filter codes" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="all">All Codes</SelectItem>
+    <SelectItem value="active">Active</SelectItem>
+    <SelectItem value="inactive">Inactive</SelectItem>
+    <SelectItem value="expired">Expired</SelectItem>
+  </SelectContent>
+</Select>
+<Button variant="secondary" size="sm" onClick={exportReferralsCSV}>
+  <Download className="h-4 w-4 mr-2" />
+  Export CSV
+</Button>
                     </div>
                   </div>
                 </CardHeader>
