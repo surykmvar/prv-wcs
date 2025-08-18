@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthGuard } from '@/components/AuthGuard'
+import { AdminGuard } from '@/components/AdminGuard'
 import { HelmetProvider } from 'react-helmet-async'
 import Index from "./pages/Index";
 import Auth from './pages/Auth'
@@ -46,11 +47,15 @@ const App = () => (
                   } 
                 />
                 <Route path="/admin" element={
-                  <AuthGuard requireAuth={true}>
+                  <AdminGuard>
                     <AdminPanel />
-                  </AuthGuard>
+                  </AdminGuard>
                 } />
-                <Route path="/system-flow" element={<SystemFlow />} />
+                <Route path="/system-flow" element={
+                  <AdminGuard>
+                    <SystemFlow />
+                  </AdminGuard>
+                } />
                 <Route path="/feed" element={<Feed />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

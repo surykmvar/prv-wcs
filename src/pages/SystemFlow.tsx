@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { AdminGuard } from '@/components/AdminGuard';
 
 const initialNodes = [
   // Auth Flow - Neutral blue-gray
@@ -184,7 +183,7 @@ export default function SystemFlow() {
   };
 
   return (
-    <AdminGuard>
+    <>
       <Helmet>
         <title>System Flow - Woices Architecture</title>
         <meta name="description" content="Interactive visualization of the Woices application architecture and data flow" />
@@ -248,6 +247,6 @@ export default function SystemFlow() {
           <MiniMap nodeColor="#f1f5f9" maskColor="rgba(240, 240, 240, 0.6)" />
         </ReactFlow>
       </div>
-    </AdminGuard>
+    </>
   );
 }

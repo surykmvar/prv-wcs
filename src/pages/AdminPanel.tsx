@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { AdminGuard } from '@/components/AdminGuard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -274,16 +273,14 @@ export default function AdminPanel() {
 
   if (loading) {
     return (
-      <AdminGuard>
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      </AdminGuard>
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
     );
   }
 
   return (
-    <AdminGuard>
+    <>
       <Helmet>
         <title>Admin Panel - Woices</title>
         <meta name="description" content="Admin panel for managing users, referrals, and membership plans" />
@@ -649,6 +646,6 @@ export default function AdminPanel() {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminGuard>
+    </>
   );
 }
