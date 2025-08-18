@@ -11,6 +11,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import Index from "./pages/Index";
 import Auth from './pages/Auth'
 import Profile from './pages/Profile'
+import AdminPanel from './pages/AdminPanel'
 import NotFound from "./pages/NotFound";
 import Feed from './pages/Feed'
 
@@ -40,6 +41,14 @@ const App = () => (
                   element={
                     <AuthGuard requireAuth={true}>
                       <Profile />
+                    </AuthGuard>
+                  } 
+                />
+                <Route 
+                  path="/admin" 
+                  element={
+                    <AuthGuard requireAuth={true}>
+                      <AdminPanel />
                     </AuthGuard>
                   } 
                 />

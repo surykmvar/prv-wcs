@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      membership_plans: {
+        Row: {
+          created_at: string
+          currency: string
+          description: string | null
+          features: string[] | null
+          id: string
+          interval_type: string
+          is_active: boolean | null
+          name: string
+          price_cents: number
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          interval_type?: string
+          is_active?: boolean | null
+          name: string
+          price_cents?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          interval_type?: string
+          is_active?: boolean | null
+          name?: string
+          price_cents?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           auth_method: string | null
@@ -50,6 +92,45 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          assigned_to: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          current_uses: number | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          max_uses: number | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          code: string
+          created_at?: string
+          created_by?: string | null
+          current_uses?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          current_uses?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       saved_thoughts: {
         Row: {
           created_at: string | null
@@ -75,6 +156,53 @@ export type Database = {
             columns: ["thought_id"]
             isOneToOne: false
             referencedRelation: "thoughts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          plan_id: string | null
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          plan_id?: string | null
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          plan_id?: string | null
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscribers_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "membership_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -124,6 +252,59 @@ export type Database = {
           thought_scope?: string
           title?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referral_code_id: string | null
+          referred_id: string
+          referrer_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referral_code_id?: string | null
+          referred_id: string
+          referrer_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referral_code_id?: string | null
+          referred_id?: string
+          referrer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_referrals_referral_code_id_fkey"
+            columns: ["referral_code_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -224,6 +405,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_auth_users_basic: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          email: string
+          last_sign_in_at: string
+          user_id: string
+        }[]
+      }
       get_profile_display_info: {
         Args: { user_ids: string[] }
         Returns: {
@@ -310,13 +500,20 @@ export type Database = {
           unclear_votes: number
         }[]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       update_expired_thoughts: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -443,6 +640,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

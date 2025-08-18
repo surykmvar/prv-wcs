@@ -28,6 +28,7 @@ export default function Auth() {
   const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [referralCode, setReferralCode] = useState('')
   const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -108,6 +109,28 @@ export default function Auth() {
         title: "Check your email",
         description: "We've sent you a confirmation link to complete your signup.",
       })
+      
+      // If user confirms email immediately and we have a referral code, try to apply it
+      // Note: This will only work if email confirmation is disabled in Supabase
+      if (referralCode.trim()) {
+        try {
+          const { data: session } = await supabase.auth.getSession()
+          if (session?.session) {
+            const { data: referralData, error: referralError } = await supabase.functions.invoke('apply-referral', {
+              body: { referralCode: referralCode.trim() }
+            });
+            
+            if (referralData?.success) {
+              toast({
+                title: "Referral Applied!",
+                description: "Your referral code has been applied successfully.",
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Error applying referral code:', error);
+        }
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -130,6 +153,24 @@ export default function Auth() {
       })
 
       if (error) throw error
+
+      // Apply referral code if provided and user doesn't have one already
+      if (referralCode.trim()) {
+        try {
+          const { data: referralData, error: referralError } = await supabase.functions.invoke('apply-referral', {
+            body: { referralCode: referralCode.trim() }
+          });
+          
+          if (referralData?.success) {
+            toast({
+              title: "Referral Applied!",
+              description: "Your referral code has been applied successfully.",
+            });
+          }
+        } catch (error) {
+          console.error('Error applying referral code:', error);
+        }
+      }
 
       toast({
         title: "Welcome back!",
@@ -298,6 +339,17 @@ export default function Auth() {
         {mode === 'signup' && (
           <p className="text-xs text-muted-foreground">Password must be at least 6 characters long</p>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="referral">Referral Code (Optional)</Label>
+        <Input 
+          id="referral" 
+          type="text" 
+          placeholder="Enter referral code" 
+          value={referralCode} 
+          onChange={(e) => setReferralCode(e.target.value)} 
+        />
       </div>
 
       <div className="flex items-center justify-between">
