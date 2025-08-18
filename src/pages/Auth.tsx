@@ -50,7 +50,7 @@ export default function Auth() {
 
   // Basic SEO: title, description, canonical
   useEffect(() => {
-    const pageTitle = mode === 'signin' ? 'Log in' : 'Register'
+    const pageTitle = mode === 'signin' ? 'Sign in' : 'Register'
     document.title = `${pageTitle} - Woices`
 
     const desc = 'Sign in or create your Woices account to join thoughtful voice debates.'
@@ -232,7 +232,7 @@ export default function Auth() {
         onClick={() => navigate('/auth?mode=signin')}
         className="flex-1"
       >
-        Log In
+        Sign In
       </Button>
       <Button 
         variant={mode === 'signup' ? 'default' : 'outline'}
@@ -425,7 +425,7 @@ export default function Auth() {
                 onClick={() => navigate('/auth?mode=signin')}
                 size="sm"
               >
-                Log In
+                Sign In
               </Button>
               <Button 
                 variant={mode === 'signup' ? 'default' : 'outline'}
