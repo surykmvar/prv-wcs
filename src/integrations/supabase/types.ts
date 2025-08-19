@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          description: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      credits_ledger: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string | null
+          id: string
+          reference_id: string | null
+          transaction_type: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          transaction_type: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          transaction_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       membership_plans: {
         Row: {
           created_at: string
@@ -53,6 +107,45 @@ export type Database = {
           price_cents?: number
           stripe_price_id?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          amount_cents: number
+          created_at: string | null
+          currency: string
+          id: string
+          points_purchased: number
+          region: string | null
+          status: string | null
+          stripe_session_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string | null
+          currency: string
+          id?: string
+          points_purchased: number
+          region?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string | null
+          currency?: string
+          id?: string
+          points_purchased?: number
+          region?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -99,10 +192,13 @@ export type Database = {
           created_at: string
           created_by: string | null
           current_uses: number | null
+          discount_type: string | null
+          discount_value: number | null
           expires_at: string | null
           id: string
           is_active: boolean | null
           max_uses: number | null
+          points_reward: number | null
           updated_at: string
         }
         Insert: {
@@ -111,10 +207,13 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           current_uses?: number | null
+          discount_type?: string | null
+          discount_value?: number | null
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
           max_uses?: number | null
+          points_reward?: number | null
           updated_at?: string
         }
         Update: {
@@ -123,11 +222,41 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           current_uses?: number | null
+          discount_type?: string | null
+          discount_value?: number | null
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
           max_uses?: number | null
+          points_reward?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      regional_pricing: {
+        Row: {
+          created_at: string | null
+          currency: string
+          id: string
+          price_per_point: number
+          region: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency: string
+          id?: string
+          price_per_point: number
+          region: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string
+          id?: string
+          price_per_point?: number
+          region?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -308,6 +437,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          created_at: string | null
+          credits_balance: number | null
+          id: string
+          is_premium: boolean | null
+          premium_expires_at: string | null
+          region: string | null
+          total_credits_purchased: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          credits_balance?: number | null
+          id?: string
+          is_premium?: boolean | null
+          premium_expires_at?: string | null
+          region?: string | null
+          total_credits_purchased?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          credits_balance?: number | null
+          id?: string
+          is_premium?: boolean | null
+          premium_expires_at?: string | null
+          region?: string | null
+          total_credits_purchased?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_votes: {
         Row: {
           created_at: string | null
@@ -456,6 +621,10 @@ export type Database = {
           unclear_votes: number
         }[]
       }
+      get_user_credits_balance: {
+        Args: { user_uuid: string }
+        Returns: number
+      }
       get_user_saved_thoughts: {
         Args: { user_uuid: string }
         Returns: {
@@ -510,6 +679,16 @@ export type Database = {
       update_expired_thoughts: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      update_user_credits: {
+        Args: {
+          credit_amount: number
+          description?: string
+          reference_uuid?: string
+          transaction_type: string
+          user_uuid: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
