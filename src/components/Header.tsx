@@ -121,7 +121,7 @@ export function Header() {
                 onClick={() => navigate('/auth?mode=signup')}
                 className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md"
               >
-                Register for free
+                Sign up
               </Button>
               <Button 
                 size="sm" 
