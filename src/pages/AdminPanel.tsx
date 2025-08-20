@@ -329,7 +329,7 @@ export default function AdminPanel() {
 
         <Tabs defaultValue="overview" className="space-y-6">
           <div className="w-full overflow-x-auto no-scrollbar">
-            <TabsList className="inline-flex whitespace-nowrap gap-1 rounded-lg border bg-muted p-1 h-9 text-xs min-w-full sm:min-w-0">
+            <TabsList className="inline-flex whitespace-nowrap gap-1 rounded-lg border bg-muted p-1 md:p-2 h-9 md:h-10 text-xs md:text-sm min-w-full sm:min-w-0">
               <TabsTrigger value="overview" className="shrink-0 px-2 py-1 text-xs">Overview</TabsTrigger>
               <TabsTrigger value="users" className="shrink-0 px-2 py-1 text-xs">Users</TabsTrigger>
               <TabsTrigger value="referrals" className="shrink-0 px-2 py-1 text-xs">Referrals</TabsTrigger>
