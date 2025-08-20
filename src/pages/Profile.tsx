@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
+import { useCredits } from '@/hooks/useCredits'
 import { supabase } from '@/integrations/supabase/client'
 import { Header } from '@/components/Header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,10 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { VoicePlayer } from '@/components/VoicePlayer'
 import { Button } from '@/components/ui/button'
-import { MessageSquare, Volume2, Flower2, Trash2, AlertCircle, Bookmark, BookmarkX, Wind } from 'lucide-react'
+import { MessageSquare, Volume2, Flower2, Trash2, AlertCircle, Bookmark, BookmarkX, Wind, Coins, Plus } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { MembershipModal } from '@/components/MembershipModal'
 import OutcomeIcon from '@/components/profile/OutcomeIcon'
 import ProfileHeader from '@/components/profile/ProfileHeader'
 
@@ -57,11 +59,13 @@ interface SavedThought {
 export default function Profile() {
   const { user } = useAuth()
   const { profile, loading: profileLoading } = useProfile()
+  const { creditsInfo, loading: creditsLoading } = useCredits()
   const [userThoughts, setUserThoughts] = useState<UserThought[]>([])
   const [userVoiceResponses, setUserVoiceResponses] = useState<UserVoiceResponse[]>([])
   const [savedThoughts, setSavedThoughts] = useState<SavedThought[]>([])
   const [loading, setLoading] = useState(true)
   const [ignoredUnclear, setIgnoredUnclear] = useState<Record<string, boolean>>({})
+  const [membershipModalOpen, setMembershipModalOpen] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -199,6 +203,38 @@ export default function Profile() {
           myths={getVoteBreakdown().myths}
           unclear={getVoteBreakdown().unclear}
         />
+
+        {/* Credits Card */}
+        {!creditsLoading && creditsInfo && (
+          <Card className="mb-6">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Coins className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                Credits
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-2xl font-bold text-foreground">
+                    {creditsInfo.balance}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    available credits
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setMembershipModalOpen(true)}
+                  size="sm"
+                  className="flex items-center gap-1.5"
+                >
+                  <Plus className="h-4 w-4" />
+                  Top up
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Tabs defaultValue="woices" className="space-y-4 md:space-y-6">
           <TabsList className="grid w-full grid-cols-3 text-xs md:text-sm">
@@ -371,6 +407,11 @@ export default function Profile() {
           </TabsContent>
         </Tabs>
       </div>
+      
+      <MembershipModal 
+        open={membershipModalOpen} 
+        onOpenChange={setMembershipModalOpen} 
+      />
     </div>
     </TooltipProvider>
   )

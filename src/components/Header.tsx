@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { useAuth } from '@/hooks/useAuth'
 import { useAdminRole } from '@/hooks/useAdminRole'
+import { useCredits } from '@/hooks/useCredits'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User, Mic, Shield, GitBranch, CreditCard } from 'lucide-react'
+import { LogOut, User, Mic, Shield, GitBranch, CreditCard, Coins } from 'lucide-react'
 import { MembershipModal } from '@/components/MembershipModal'
 import { useState } from 'react'
 import {
@@ -18,6 +19,7 @@ import {
 export function Header() {
   const { user, signOut } = useAuth()
   const { isAdmin } = useAdminRole()
+  const { creditsInfo, loading: creditsLoading } = useCredits()
   const navigate = useNavigate()
   const [membershipModalOpen, setMembershipModalOpen] = useState(false)
 
@@ -73,13 +75,25 @@ export function Header() {
             <Mic className="h-5 w-5" />
           </Button>
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">{user.email}</span>
+            <div className="flex items-center gap-2">
+              {!creditsLoading && creditsInfo && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setMembershipModalOpen(true)}
+                  className="flex items-center gap-1.5 px-2 py-1 h-8 text-xs font-medium rounded-full border border-border/50 hover:bg-accent hover:border-border transition-colors"
+                >
+                  <Coins className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                  <span className="text-foreground">{creditsInfo.balance}</span>
                 </Button>
-              </DropdownMenuTrigger>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span className="hidden sm:inline">{user.email}</span>
+                  </Button>
+                </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => navigate('/feed')}>
                   <Mic className="mr-2 h-4 w-4" />
@@ -113,6 +127,7 @@ export function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           ) : (
             <>
               <Button 

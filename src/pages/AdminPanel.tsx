@@ -290,7 +290,8 @@ export default function AdminPanel() {
         <meta name="description" content="Admin panel for managing users, referrals, and membership plans" />
       </Helmet>
       
-      <div className="container mx-auto p-6 max-w-7xl">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+        <div className="container mx-auto p-6 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Admin Panel</h1>
           <div className="flex gap-2">
@@ -304,7 +305,7 @@ export default function AdminPanel() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-5 rounded-lg border bg-muted p-1">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="referrals">Referrals</TabsTrigger>
@@ -664,6 +665,7 @@ export default function AdminPanel() {
             </div>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </>
   );
