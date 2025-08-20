@@ -510,7 +510,7 @@ export default function Auth() {
               </Button>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              {mode === 'signin' ? 'Welcome back' : 'Create your account'}
+              {mode === 'signin' ? 'Welcome back to Woices' : 'Create your account'}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {mode === 'signup' ? (
@@ -524,7 +524,15 @@ export default function Auth() {
                   </button>
                 </>
               ) : (
-                'Welcome back to Woices'
+                <>
+                  Don't have an account?{' '}
+                  <button 
+                    onClick={() => navigate('/auth?mode=signup')} 
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Sign Up Now
+                  </button>
+                </>
               )}
             </p>
           </header>
