@@ -512,7 +512,21 @@ export default function Auth() {
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
               {mode === 'signin' ? 'Welcome back' : 'Create your account'}
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">Join the conversation and share your voice.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {mode === 'signup' ? (
+                <>
+                  Join the conversation and share your voice. Already have an account?{' '}
+                  <button 
+                    onClick={() => navigate('/auth?mode=signin')} 
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Sign In
+                  </button>
+                </>
+              ) : (
+                'Welcome back to Woices'
+              )}
+            </p>
           </header>
 
           {renderAuthMethodToggle()}
