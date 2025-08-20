@@ -16,6 +16,7 @@ import AdminPanel from './pages/AdminPanel'
 import NotFound from "./pages/NotFound";
 import Feed from './pages/Feed'
 import SystemFlow from './pages/SystemFlow'
+import PaymentSuccess from './pages/PaymentSuccess'
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
                   </AdminGuard>
                 } />
                 <Route path="/feed" element={<Feed />} />
+                <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

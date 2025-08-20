@@ -4,7 +4,9 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import { useAuth } from '@/hooks/useAuth'
 import { useAdminRole } from '@/hooks/useAdminRole'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User, Mic, Shield, GitBranch } from 'lucide-react'
+import { LogOut, User, Mic, Shield, GitBranch, CreditCard } from 'lucide-react'
+import { MembershipModal } from '@/components/MembershipModal'
+import { useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +19,7 @@ export function Header() {
   const { user, signOut } = useAuth()
   const { isAdmin } = useAdminRole()
   const navigate = useNavigate()
+  const [membershipModalOpen, setMembershipModalOpen] = useState(false)
 
   const handleSignOut = async () => {
     await signOut()
@@ -86,6 +89,10 @@ export function Header() {
                   <User className="mr-2 h-4 w-4" />
                   My Profile
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setMembershipModalOpen(true)}>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Get Credits
+                </DropdownMenuItem>
                 {isAdmin && (
                   <>
                     <DropdownMenuSeparator />
@@ -127,6 +134,10 @@ export function Header() {
           )}
         </div>
       </div>
+      <MembershipModal 
+        open={membershipModalOpen} 
+        onOpenChange={setMembershipModalOpen} 
+      />
     </header>
   )
 }
