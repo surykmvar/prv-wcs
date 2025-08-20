@@ -506,7 +506,7 @@ export default function Auth() {
                 onClick={() => navigate('/auth?mode=signup')}
                 size="sm"
               >
-                Register Now
+                Sign Up Now
               </Button>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
