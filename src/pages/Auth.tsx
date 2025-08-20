@@ -481,9 +481,9 @@ export default function Auth() {
 
   return (
     <main className="w-full px-4 sm:px-6 py-8 md:py-12 min-h-[85vh] flex items-center justify-center">
-      <section className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-xl border bg-card shadow-sm md:grid-cols-2">
+      <section className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-xl border bg-card shadow-sm md:grid-cols-2 md:h-[600px]">
         {/* Left: Form */}
-        <article className="relative p-6 sm:p-10 md:order-2">
+        <article className="relative p-6 sm:p-10 md:order-2 md:h-full md:overflow-y-auto">
           <button
             aria-label="Close"
             onClick={() => navigate('/')}
@@ -552,12 +552,12 @@ export default function Auth() {
         </article>
 
         {/* Right: Visual */}
-        <aside className="hidden md:block relative bg-muted md:order-1 flex items-center justify-center">
+        <aside className="hidden md:block relative bg-muted md:order-1 md:h-full">
           <img
             src={authOrb}
             alt="AI voice assistant orb with waveforms in Woices gradient"
             loading="lazy"
-            className="max-h-full max-w-full object-contain"
+            className="h-full w-full object-cover object-center"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
         </aside>
