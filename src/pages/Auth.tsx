@@ -557,7 +557,7 @@ export default function Auth() {
             src={authOrb}
             alt="AI voice assistant orb with waveforms in Woices gradient"
             loading="lazy"
-            className="h-full w-full object-contain"
+            className="h-full w-full object-cover object-center"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
         </aside>
