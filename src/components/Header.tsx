@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { LogOut, User, Mic, Shield, GitBranch, CreditCard, Coins } from 'lucide-react'
 import { MembershipModal } from '@/components/MembershipModal'
 import { useState } from 'react'
+import { useIsMobile } from '@/hooks/use-mobile'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,13 +16,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 export function Header() {
   const { user, signOut } = useAuth()
   const { isAdmin } = useAdminRole()
   const { creditsInfo, loading: creditsLoading } = useCredits()
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const [membershipModalOpen, setMembershipModalOpen] = useState(false)
+  const [showSystemFlowMobileNotice, setShowSystemFlowMobileNotice] = useState(false)
 
   const handleSignOut = async () => {
     await signOut()
@@ -114,7 +126,13 @@ export function Header() {
                       <Shield className="mr-2 h-4 w-4" />
                       Admin Panel
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/system-flow')}>
+                    <DropdownMenuItem onClick={() => {
+                      if (isMobile) {
+                        setShowSystemFlowMobileNotice(true)
+                      } else {
+                        navigate('/system-flow')
+                      }
+                    }}>
                       <GitBranch className="mr-2 h-4 w-4" />
                       System Flow
                     </DropdownMenuItem>
@@ -153,6 +171,31 @@ export function Header() {
         open={membershipModalOpen} 
         onOpenChange={setMembershipModalOpen} 
       />
+      
+      <AlertDialog open={showSystemFlowMobileNotice} onOpenChange={setShowSystemFlowMobileNotice}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Desktop-only feature</AlertDialogTitle>
+            <AlertDialogDescription>
+              System Flow is only accessible on desktop. Please open Woices on a laptop or desktop to view it.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => {
+              setShowSystemFlowMobileNotice(false)
+              navigate('/admin')
+            }}>
+              Back to Admin Panel
+            </AlertDialogAction>
+            <AlertDialogAction onClick={() => {
+              setShowSystemFlowMobileNotice(false)
+              navigate('/')
+            }}>
+              Go Home
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   )
 }

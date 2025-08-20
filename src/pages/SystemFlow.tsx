@@ -16,6 +16,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const initialNodes = [
   // Auth Flow - Neutral blue-gray
@@ -130,9 +140,11 @@ const initialEdges = [
 
 export default function SystemFlow() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [highlightPath, setHighlightPath] = useState<string | null>(null);
+  const [showMobileNotice, setShowMobileNotice] = useState(false);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -181,6 +193,40 @@ export default function SystemFlow() {
       }))
     );
   };
+
+  if (isMobile) {
+    return (
+      <>
+        <Helmet>
+          <title>System Flow - Woices Architecture</title>
+          <meta name="description" content="Interactive visualization of the Woices application architecture and data flow" />
+        </Helmet>
+        
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-background to-muted/20">
+          <div className="absolute top-4 left-4">
+            <Button onClick={() => navigate('/admin')} variant="outline" size="sm">
+              ← Back to Admin Panel
+            </Button>
+          </div>
+          
+          <div className="text-center space-y-4 max-w-md">
+            <h1 className="text-2xl font-bold">Desktop-only feature</h1>
+            <p className="text-muted-foreground">
+              System Flow is only accessible on desktop. Please open Woices on a laptop or desktop to view the interactive architecture diagram.
+            </p>
+            <div className="flex flex-col gap-2 pt-4">
+              <Button onClick={() => navigate('/admin')} variant="outline">
+                Back to Admin Panel
+              </Button>
+              <Button onClick={() => navigate('/')}>
+                Go Home
+              </Button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

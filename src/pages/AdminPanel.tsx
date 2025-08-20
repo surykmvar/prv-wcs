@@ -16,10 +16,22 @@ import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search, CalendarIcon } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function AdminPanel() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
+  const [showSystemFlowMobileNotice, setShowSystemFlowMobileNotice] = useState(false);
   const [users, setUsers] = useState([]);
   const [thoughts, setThoughts] = useState([]);
   const [voiceResponses, setVoiceResponses] = useState([]);
@@ -291,26 +303,37 @@ export default function AdminPanel() {
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-        <div className="container mx-auto p-6 max-w-7xl">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <div className="flex gap-2">
-            <Button onClick={() => navigate('/system-flow')} variant="outline">
+        <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold">Admin Panel</h1>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button 
+              onClick={() => {
+                if (isMobile) {
+                  setShowSystemFlowMobileNotice(true)
+                } else {
+                  navigate('/system-flow')
+                }
+              }} 
+              variant="outline" 
+              size="sm"
+              className="w-full sm:w-auto"
+            >
               System Flow
             </Button>
-            <Button onClick={() => navigate('/')} variant="outline">
+            <Button onClick={() => navigate('/')} variant="outline" size="sm" className="w-full sm:w-auto">
               Back to App
             </Button>
           </div>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 rounded-lg border bg-muted p-1">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="referrals">Referrals</TabsTrigger>
-            <TabsTrigger value="memberships">Memberships</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 rounded-lg border bg-muted p-1 h-9 sm:h-10 text-xs sm:text-sm">
+            <TabsTrigger value="overview" className="px-2 py-1 text-xs sm:text-sm">Overview</TabsTrigger>
+            <TabsTrigger value="users" className="px-2 py-1 text-xs sm:text-sm">Users</TabsTrigger>
+            <TabsTrigger value="referrals" className="px-2 py-1 text-xs sm:text-sm">Referrals</TabsTrigger>
+            <TabsTrigger value="memberships" className="px-2 py-1 text-xs sm:text-sm">Memberships</TabsTrigger>
+            <TabsTrigger value="content" className="px-2 py-1 text-xs sm:text-sm">Content</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -380,8 +403,8 @@ export default function AdminPanel() {
                     const referralCounts = getUserReferralCounts(user.user_id);
                     const profile = userProfiles.find((p: any) => p.user_id === user.user_id);
                     return (
-                      <div key={user.user_id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
+                      <div key={user.user_id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-2 p-4 border rounded-lg">
+                        <div className="flex-1">
                           <div className="font-medium">{user.email}</div>
                           {profile && (
                             <div className="text-sm text-muted-foreground">
@@ -429,7 +452,7 @@ export default function AdminPanel() {
                   <CardTitle>Create Referral Code</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="code">Code</Label>
                       <Input
@@ -482,7 +505,7 @@ export default function AdminPanel() {
                       />
                     </div>
                   </div>
-                  <Button onClick={createReferralCode}>Create Code</Button>
+                  <Button onClick={createReferralCode} size="sm">Create Code</Button>
                 </CardContent>
               </Card>
 
@@ -516,8 +539,8 @@ export default function AdminPanel() {
                      {filteredCodes.map((code: any) => {
                       const assignedUser = users.find((u: any) => u.user_id === code.assigned_to);
                       return (
-                        <div key={code.id} className="flex items-center justify-between p-4 border rounded-lg">
-                          <div>
+                        <div key={code.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-2 p-4 border rounded-lg">
+                          <div className="flex-1">
                             <div className="font-mono font-bold">{code.code}</div>
                             <div className="text-sm text-muted-foreground">
                               Uses: {code.current_uses}{code.max_uses ? ` / ${code.max_uses}` : ' (unlimited)'}
@@ -561,7 +584,7 @@ export default function AdminPanel() {
                   <CardDescription>Ready for future Stripe integration</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="planName">Plan Name</Label>
                       <Input
@@ -600,7 +623,7 @@ export default function AdminPanel() {
                       placeholder="e.g., Unlimited thoughts, Priority support"
                     />
                   </div>
-                  <Button onClick={createMembershipPlan}>Create Plan</Button>
+                  <Button onClick={createMembershipPlan} size="sm">Create Plan</Button>
                 </CardContent>
               </Card>
 
@@ -666,6 +689,31 @@ export default function AdminPanel() {
           </TabsContent>
         </Tabs>
         </div>
+        
+        <AlertDialog open={showSystemFlowMobileNotice} onOpenChange={setShowSystemFlowMobileNotice}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Desktop-only feature</AlertDialogTitle>
+              <AlertDialogDescription>
+                System Flow is only accessible on desktop. Please open Woices on a laptop or desktop to view it.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => {
+                setShowSystemFlowMobileNotice(false)
+                navigate('/admin')
+              }}>
+                Stay on Admin Panel
+              </AlertDialogAction>
+              <AlertDialogAction onClick={() => {
+                setShowSystemFlowMobileNotice(false)
+                navigate('/')
+              }}>
+                Go Home
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );
