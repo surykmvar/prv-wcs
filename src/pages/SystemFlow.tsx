@@ -144,7 +144,7 @@ export default function SystemFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [highlightPath, setHighlightPath] = useState<string | null>(null);
-  const [showMobileNotice, setShowMobileNotice] = useState(false);
+  const [showMobileNotice, setShowMobileNotice] = useState(true);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),

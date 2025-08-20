@@ -328,13 +328,15 @@ export default function AdminPanel() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 rounded-lg border bg-muted p-1 h-9 sm:h-10 text-xs sm:text-sm">
-            <TabsTrigger value="overview" className="px-2 py-1 text-xs sm:text-sm">Overview</TabsTrigger>
-            <TabsTrigger value="users" className="px-2 py-1 text-xs sm:text-sm">Users</TabsTrigger>
-            <TabsTrigger value="referrals" className="px-2 py-1 text-xs sm:text-sm">Referrals</TabsTrigger>
-            <TabsTrigger value="memberships" className="px-2 py-1 text-xs sm:text-sm">Memberships</TabsTrigger>
-            <TabsTrigger value="content" className="px-2 py-1 text-xs sm:text-sm">Content</TabsTrigger>
-          </TabsList>
+          <div className="w-full overflow-x-auto no-scrollbar">
+            <TabsList className="inline-flex whitespace-nowrap gap-1 rounded-lg border bg-muted p-1 h-9 text-xs min-w-full sm:min-w-0">
+              <TabsTrigger value="overview" className="shrink-0 px-2 py-1 text-xs">Overview</TabsTrigger>
+              <TabsTrigger value="users" className="shrink-0 px-2 py-1 text-xs">Users</TabsTrigger>
+              <TabsTrigger value="referrals" className="shrink-0 px-2 py-1 text-xs">Referrals</TabsTrigger>
+              <TabsTrigger value="memberships" className="shrink-0 px-2 py-1 text-xs">Members</TabsTrigger>
+              <TabsTrigger value="content" className="shrink-0 px-2 py-1 text-xs">Content</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="overview">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -382,8 +384,8 @@ export default function AdminPanel() {
 
           <TabsContent value="users">
             <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">User Management</CardTitle>
                 <CardDescription>View and manage registered users</CardDescription>
               </CardHeader>
               <CardContent>
@@ -394,7 +396,7 @@ export default function AdminPanel() {
                       placeholder="Search users by email..."
                       value={userSearch}
                       onChange={(e) => setUserSearch(e.target.value)}
-                      className="pl-8"
+                      className="pl-8 h-9 text-sm"
                     />
                   </div>
                 </div>
@@ -448,8 +450,8 @@ export default function AdminPanel() {
           <TabsContent value="referrals">
             <div className="space-y-6">
               <Card>
-                <CardHeader>
-                  <CardTitle>Create Referral Code</CardTitle>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Create Referral Code</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -460,12 +462,14 @@ export default function AdminPanel() {
                         value={newCode.code}
                         onChange={(e) => setNewCode({...newCode, code: e.target.value})}
                         placeholder="e.g., WELCOME10"
+                        className="h-9 text-sm"
                       />
                     </div>
                     <div>
                       <Label htmlFor="maxUses">Max Uses (optional)</Label>
                       <Input
                         id="maxUses"
+                        className="h-9 text-sm"
                         type="number"
                         value={newCode.maxUses}
                         onChange={(e) => setNewCode({...newCode, maxUses: e.target.value})}
@@ -699,10 +703,12 @@ export default function AdminPanel() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogAction onClick={() => {
-                setShowSystemFlowMobileNotice(false)
-                navigate('/admin')
-              }}>
+              <AlertDialogAction 
+                className="bg-muted text-muted-foreground hover:bg-muted/80"
+                onClick={() => {
+                  setShowSystemFlowMobileNotice(false)
+                }}
+              >
                 Stay on Admin Panel
               </AlertDialogAction>
               <AlertDialogAction onClick={() => {

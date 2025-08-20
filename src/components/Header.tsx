@@ -9,6 +9,7 @@ import { LogOut, User, Mic, Shield, GitBranch, CreditCard, Coins } from 'lucide-
 import { MembershipModal } from '@/components/MembershipModal'
 import { useState } from 'react'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useLocation } from 'react-router-dom'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +32,7 @@ export function Header() {
   const { isAdmin } = useAdminRole()
   const { creditsInfo, loading: creditsLoading } = useCredits()
   const navigate = useNavigate()
+  const location = useLocation()
   const isMobile = useIsMobile()
   const [membershipModalOpen, setMembershipModalOpen] = useState(false)
   const [showSystemFlowMobileNotice, setShowSystemFlowMobileNotice] = useState(false)
@@ -181,12 +183,16 @@ export function Header() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => {
-              setShowSystemFlowMobileNotice(false)
-              navigate('/admin')
-            }}>
-              Back to Admin Panel
-            </AlertDialogAction>
+            {location.pathname === '/admin' && (
+              <AlertDialogAction 
+                className="bg-muted text-muted-foreground hover:bg-muted/80"
+                onClick={() => {
+                  setShowSystemFlowMobileNotice(false)
+                }}
+              >
+                Stay on Admin Panel
+              </AlertDialogAction>
+            )}
             <AlertDialogAction onClick={() => {
               setShowSystemFlowMobileNotice(false)
               navigate('/')
