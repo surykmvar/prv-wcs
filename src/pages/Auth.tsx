@@ -312,7 +312,7 @@ export default function Auth() {
       <Tabs
         value={authMethod}
         onValueChange={(v) => {
-          if (v === 'phone' && mode === 'signup') {
+          if (v === 'phone') {
             setComingSoon(true)
             return
           }
@@ -543,7 +543,7 @@ export default function Auth() {
           {comingSoon && (
             <div className="absolute inset-0 z-20 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
               <div className="text-center space-y-2 px-6">
-                <p className="text-lg font-semibold">Phone sign up is coming soon</p>
+                <p className="text-lg font-semibold">Phone authentication is coming soon</p>
                 <p className="text-sm text-muted-foreground">Please use email for now.</p>
                 <Button onClick={() => setComingSoon(false)} className="mt-2">Okay</Button>
               </div>
