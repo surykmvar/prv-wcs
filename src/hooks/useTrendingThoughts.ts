@@ -50,7 +50,24 @@ export function useTrendingThoughts() {
       });
 
       if (error) {
-        throw error;
+        console.error('Edge function error:', error);
+        // Use fallback topics if the edge function fails
+        const fallbackTopics = [
+          {
+            id: 'fallback-1',
+            title: 'Is artificial intelligence truly revolutionizing our world?',
+            description: 'AI is everywhere now - from your phone to your job. Some say it\'s the future, others worry about job losses. What\'s your take on the AI revolution?',
+            tags: ['AI', 'technology', 'future', 'automation', 'jobs'],
+            google_trends_keyword: 'artificial intelligence',
+            region: 'US',
+            created_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            is_active: true
+          }
+        ];
+        setTrendingTopics(fallbackTopics);
+        setCurrentIndex(0);
+        return;
       }
 
       if (data?.topics) {
@@ -59,11 +76,23 @@ export function useTrendingThoughts() {
       }
     } catch (error) {
       console.error('Error fetching trending topics:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load trending topics. Please try again.',
-        variant: 'destructive'
-      });
+      
+      // Use fallback topics if everything fails
+      const fallbackTopics = [
+        {
+          id: 'fallback-1',
+          title: 'Is social media actually connecting us or dividing us?',
+          description: 'Social platforms promise to bring us together, but some argue they\'re creating echo chambers. What\'s your experience with social media?',
+          tags: ['social-media', 'connection', 'technology', 'society'],
+          google_trends_keyword: 'social media impact',
+          region: 'US',
+          created_at: new Date().toISOString(),
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          is_active: true
+        }
+      ];
+      setTrendingTopics(fallbackTopics);
+      setCurrentIndex(0);
     } finally {
       setLoading(false);
     }

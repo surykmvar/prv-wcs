@@ -90,8 +90,16 @@ export function TrendingThoughtDropdown({
                     <Sparkles className="h-8 w-8 text-primary" />
                   </motion.div>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Generating trending thoughts...
+                    Loading trending thoughts...
                   </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleRefresh}
+                    className="mt-3"
+                  >
+                    Retry
+                  </Button>
                 </div>
               ) : (
                 <div className="space-y-4">
