@@ -9,8 +9,8 @@ const corsHeaders = {
 
 // Initialize Supabase client
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Fallback trending topics if Google Trends or OpenAI fails
 const fallbackTopics = [
@@ -274,12 +274,27 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in fetch-trending-topics:', error);
+    
+    // Return fallback topics if everything fails
+    const fallbackResponse = fallbackTopics.map((topic, index) => ({
+      id: `fallback-${index}`,
+      title: topic.title,
+      description: topic.description,
+      tags: topic.tags,
+      google_trends_keyword: topic.keyword,
+      region: 'US',
+      created_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      is_active: true
+    }));
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+      JSON.stringify({ 
+        topics: fallbackResponse,
+        fallback: true,
+        message: 'Using fallback topics due to service error'
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
