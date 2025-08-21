@@ -1,5 +1,6 @@
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Header } from "@/components/Header"
 import { MainActions } from "@/components/MainActions"
 import { VotingExplanationModal } from '@/components/VotingExplanationModal'
@@ -7,6 +8,8 @@ import { DynamicBackground } from "@/components/DynamicBackground"
 import { Helmet } from "react-helmet-async"
 
 const Index = () => {
+  const location = useLocation()
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background font-inter">
       <div className="absolute inset-0 -z-10 pointer-events-none">

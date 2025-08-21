@@ -3,27 +3,70 @@ import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { Mic, Plus, Star } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
-// import { RandomThoughtRecorder } from "@/components/RandomThoughtRecorder"
+import { TrendingThoughtDropdown } from "@/components/TrendingThoughtDropdown"
+import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { useAuth } from "@/hooks/useAuth"
+import { useTrendingThoughts } from "@/hooks/useTrendingThoughts"
 import { motion } from "framer-motion"
 import { SparkleField } from "@/components/SparkleField"
 
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
-  // const [showRandomRecorder, setShowRandomRecorder] = useState(false)
+  const [showTrendingDropdown, setShowTrendingDropdown] = useState(false)
+  const [recordingTrendingTopicId, setRecordingTrendingTopicId] = useState<string | null>(null)
+  const [materializedThoughtId, setMaterializedThoughtId] = useState<string | null>(null)
   const [splash, setSplash] = useState<null | 'record' | 'write'>(null)
   const location = useLocation()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { materializeTrendingTopic } = useTrendingThoughts()
 
   // Reset state when navigating back to home page
   useEffect(() => {
     console.log('MainActions route changed:', location.pathname); // Debug log
     if (location.pathname === '/') {
-      // setShowRandomRecorder(false)
       setShowWriteNote(false)
+      setShowTrendingDropdown(false)
+      setRecordingTrendingTopicId(null)
+      setMaterializedThoughtId(null)
     }
   }, [location.pathname])
+
+  const handleOpenAuth = () => {
+    setShowTrendingDropdown(false)
+    navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?trending=true')}`)
+  }
+
+  const handleStartRecording = async (trendingTopicId: string) => {
+    if (!user) {
+      handleOpenAuth()
+      return
+    }
+
+    try {
+      // Materialize the trending topic into a real thought
+      const thoughtId = await materializeTrendingTopic(trendingTopicId, user.id)
+      if (thoughtId) {
+        setMaterializedThoughtId(thoughtId)
+        setRecordingTrendingTopicId(trendingTopicId)
+        setShowTrendingDropdown(false)
+      }
+    } catch (error) {
+      console.error('Error materializing trending topic:', error)
+    }
+  }
+
+  const handleRecordingSuccess = () => {
+    setRecordingTrendingTopicId(null)
+    setMaterializedThoughtId(null)
+    // Navigate to feed to see the new post
+    navigate('/feed')
+  }
+
+  const handleRecordingClose = () => {
+    setRecordingTrendingTopicId(null)
+    setMaterializedThoughtId(null)
+  }
 
   const handleRandomRecorderSuccess = () => {
     // setShowRandomRecorder(false)
@@ -62,20 +105,8 @@ export function MainActions() {
           <button
             type="button"
             onClick={() => {
-              if (!user) {
-                navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/feed')}`)
-              } else {
-                const isLarge = typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches
-                if (isLarge) {
-                  setSplash('record')
-                  setTimeout(() => {
-                    navigate('/feed')
-                    setSplash(null)
-                  }, 280)
-                } else {
-                  navigate('/feed')
-                }
-              }
+              // Show trending thought dropdown instead of redirecting
+              setShowTrendingDropdown(true)
             }}
             className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-4 sm:p-6 panel surface-elevated supports-[backdrop-filter]:backdrop-blur-md hover:shadow-lg transition-all min-h-[150px] sm:min-h-[180px]"
             aria-label="Break the ice and record a 60 second voice reply"
@@ -177,6 +208,21 @@ export function MainActions() {
         open={showWriteNote} 
         onOpenChange={setShowWriteNote}
       />
+
+      <TrendingThoughtDropdown
+        isOpen={showTrendingDropdown}
+        onClose={() => setShowTrendingDropdown(false)}
+        onOpenAuth={handleOpenAuth}
+        onStartRecording={handleStartRecording}
+      />
+
+      {recordingTrendingTopicId && materializedThoughtId && (
+        <VoiceRecorder
+          thoughtId={materializedThoughtId}
+          onClose={handleRecordingClose}
+          onSuccess={handleRecordingSuccess}
+        />
+      )}
     </div>
   )
 }
