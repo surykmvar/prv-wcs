@@ -384,6 +384,42 @@ export type Database = {
         }
         Relationships: []
       }
+      trending_topics_cache: {
+        Row: {
+          created_at: string
+          description: string
+          expires_at: string
+          google_trends_keyword: string
+          id: string
+          is_active: boolean | null
+          region: string | null
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          expires_at?: string
+          google_trends_keyword: string
+          id?: string
+          is_active?: boolean | null
+          region?: string | null
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          expires_at?: string
+          google_trends_keyword?: string
+          id?: string
+          is_active?: boolean | null
+          region?: string | null
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
       user_referrals: {
         Row: {
           created_at: string
