@@ -81,11 +81,11 @@ export function TrendingThoughtDropdown({
                 damping: 30,
                 duration: 0.3 
               }}
-              className="fixed inset-4 z-50 flex items-center justify-center"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
             >
-              <Card className="w-full max-w-sm max-h-[80vh] overflow-y-auto p-4 bg-background border-2 border-primary/20 shadow-2xl">
+              <div className="panel surface-elevated w-full max-w-sm max-h-[85vh] overflow-y-auto p-5">
                 {renderContent()}
-              </Card>
+              </div>
             </motion.div>
           </>
         )}
@@ -109,9 +109,9 @@ export function TrendingThoughtDropdown({
           }}
           className="w-full max-w-2xl mx-auto mt-4 px-4"
         >
-          <Card className="p-6 bg-background/95 backdrop-blur-sm border-2 border-primary/20 shadow-2xl">
+          <div className="panel surface-elevated p-6">
             {renderContent()}
-          </Card>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -175,7 +175,7 @@ export function TrendingThoughtDropdown({
                   <Badge 
                     key={index} 
                     variant="secondary" 
-                    className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20"
+                    className="text-xs px-2 py-0.5 bg-muted text-muted-foreground border-border"
                   >
                     <Hash className="h-2.5 w-2.5 mr-1" />
                     {tag}
@@ -185,7 +185,7 @@ export function TrendingThoughtDropdown({
             )}
 
             {/* Max Woices Info */}
-            <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg">
+            <div className="text-xs text-muted-foreground bg-muted px-3 py-2 rounded-lg border border-border">
               <span className="font-medium">Limited:</span> Only 10 Woice replies allowed
             </div>
 
@@ -193,7 +193,7 @@ export function TrendingThoughtDropdown({
             <div className="flex flex-col sm:flex-row gap-2 pt-2">
               <Button
                 onClick={handleRecordClick}
-                className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium"
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
                 size="sm"
               >
                 <Mic className="h-4 w-4 mr-2" />
@@ -206,7 +206,7 @@ export function TrendingThoughtDropdown({
                   variant="outline"
                   size="sm"
                   disabled={isRefreshing}
-                  className="border-primary/20 hover:bg-primary/5"
+                  className="border-border hover:bg-accent"
                 >
                   <RefreshCw 
                     className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} 
@@ -217,7 +217,7 @@ export function TrendingThoughtDropdown({
                   onClick={handleShowMore}
                   variant="outline"
                   size="sm"
-                  className="border-primary/20 hover:bg-primary/5"
+                  className="border-border hover:bg-accent"
                 >
                   <ArrowUp className="h-4 w-4" />
                 </Button>
