@@ -81,9 +81,9 @@ export function TrendingThoughtDropdown({
                 damping: 30,
                 duration: 0.3 
               }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-sm z-50"
+              className="fixed inset-4 z-50 flex items-center justify-center"
             >
-              <Card className="p-6 bg-background border-2 border-primary/20 shadow-2xl">
+              <Card className="w-full max-w-sm max-h-[80vh] overflow-y-auto p-4 bg-background border-2 border-primary/20 shadow-2xl">
                 {renderContent()}
               </Card>
             </motion.div>
