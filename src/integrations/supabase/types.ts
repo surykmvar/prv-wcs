@@ -647,6 +647,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      allocate_activity_credits: {
+        Args: {
+          activity_type: string
+          reference_thought_id?: string
+          target_user_uuid?: string
+          user_uuid: string
+        }
+        Returns: boolean
+      }
       allocate_activity_points: {
         Args: {
           activity_type: string
@@ -785,6 +794,10 @@ export type Database = {
               transaction_type: string
               user_uuid: string
             }
+        Returns: boolean
+      }
+      user_has_replied_to_thought: {
+        Args: { thought_uuid: string; user_uuid: string }
         Returns: boolean
       }
     }

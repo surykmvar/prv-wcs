@@ -23,6 +23,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
+        
+        // Ensure initial credits for new sessions
+        if (session?.user && event === 'SIGNED_IN') {
+          setTimeout(() => {
+            supabase.functions.invoke('ensure-initial-credits')
+              .catch(error => console.error('Error ensuring initial credits:', error));
+          }, 0);
+        }
       }
     )
 
@@ -31,6 +39,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
+      
+      // Ensure initial credits for existing sessions
+      if (session?.user) {
+        setTimeout(() => {
+          supabase.functions.invoke('ensure-initial-credits')
+            .catch(error => console.error('Error ensuring initial credits:', error));
+        }, 0);
+      }
     })
 
     return () => subscription.unsubscribe()

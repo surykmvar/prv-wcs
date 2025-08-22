@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface TrendingTopic {
   id: string;
@@ -15,6 +16,7 @@ export interface TrendingTopic {
 }
 
 export function useTrendingThoughts() {
+  const { user } = useAuth();
   const [trendingTopics, setTrendingTopics] = useState<TrendingTopic[]>([]);
   const [feedThoughts, setFeedThoughts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -24,13 +26,28 @@ export function useTrendingThoughts() {
 
   const fetchFeedThoughts = async () => {
     try {
-      const { data: thoughts, error } = await supabase
+      let query = supabase
         .from('thoughts')
         .select('*')
         .eq('status', 'active')
         .gt('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false })
         .limit(20);
+
+      // If user is authenticated, exclude thoughts they've already replied to
+      if (user) {
+        const { data: userReplies } = await supabase
+          .from('voice_responses')
+          .select('thought_id')
+          .eq('user_id', user.id);
+
+        if (userReplies && userReplies.length > 0) {
+          const repliedThoughtIds = userReplies.map(r => r.thought_id);
+          query = query.not('id', 'in', `(${repliedThoughtIds.join(',')})`);
+        }
+      }
+
+      const { data: thoughts, error } = await query;
 
       if (error) {
         console.error('Error fetching feed thoughts:', error);

@@ -175,7 +175,12 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-semibold mb-4">Choose Credits Package</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className={`grid gap-4 ${
+              packages.length === 1 ? 'grid-cols-1 max-w-sm mx-auto' :
+              packages.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-2xl mx-auto' :
+              packages.length === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto' :
+              'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto'
+            }`}>
               {packages.map((pkg) => {
                 const hasSeasonalOffer = pkg.seasonal_offer_percentage && 
                   pkg.seasonal_offer_expires_at && 

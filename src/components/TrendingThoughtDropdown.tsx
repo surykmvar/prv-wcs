@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, RefreshCw, ArrowUp, Sparkles, Hash, User } from 'lucide-react';
+import { Mic, RefreshCw, ArrowUp, Sparkles, Hash, User, X, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +50,11 @@ export function TrendingThoughtDropdown({
     onClose();
   };
 
+  const handleGoToFeed = () => {
+    navigate('/feed');
+    onClose();
+  };
+
   if (!currentTopic && !loading) {
     return null;
   }
@@ -83,8 +88,31 @@ export function TrendingThoughtDropdown({
               }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
             >
-              <div className="panel surface-elevated w-full max-w-sm max-h-[85vh] overflow-y-auto p-5">
-                {renderContent()}
+              <div className="panel surface-elevated w-full max-w-sm max-h-[85vh] overflow-y-auto">
+                <div className="flex items-center justify-between p-4 border-b">
+                  <h3 className="text-lg font-semibold">Trending Thoughts</h3>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleGoToFeed}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={onClose}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="p-5">
+                  {renderContent()}
+                </div>
               </div>
             </motion.div>
           </>
@@ -109,8 +137,32 @@ export function TrendingThoughtDropdown({
           }}
           className="w-full max-w-2xl mx-auto mt-4 px-4"
         >
-          <div className="panel surface-elevated p-6">
-            {renderContent()}
+          <div className="panel surface-elevated">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold">Trending Thoughts</h3>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleGoToFeed}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Users className="h-4 w-4 mr-1" />
+                  Feed
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClose}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="p-6">
+              {renderContent()}
+            </div>
           </div>
         </motion.div>
       )}
