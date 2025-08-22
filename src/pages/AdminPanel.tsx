@@ -15,6 +15,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search, CalendarIcon } from 'lucide-react';
+import { CreditPackageManager } from '@/components/admin/CreditPackageManager';
 import { Helmet } from 'react-helmet-async';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -581,89 +582,7 @@ export default function AdminPanel() {
           </TabsContent>
 
           <TabsContent value="memberships">
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Create Membership Plan</CardTitle>
-                  <CardDescription>Ready for future Stripe integration</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="planName">Plan Name</Label>
-                      <Input
-                        id="planName"
-                        value={newPlan.name}
-                        onChange={(e) => setNewPlan({...newPlan, name: e.target.value})}
-                        placeholder="e.g., Basic, Pro, Creator"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="priceCents">Price (cents)</Label>
-                      <Input
-                        id="priceCents"
-                        type="number"
-                        value={newPlan.priceCents}
-                        onChange={(e) => setNewPlan({...newPlan, priceCents: e.target.value})}
-                        placeholder="e.g., 999 for $9.99"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="planDescription">Description</Label>
-                    <Textarea
-                      id="planDescription"
-                      value={newPlan.description}
-                      onChange={(e) => setNewPlan({...newPlan, description: e.target.value})}
-                      placeholder="Plan description"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="features">Features (comma-separated)</Label>
-                    <Input
-                      id="features"
-                      value={newPlan.features}
-                      onChange={(e) => setNewPlan({...newPlan, features: e.target.value})}
-                      placeholder="e.g., Unlimited thoughts, Priority support"
-                    />
-                  </div>
-                  <Button onClick={createMembershipPlan} size="sm">Create Plan</Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Membership Plans</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {membershipPlans.map((plan: any) => (
-                      <Card key={plan.id}>
-                        <CardHeader>
-                          <CardTitle className="flex items-center justify-between">
-                            {plan.name}
-                            <Badge variant={plan.is_active ? "default" : "secondary"}>
-                              {plan.is_active ? "Active" : "Inactive"}
-                            </Badge>
-                          </CardTitle>
-                          <CardDescription>
-                            ${(plan.price_cents / 100).toFixed(2)} / {plan.interval_type}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground mb-2">{plan.description}</p>
-                          <div className="space-y-1">
-                            {plan.features?.map((feature: string, index: number) => (
-                              <div key={index} className="text-sm">• {feature}</div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <CreditPackageManager />
           </TabsContent>
 
           <TabsContent value="content">

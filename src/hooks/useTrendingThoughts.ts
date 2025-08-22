@@ -201,7 +201,24 @@ export function useTrendingThoughts() {
         return trendingTopicId; // The ID is already a thought ID
       }
 
-      // Otherwise, materialize the trending topic
+      // Check if we already have a materialized thought for this trending topic
+      const { data: existingThought, error: checkError } = await supabase
+        .from('thoughts')
+        .select('id')
+        .eq('title', currentTopic?.title)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      if (checkError) {
+        console.error('Error checking existing thought:', checkError);
+      }
+
+      // If we found an existing thought, return its ID
+      if (existingThought) {
+        return existingThought.id;
+      }
+
+      // Otherwise, materialize the trending topic via edge function
       const { data, error } = await supabase.functions.invoke('materialize-trending', {
         body: {
           trendingTopicId,

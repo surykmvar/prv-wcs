@@ -38,6 +38,51 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_packages: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          is_active: boolean | null
+          is_popular: boolean | null
+          name: string
+          points: number
+          price_cents: number
+          region: string
+          seasonal_offer_expires_at: string | null
+          seasonal_offer_percentage: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean | null
+          is_popular?: boolean | null
+          name: string
+          points: number
+          price_cents: number
+          region: string
+          seasonal_offer_expires_at?: string | null
+          seasonal_offer_percentage?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean | null
+          is_popular?: boolean | null
+          name?: string
+          points?: number
+          price_cents?: number
+          region?: string
+          seasonal_offer_expires_at?: string | null
+          seasonal_offer_percentage?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       credits_ledger: {
         Row: {
           amount: number
@@ -602,6 +647,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      allocate_activity_points: {
+        Args: {
+          activity_type: string
+          target_user_uuid?: string
+          user_uuid: string
+        }
+        Returns: boolean
+      }
       evaluate_thought_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -717,13 +770,21 @@ export type Database = {
         Returns: undefined
       }
       update_user_credits: {
-        Args: {
-          credit_amount: number
-          description?: string
-          reference_uuid?: string
-          transaction_type: string
-          user_uuid: string
-        }
+        Args:
+          | {
+              credit_amount: number
+              description?: string
+              reference_uuid?: string
+              transaction_type: string
+              user_uuid: string
+            }
+          | {
+              credit_amount: number
+              description?: string
+              reference_uuid?: string
+              transaction_type: string
+              user_uuid: string
+            }
         Returns: boolean
       }
     }

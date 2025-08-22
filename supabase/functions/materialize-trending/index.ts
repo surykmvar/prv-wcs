@@ -7,10 +7,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Initialize Supabase client
+// Initialize Supabase client with service role for bypassing RLS
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-<parameter name="supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -57,9 +57,9 @@ serve(async (req) => {
       .select('id')
       .eq('title', trendingTopic.title)
       .eq('status', 'active')
-      .single();
+      .maybeSingle();
 
-    if (existingError && existingError.code !== 'PGRST116') { // PGRST116 = no rows found
+    if (existingError) {
       console.error('Error checking existing thought:', existingError);
       return new Response(
         JSON.stringify({ error: 'Database error' }),
@@ -111,12 +111,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Deactivate the trending topic since it's now materialized
-    await supabase
-      .from('trending_topics_cache')
-      .update({ is_active: false })
-      .eq('id', trendingTopicId);
 
     console.log(`Successfully materialized trending topic as thought ${newThought.id}`);
 

@@ -229,7 +229,7 @@ export function TrendingThoughtDropdown({
               {user 
                 ? showFeedThought
                   ? "Reply to this community thought with your voice"
-                  : "Your reply will create a new post in the feed" 
+                  : "Explore more questions by tapping the feed button" 
                 : "Sign in to join the conversation"
               }
             </p>

@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Check, Zap, Star, Crown } from 'lucide-react';
 import { useCredits } from '@/hooks/useCredits';
 import { useRegionDetection } from '@/hooks/useRegionDetection';
+import { useCreditPackages } from '@/hooks/useCreditPackages';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -17,19 +18,13 @@ interface MembershipModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const PRESET_PACKAGES = [
-  { points: 50, popular: false },
-  { points: 200, popular: true },
-  { points: 500, popular: false },
-  { points: 1000, popular: false }
-];
-
 export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   const { user } = useAuth();
   const { creditsInfo, loading: creditsLoading } = useCredits();
   const { regionInfo, loading: regionLoading, error: regionError, calculatePrice, getCurrencySymbol } = useRegionDetection();
+  const { packages, loading: packagesLoading } = useCreditPackages(regionInfo?.region);
   const { toast } = useToast();
-  const [selectedPackage, setSelectedPackage] = useState<number>(200);
+  const [selectedPackage, setSelectedPackage] = useState<string>('');
   const [customPoints, setCustomPoints] = useState<string>('');
   const [isCustom, setIsCustom] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
@@ -40,7 +35,7 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   const totalCredits = 2048; // Max credits for progress bar
   const progressPercentage = (currentPoints / totalCredits) * 100;
 
-  const handlePurchase = async (points: number) => {
+  const handlePurchase = async (packageId?: string) => {
     if (!regionInfo || regionError) {
       toast({
         title: 'Region Error',
@@ -50,14 +45,28 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
       return;
     }
 
+    const points = getPointsToUse();
+    if (points < 10) {
+      toast({
+        title: 'Invalid Amount',
+        description: 'Minimum purchase is 10 credits.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setPurchasing(true);
     try {
+      const selectedPkg = packages.find(p => p.id === packageId);
+      
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { 
           points,
+          packageId: packageId || null,
           region: regionInfo.region,
           currency: regionInfo.currency,
-          pricePerPoint: regionInfo.pricePerPoint
+          pricePerPoint: regionInfo.pricePerPoint,
+          packagePrice: selectedPkg ? selectedPkg.price_cents : null
         }
       });
 
@@ -81,12 +90,16 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   };
 
   const getPointsToUse = () => {
-    return isCustom ? parseInt(customPoints) || 0 : selectedPackage;
+    if (isCustom) {
+      return parseInt(customPoints) || 0;
+    }
+    const selectedPkg = packages.find(p => p.id === selectedPackage);
+    return selectedPkg ? selectedPkg.points : 0;
   };
 
   const currentPrice = calculatePrice(getPointsToUse());
 
-  if (creditsLoading || regionLoading) {
+  if (creditsLoading || regionLoading || packagesLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-2xl">
@@ -163,48 +176,70 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
           <div>
             <h3 className="text-lg font-semibold mb-4">Choose Credits Package</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {PRESET_PACKAGES.map((pkg) => (
-                <div
-                  key={pkg.points}
-                  className={`relative p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                    selectedPackage === pkg.points && !isCustom
-                      ? 'border-primary bg-primary/5 shadow-md'
-                      : 'border-border'
-                  }`}
-                  onClick={() => {
-                    setSelectedPackage(pkg.points);
-                    setIsCustom(false);
-                  }}
-                >
-                  {pkg.popular && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs px-2 py-1 whitespace-nowrap shadow-md z-10">
-                      <Star className="h-3 w-3 mr-1 flex-shrink-0" />
-                      Most Popular
-                    </Badge>
-                  )}
-                  
-                  <div className="text-center">
-                    <div className="text-2xl font-bold mb-1">{pkg.points}</div>
-                    <div className="text-sm text-muted-foreground mb-3">Credits</div>
-                    <div className="text-lg font-semibold text-primary">
-                      {getCurrencySymbol()}{calculatePrice(pkg.points)}
-                    </div>
+              {packages.map((pkg) => {
+                const hasSeasonalOffer = pkg.seasonal_offer_percentage && 
+                  pkg.seasonal_offer_expires_at && 
+                  new Date(pkg.seasonal_offer_expires_at) > new Date();
+                
+                const originalPrice = pkg.price_cents / 100;
+                const discountedPrice = hasSeasonalOffer 
+                  ? originalPrice * (1 - pkg.seasonal_offer_percentage! / 100)
+                  : originalPrice;
+
+                return (
+                  <div
+                    key={pkg.id}
+                    className={`relative p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${
+                      selectedPackage === pkg.id && !isCustom
+                        ? 'border-primary bg-primary/5 shadow-md'
+                        : 'border-border'
+                    }`}
+                    onClick={() => {
+                      setSelectedPackage(pkg.id);
+                      setIsCustom(false);
+                    }}
+                  >
+                    {pkg.is_popular && (
+                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs px-2 py-1 whitespace-nowrap shadow-md z-10">
+                        <Star className="h-3 w-3 mr-1 flex-shrink-0" />
+                        Most Popular
+                      </Badge>
+                    )}
+
+                    {hasSeasonalOffer && (
+                      <Badge className="absolute -top-3 right-2 bg-red-500 text-white text-xs px-2 py-1">
+                        -{pkg.seasonal_offer_percentage}%
+                      </Badge>
+                    )}
                     
-                    <div className="mt-3 space-y-1">
-                      <div className="flex items-center justify-center text-xs">
-                        <Zap className="h-3 w-3 mr-1 text-yellow-500" />
-                        {pkg.points} premium features
+                    <div className="text-center">
+                      <div className="text-2xl font-bold mb-1">{pkg.points}</div>
+                      <div className="text-sm text-muted-foreground mb-3">Credits</div>
+                      <div className="text-lg font-semibold text-primary">
+                        {hasSeasonalOffer && (
+                          <span className="text-sm text-muted-foreground line-through mr-2">
+                            {getCurrencySymbol()}{originalPrice.toFixed(2)}
+                          </span>
+                        )}
+                        {getCurrencySymbol()}{discountedPrice.toFixed(2)}
                       </div>
-                      {pkg.points >= 200 && (
+                      
+                      <div className="mt-3 space-y-1">
                         <div className="flex items-center justify-center text-xs">
-                          <Crown className="h-3 w-3 mr-1 text-purple-500" />
-                          Bonus content
+                          <Zap className="h-3 w-3 mr-1 text-yellow-500" />
+                          {pkg.points} premium features
                         </div>
-                      )}
+                        {pkg.points >= 200 && (
+                          <div className="flex items-center justify-center text-xs">
+                            <Crown className="h-3 w-3 mr-1 text-purple-500" />
+                            Bonus content
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -265,7 +300,7 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
             
             <Button 
               className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-              onClick={() => handlePurchase(getPointsToUse())}
+              onClick={() => handlePurchase(isCustom ? undefined : selectedPackage)}
               disabled={purchasing || getPointsToUse() < 10}
             >
               {purchasing ? (
