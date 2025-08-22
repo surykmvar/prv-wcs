@@ -177,10 +177,9 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
                   }}
                 >
                   {pkg.popular && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs px-2 py-1 whitespace-nowrap shadow-md z-10">
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs px-2 py-1 whitespace-nowrap shadow-md z-10">
                       <Star className="h-3 w-3 mr-1 flex-shrink-0" />
-                      <span className="hidden xs:inline">Most Popular</span>
-                      <span className="xs:hidden">Popular</span>
+                      Most Popular
                     </Badge>
                   )}
                   
