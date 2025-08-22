@@ -16,39 +16,51 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const fallbackTopics = [
   {
     keyword: "AI taking over",
-    title: "Will AI robots steal our jobs or just help us work in pajamas? 🤖",
-    description: "Some say robots will replace us all, others think they'll just make life easier. Maybe they'll just remind us to take more coffee breaks?",
+    title: "Will AI robots steal our jobs or just make us lazier? 🤖",
+    description: "Some say robots will replace us all, others think they'll just help us binge-watch better. What's your take on our robot overlords?",
     tags: ["AI", "jobs", "robots", "automation", "future"]
   },
   {
     keyword: "pineapple pizza debate",
     title: "Is pineapple on pizza a crime against humanity? 🍕",
-    description: "The eternal food fight continues. Team pineapple says it's sweet perfection, while purists claim it's absolute chaos. Where do you stand in this delicious war?",
+    description: "The eternal food fight continues. Team pineapple says it's tropical perfection, while purists are literally shaking. Where do you stand?",
     tags: ["pizza", "pineapple", "food", "debate", "taste"]
   },
   {
-    keyword: "remote work pajamas",
-    title: "Should pajama pants be considered business attire? 👔",
-    description: "Working from home has blurred the lines between sleepwear and office wear. Some say comfort equals productivity, others miss actual pants.",
+    keyword: "remote work vibes",
+    title: "Should pajama pants count as business casual?",
+    description: "Working from home has us all living our comfiest life. Some say productivity is up, others just miss wearing real pants. What's your WFH style?",
     tags: ["remote-work", "fashion", "comfort", "productivity", "workplace"]
   },
   {
-    keyword: "social media scrolling",
-    title: "Is endless scrolling turning us into phone zombies? 📱",
-    description: "We scroll, we like, we scroll some more. But are we actually connecting with people or just feeding the algorithm monster?",
+    keyword: "social media addiction",
+    title: "Are we all just phone zombies now? 📱",
+    description: "We scroll, we double-tap, we scroll some more. But are we actually vibing with people or just feeding the algorithm beast?",
     tags: ["social-media", "technology", "scrolling", "connection", "habits"]
   },
   {
-    keyword: "avocado toast economics",
-    title: "Did avocado toast really kill the housing market? 🥑",
-    description: "Millennials love their green gold on bread, but some say this breakfast trend cost them homeownership. Is brunch really that powerful?",
+    keyword: "avocado toast economy",
+    title: "Did avocado toast really break the housing market?",
+    description: "Millennials love their green gold on bread, but boomers say this breakfast killed homeownership dreams. Is brunch really that powerful?",
     tags: ["avocado", "millennials", "housing", "food-trends", "economics"]
   },
   {
-    keyword: "streaming subscription chaos",
-    title: "Do we need 47 different streaming services to watch TV? 📺",
-    description: "Remember when Netflix had everything? Now we need a spreadsheet to track our subscriptions. Is convenience becoming inconvenient?",
+    keyword: "streaming chaos",
+    title: "Do we really need 50 streaming apps to watch one show? 📺",
+    description: "Remember when Netflix had everything? Now we need a whole budget just for subscriptions. Is convenience becoming super inconvenient?",
     tags: ["streaming", "subscriptions", "entertainment", "netflix", "TV"]
+  },
+  {
+    keyword: "plant parenting",
+    title: "Is keeping plants alive the new adulting test? 🌱",
+    description: "Everyone's suddenly a plant parent, but half of us are plant serial killers. Are succulents the new tamagotchis?",
+    tags: ["plants", "adulting", "hobbies", "lifestyle", "responsibility"]
+  },
+  {
+    keyword: "coffee addiction",
+    title: "Is coffee actually a personality trait now? ☕",
+    description: "Some people literally can't function without their daily brew, others think it's all hype. Are we caffeinated or just caffeinated?",
+    tags: ["coffee", "lifestyle", "addiction", "morning", "energy"]
   }
 ];
 
