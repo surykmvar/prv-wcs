@@ -101,7 +101,12 @@ export function useTrendingThoughts() {
     // If no cached topics, trigger refresh
     console.log('No cached topics found, triggering refresh...');
     const { data, error } = await supabase.functions.invoke('fetch-trending-topics', {
-      body: {}
+      body: { 
+        style: 'goofy', 
+        maxEmojis: 2, 
+        forceRefresh: true, // Force refresh initially to see new style
+        safeMode: true 
+      }
     });
 
     if (error) {

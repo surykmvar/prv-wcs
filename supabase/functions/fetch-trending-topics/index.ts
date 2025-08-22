@@ -12,46 +12,73 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Fallback trending topics if Google Trends or OpenAI fails
+// Goofy fallback topics with emojis and fun tone
 const fallbackTopics = [
   {
-    keyword: "climate change solutions",
-    title: "Is renewable energy truly the answer to climate change?",
-    description: "While solar and wind power are booming, critics argue they're unreliable and expensive. Supporters say they're our only hope. What's your take on the green energy revolution?",
-    tags: ["climate", "energy", "environment", "renewable", "future"]
+    keyword: "AI taking over",
+    title: "Will AI robots steal our jobs or just help us work in pajamas? 🤖",
+    description: "Some say robots will replace us all, others think they'll just make life easier. Maybe they'll just remind us to take more coffee breaks?",
+    tags: ["AI", "jobs", "robots", "automation", "future"]
   },
   {
-    keyword: "artificial intelligence jobs",
-    title: "Will AI replace more jobs than it creates?",
-    description: "Tech optimists claim AI will create new opportunities, but skeptics worry about mass unemployment. History shows technology can be disruptive—but is this time different?",
-    tags: ["AI", "jobs", "technology", "automation", "future"]
+    keyword: "pineapple pizza debate",
+    title: "Is pineapple on pizza a crime against humanity? 🍕",
+    description: "The eternal food fight continues. Team pineapple says it's sweet perfection, while purists claim it's absolute chaos. Where do you stand in this delicious war?",
+    tags: ["pizza", "pineapple", "food", "debate", "taste"]
   },
   {
-    keyword: "remote work productivity",
-    title: "Are remote workers actually more productive?",
-    description: "Some swear by working from home, citing fewer distractions and better work-life balance. Others argue nothing beats face-to-face collaboration. Where do you stand?",
-    tags: ["remote-work", "productivity", "workplace", "hybrid", "collaboration"]
+    keyword: "remote work pajamas",
+    title: "Should pajama pants be considered business attire? 👔",
+    description: "Working from home has blurred the lines between sleepwear and office wear. Some say comfort equals productivity, others miss actual pants.",
+    tags: ["remote-work", "fashion", "comfort", "productivity", "workplace"]
   },
   {
-    keyword: "social media mental health",
-    title: "Is social media destroying our mental health?",
-    description: "Studies link social platforms to anxiety and depression, especially in teens. But others argue social media helps people connect and find communities. What's your experience?",
-    tags: ["social-media", "mental-health", "technology", "youth", "connection"]
+    keyword: "social media scrolling",
+    title: "Is endless scrolling turning us into phone zombies? 📱",
+    description: "We scroll, we like, we scroll some more. But are we actually connecting with people or just feeding the algorithm monster?",
+    tags: ["social-media", "technology", "scrolling", "connection", "habits"]
   },
   {
-    keyword: "electric vehicles adoption",
-    title: "Are electric cars really better for the environment?",
-    description: "EVs promise zero emissions, but manufacturing batteries creates pollution. Plus, the power grid still relies heavily on fossil fuels. Is electric really greener?",
-    tags: ["electric-cars", "environment", "transportation", "battery", "green-tech"]
+    keyword: "avocado toast economics",
+    title: "Did avocado toast really kill the housing market? 🥑",
+    description: "Millennials love their green gold on bread, but some say this breakfast trend cost them homeownership. Is brunch really that powerful?",
+    tags: ["avocado", "millennials", "housing", "food-trends", "economics"]
+  },
+  {
+    keyword: "streaming subscription chaos",
+    title: "Do we need 47 different streaming services to watch TV? 📺",
+    description: "Remember when Netflix had everything? Now we need a spreadsheet to track our subscriptions. Is convenience becoming inconvenient?",
+    tags: ["streaming", "subscriptions", "entertainment", "netflix", "TV"]
   }
 ];
 
-async function generateDebateQuestion(keyword: string): Promise<{ title: string; description: string; tags: string[] }> {
+// Emoji category mapping for heuristic generation
+const emojiMap: Record<string, string[]> = {
+  'AI': ['🤖', '🧠', '⚡'],
+  'tech': ['💻', '📱', '🔧'],
+  'climate': ['🌍', '♻️', '🌱'],
+  'food': ['🍕', '🥑', '🍔'],
+  'work': ['💼', '👔', '💻'],
+  'social': ['📱', '💬', '👥'],
+  'streaming': ['📺', '🎬', '🍿'],
+  'gaming': ['🎮', '🕹️', '👾'],
+  'fashion': ['👕', '👟', '✨'],
+  'music': ['🎵', '🎤', '🎧'],
+  'space': ['🚀', '🌟', '🪐'],
+  'crypto': ['💰', '📈', '🪙']
+};
+
+async function generateDebateQuestion(
+  keyword: string, 
+  style: string = 'goofy', 
+  maxEmojis: number = 2, 
+  safeMode: boolean = true
+): Promise<{ title: string; description: string; tags: string[] }> {
   const openAIKey = Deno.env.get('OPENAI_API_KEY');
   
   if (!openAIKey) {
     console.log('No OpenAI key found, using heuristic generation');
-    return generateHeuristicQuestion(keyword);
+    return generateHeuristicQuestion(keyword, maxEmojis);
   }
 
   try {
@@ -66,7 +93,30 @@ async function generateDebateQuestion(keyword: string): Promise<{ title: string;
         messages: [
           {
             role: 'system',
-            content: `You are a debate question generator for a voice social platform called "Woices". Generate engaging, thought-provoking debate questions from trending topics. 
+            content: style === 'goofy' ? 
+              `You are a fun, goofy debate question generator for "Woices" - a voice social platform. Create lighthearted, playful questions that spark friendly debates.
+
+STYLE GUIDELINES:
+- Keep it fun and goofy, but not childish
+- Use 0-${maxEmojis} emojis MAX (keep it balanced, not emoji spam)
+- Avoid sensitive topics like politics, religion, serious social issues
+- Focus on everyday debates, pop culture, food, tech, lifestyle
+- Make it conversational and relatable
+${safeMode ? '- Keep content family-friendly and non-controversial' : ''}
+
+FORMAT (JSON only):
+{
+  "title": "A fun, goofy question that sparks debate (max 90 chars including emojis)",
+  "description": "A playful explanation presenting both sides, ending with an engaging question (max 240 chars)",
+  "tags": ["5-7 relevant hashtags without # symbol"]
+}
+
+EXAMPLES:
+- "Is cereal soup or just breakfast? 🥣"
+- "Should socks with sandals be illegal? 👡"
+- "Are hot dogs sandwiches or their own thing? 🌭"` 
+              :
+              `You are a debate question generator for a voice social platform called "Woices". Generate engaging, thought-provoking debate questions from trending topics. 
 
 Format your response as JSON:
 {
@@ -97,41 +147,55 @@ Make questions balanced, avoiding extreme political stances. Focus on topics peo
     try {
       const parsed = JSON.parse(content);
       return {
-        title: parsed.title.substring(0, 100),
-        description: parsed.description.substring(0, 280),
+        title: parsed.title.substring(0, style === 'goofy' ? 90 : 100),
+        description: parsed.description.substring(0, style === 'goofy' ? 240 : 280),
         tags: parsed.tags.slice(0, 7)
       };
     } catch (parseError) {
       console.error('Failed to parse OpenAI response:', parseError);
-      return generateHeuristicQuestion(keyword);
+      return generateHeuristicQuestion(keyword, maxEmojis);
     }
   } catch (error) {
     console.error('OpenAI API error:', error);
-    return generateHeuristicQuestion(keyword);
+    return generateHeuristicQuestion(keyword, maxEmojis);
   }
 }
 
-function generateHeuristicQuestion(keyword: string): { title: string; description: string; tags: string[] } {
-  // Simple heuristic question generation based on keyword patterns
-  const questionStarters = [
-    "Is", "Should", "Will", "Can", "Does", "Are", "Has"
+function generateHeuristicQuestion(keyword: string, maxEmojis: number = 2): { title: string; description: string; tags: string[] } {
+  const goofyStarters = [
+    "Is", "Should", "Can", "Will", "Are", "Do", "Does"
   ];
   
-  const engagingEndings = [
-    "really worth it?",
-    "the right approach?",
-    "actually effective?",
-    "a good idea?",
-    "changing our world?",
-    "the future?",
-    "helping or hurting us?"
+  const goofyEndings = [
+    "actually a thing? 🤔",
+    "the future or just hype?",
+    "worth the drama? 😅", 
+    "genius or madness?",
+    "changing everything? ✨",
+    "overrated or underrated?",
+    "a game changer? 🎮"
   ];
 
-  const starter = questionStarters[Math.floor(Math.random() * questionStarters.length)];
-  const ending = engagingEndings[Math.floor(Math.random() * engagingEndings.length)];
+  // Find relevant emojis based on keyword
+  let relevantEmojis: string[] = [];
+  for (const [category, emojis] of Object.entries(emojiMap)) {
+    if (keyword.toLowerCase().includes(category)) {
+      relevantEmojis = emojis;
+      break;
+    }
+  }
   
-  const title = `${starter} ${keyword} ${ending}`;
-  const description = `This trending topic has people divided. Some say it's revolutionary, others aren't convinced. What's your take on ${keyword}?`;
+  const starter = goofyStarters[Math.floor(Math.random() * goofyStarters.length)];
+  const ending = goofyEndings[Math.floor(Math.random() * goofyEndings.length)];
+  
+  // Add emoji if we found relevant ones and maxEmojis allows it
+  let emoji = '';
+  if (relevantEmojis.length > 0 && maxEmojis > 0 && Math.random() > 0.3) {
+    emoji = ' ' + relevantEmojis[Math.floor(Math.random() * relevantEmojis.length)];
+  }
+  
+  const title = `${starter} ${keyword} ${ending}${emoji}`.substring(0, 90);
+  const description = `People are split on this one! Some are totally here for it, others think it's overrated. What's your hot take on ${keyword}?`;
   
   // Generate tags from keyword
   const tags = keyword.toLowerCase()
@@ -177,7 +241,25 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Fetching trending topics...');
+    // Parse request parameters
+    let style = 'goofy';
+    let maxEmojis = 2;
+    let forceRefresh = false;
+    let safeMode = true;
+    
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        style = body.style || 'goofy';
+        maxEmojis = body.maxEmojis ?? 2;
+        forceRefresh = body.forceRefresh || false;
+        safeMode = body.safeMode ?? true;
+      } catch (e) {
+        console.log('No valid JSON body, using defaults');
+      }
+    }
+    
+    console.log(`Fetching trending topics with style: ${style}, maxEmojis: ${maxEmojis}, forceRefresh: ${forceRefresh}`);
     
     // Check if we have recent cached topics (less than 12 hours old)
     const { data: existingTopics, error: fetchError } = await supabase
@@ -191,8 +273,8 @@ serve(async (req) => {
       console.error('Error fetching existing topics:', fetchError);
     }
 
-    // If we have enough recent topics, return them
-    if (existingTopics && existingTopics.length >= 10) {
+    // If we have enough recent topics and not forcing refresh, return them
+    if (!forceRefresh && existingTopics && existingTopics.length >= 10) {
       console.log(`Found ${existingTopics.length} cached topics, skipping refresh`);
       return new Response(
         JSON.stringify({ 
@@ -220,7 +302,7 @@ serve(async (req) => {
     // Generate debate questions for each keyword
     for (const keyword of keywords) {
       try {
-        const question = await generateDebateQuestion(keyword);
+        const question = await generateDebateQuestion(keyword, style, maxEmojis, safeMode);
         newTopics.push({
           title: question.title,
           description: question.description,
