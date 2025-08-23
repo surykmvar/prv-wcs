@@ -91,20 +91,16 @@ export function useTrendingThoughts() {
       console.error('Error fetching cached topics:', cacheError);
     }
 
-    if (cachedTopics && cachedTopics.length > 0) {
-      // Shuffle the topics for variety
-      const shuffled = [...cachedTopics].sort(() => 0.5 - Math.random());
-      setTrendingTopics(shuffled);
-      return;
-    }
+    // Temporarily skip cache to get fresh Gen Z style topics
+    console.log('Forcing refresh to get new Gen Z style topics...');
 
     // If no cached topics, trigger refresh
-    console.log('No cached topics found, triggering refresh...');
+    console.log('Triggering fresh trending topics with Gen Z style...');
     const { data, error } = await supabase.functions.invoke('fetch-trending-topics', {
       body: { 
         style: 'genz', 
         maxEmojis: 2, 
-        forceRefresh: true, // Force refresh initially to see new Gen Z style
+        forceRefresh: true, // Force refresh to get new Gen Z style
         safeMode: 'strict' 
       }
     });
