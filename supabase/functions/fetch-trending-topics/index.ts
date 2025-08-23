@@ -12,85 +12,92 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Goofy fallback topics with emojis and fun tone
+// Gen Z style fallback topics with authentic vibe and emojis
 const fallbackTopics = [
   {
-    keyword: "AI taking over",
-    title: "Will AI robots steal our jobs or just make us lazier? 🤖",
-    description: "Some say robots will replace us all, others think they'll just help us binge-watch better. What's your take on our robot overlords?",
-    tags: ["AI", "jobs", "robots", "automation", "future"]
+    keyword: "AI helping vs replacing",
+    title: "Is AI helping us or low-key replacing us? 🤖😬",
+    description: "Feels smart and super handy, but also kinda scary for jobs. Is AI leveling us up or pushing people out? Drop your hot take. 🔥",
+    tags: ["AI", "jobs", "automation", "future", "tech"]
   },
   {
-    keyword: "pineapple pizza debate",
-    title: "Is pineapple on pizza a crime against humanity? 🍕",
-    description: "The eternal food fight continues. Team pineapple says it's tropical perfection, while purists are literally shaking. Where do you stand?",
-    tags: ["pizza", "pineapple", "food", "debate", "taste"]
+    keyword: "EVs actually greener",
+    title: "Are EVs actually greener or just vibes? 🚗⚡",
+    description: "Zero tailpipe ≠ zero impact. Batteries + grid matter. Are EVs the real climate win or overhyped? Be honest. 🌍",
+    tags: ["EVs", "climate", "environment", "sustainability", "cars"]
   },
   {
-    keyword: "remote work vibes",
-    title: "Should pajama pants count as business casual?",
-    description: "Working from home has us all living our comfiest life. Some say productivity is up, others just miss wearing real pants. What's your WFH style?",
-    tags: ["remote-work", "fashion", "comfort", "productivity", "workplace"]
+    keyword: "social media brain frying",
+    title: "Is social media connecting us or frying our brains? 📱🧠",
+    description: "Community feels great, doomscrolling doesn't. Are we bonding or burning out? What's your screen-time reality? ⏳",
+    tags: ["social-media", "mental-health", "connection", "doomscrolling", "tech"]
   },
   {
-    keyword: "social media addiction",
-    title: "Are we all just phone zombies now? 📱",
-    description: "We scroll, we double-tap, we scroll some more. But are we actually vibing with people or just feeding the algorithm beast?",
-    tags: ["social-media", "technology", "scrolling", "connection", "habits"]
+    keyword: "streaming subscription chaos",
+    title: "Are we watching shows or just hunting for what to watch? 🎬🍿",
+    description: "Netflix, Hulu, Disney+, HBO... the list never ends. We spend more time browsing than watching. Is streaming broken? 💸",
+    tags: ["streaming", "entertainment", "subscriptions", "decision-fatigue", "TV"]
   },
   {
-    keyword: "avocado toast economy",
-    title: "Did avocado toast really break the housing market?",
-    description: "Millennials love their green gold on bread, but boomers say this breakfast killed homeownership dreams. Is brunch really that powerful?",
-    tags: ["avocado", "millennials", "housing", "food-trends", "economics"]
+    keyword: "sneaker drop culture",
+    title: "Sneaker drops: culture or controlled chaos? 👟🔥",
+    description: "Limited releases got people camping online for hours. Is it about the shoes or the flex? What's your sneaker game? 💯",
+    tags: ["sneakers", "fashion", "culture", "hype", "drops"]
   },
   {
-    keyword: "streaming chaos",
-    title: "Do we really need 50 streaming apps to watch one show? 📺",
-    description: "Remember when Netflix had everything? Now we need a whole budget just for subscriptions. Is convenience becoming super inconvenient?",
-    tags: ["streaming", "subscriptions", "entertainment", "netflix", "TV"]
+    keyword: "remote work pajamas",
+    title: "Are we actually productive in pajamas or just pretending? 🏠💼",
+    description: "WFH life hits different. Some thrive, others miss the office energy. Is remote work the future or are we losing something? 🤔",
+    tags: ["remote-work", "productivity", "lifestyle", "work-culture", "pajamas"]
   },
   {
-    keyword: "plant parenting",
-    title: "Is keeping plants alive the new adulting test? 🌱",
-    description: "Everyone's suddenly a plant parent, but half of us are plant serial killers. Are succulents the new tamagotchis?",
-    tags: ["plants", "adulting", "hobbies", "lifestyle", "responsibility"]
+    keyword: "crypto still relevant",
+    title: "Is crypto dead or just taking a nap? 🪙😴",
+    description: "From moon shots to major crashes, crypto's been wild. Still believing in digital money or moving on? Where you at? 📈",
+    tags: ["crypto", "bitcoin", "investing", "finance", "digital-money"]
   },
   {
-    keyword: "coffee addiction",
-    title: "Is coffee actually a personality trait now? ☕",
-    description: "Some people literally can't function without their daily brew, others think it's all hype. Are we caffeinated or just caffeinated?",
-    tags: ["coffee", "lifestyle", "addiction", "morning", "energy"]
+    keyword: "influencer authenticity",
+    title: "Are influencers actually influential or just really good at selfies? 📸✨",
+    description: "Everyone's an influencer now, but who's actually influencing? Is it authentic connection or just aesthetic game? Spill. 💭",
+    tags: ["influencers", "social-media", "authenticity", "marketing", "content"]
   }
 ];
 
-// Emoji category mapping for heuristic generation
+// Enhanced emoji category mapping for Gen Z style generation
 const emojiMap: Record<string, string[]> = {
   'AI': ['🤖', '🧠', '⚡'],
   'tech': ['💻', '📱', '🔧'],
   'climate': ['🌍', '♻️', '🌱'],
+  'EVs': ['🚗', '⚡', '🔋'],
   'food': ['🍕', '🥑', '🍔'],
-  'work': ['💼', '👔', '💻'],
+  'work': ['💼', '🏠', '💻'],
   'social': ['📱', '💬', '👥'],
   'streaming': ['📺', '🎬', '🍿'],
   'gaming': ['🎮', '🕹️', '👾'],
-  'fashion': ['👕', '👟', '✨'],
+  'fashion': ['👟', '🔥', '✨'],
+  'sneakers': ['👟', '🔥', '💯'],
   'music': ['🎵', '🎤', '🎧'],
   'space': ['🚀', '🌟', '🪐'],
-  'crypto': ['💰', '📈', '🪙']
+  'crypto': ['🪙', '📈', '💰'],
+  'mental': ['🧠', '💙', '😮‍💨'],
+  'influencer': ['📸', '✨', '💭'],
+  'brain': ['🧠', '😵‍💫', '⏳'],
+  'money': ['💸', '💰', '🏦'],
+  'chaos': ['🔥', '💀', '😅']
 };
 
 async function generateDebateQuestion(
   keyword: string, 
-  style: string = 'goofy', 
+  style: string = 'genz', 
   maxEmojis: number = 2, 
-  safeMode: boolean = true
+  safeMode: string = 'strict'
 ): Promise<{ title: string; description: string; tags: string[] }> {
   const openAIKey = Deno.env.get('OPENAI_API_KEY');
   
   if (!openAIKey) {
     console.log('No OpenAI key found, using heuristic generation');
-    return generateHeuristicQuestion(keyword, maxEmojis);
+    return generateHeuristicQuestion(keyword, maxEmojis, style);
   }
 
   try {
@@ -105,30 +112,31 @@ async function generateDebateQuestion(
         messages: [
           {
             role: 'system',
-            content: style === 'goofy' ? 
-              `You are a fun, goofy debate question generator for "Woices" - a voice social platform. Create lighthearted, playful questions that spark friendly debates.
+            content: style === 'genz' ? 
+              `You are a Gen Z debate question generator for "Woices" - a voice social platform. Create authentic, punchy questions that spark genuine debates using current Gen Z language and vibes.
 
-STYLE GUIDELINES:
-- Keep it fun and goofy, but not childish
-- Use 0-${maxEmojis} emojis MAX (keep it balanced, not emoji spam)
-- Avoid sensitive topics like politics, religion, serious social issues
-- Focus on everyday debates, pop culture, food, tech, lifestyle
-- Make it conversational and relatable
-${safeMode ? '- Keep content family-friendly and non-controversial' : ''}
+STRICT REQUIREMENTS:
+- Use 0-${maxEmojis} emojis MAX (tasteful, not spam)
+- NO hashtags in titles or descriptions
+- Keep titles ≤ 90-100 characters
+- Keep descriptions ≤ 200-240 characters
+- Use Gen Z language: "low-key", "no cap", "actually", "kinda", "literally", "vibes", "hits different", "be honest", "spill"
+- Be conversational and relatable, avoid corporate tone
+${safeMode === 'strict' ? '- STRICTLY avoid: adult content, graphic violence, tragedies, extremist politics, slurs, sensitive topics' : ''}
+
+TONE EXAMPLES:
+- "Is AI helping us or low-key replacing us? 🤖😬"
+- "Are EVs actually greener or just vibes? 🚗⚡"
+- "Is social media connecting us or frying our brains? 📱🧠"
 
 FORMAT (JSON only):
 {
-  "title": "A fun, goofy question that sparks debate (max 90 chars including emojis)",
-  "description": "A playful explanation presenting both sides, ending with an engaging question (max 240 chars)",
-  "tags": ["5-7 relevant hashtags without # symbol"]
-}
-
-EXAMPLES:
-- "Is cereal soup or just breakfast? 🥣"
-- "Should socks with sandals be illegal? 👡"
-- "Are hot dogs sandwiches or their own thing? 🌭"` 
+  "title": "Short, punchy Gen Z question (90-100 chars with emojis)",
+  "description": "Conversational explanation with both sides, ending with engaging question (200-240 chars)",
+  "tags": ["5-7 relevant keywords without # symbol"]
+}` 
               :
-              `You are a debate question generator for a voice social platform called "Woices". Generate engaging, thought-provoking debate questions from trending topics. 
+              `You are a professional debate question generator for a voice social platform called "Woices". Generate engaging, thought-provoking debate questions from trending topics. 
 
 Format your response as JSON:
 {
@@ -158,64 +166,140 @@ Make questions balanced, avoiding extreme political stances. Focus on topics peo
     
     try {
       const parsed = JSON.parse(content);
+      
+      // Post-process for safety and emoji limits
+      let title = parsed.title;
+      let description = parsed.description;
+      
+      // Count and limit emojis
+      const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu;
+      const titleEmojis = title.match(emojiRegex) || [];
+      const descEmojis = description.match(emojiRegex) || [];
+      
+      if (titleEmojis.length > maxEmojis) {
+        title = title.replace(emojiRegex, (match, index) => titleEmojis.slice(0, maxEmojis).includes(match) ? match : '').trim();
+      }
+      if (descEmojis.length > maxEmojis) {
+        description = description.replace(emojiRegex, (match, index) => descEmojis.slice(0, maxEmojis).includes(match) ? match : '').trim();
+      }
+      
+      // Safety filter for blocked content
+      const blockedKeywords = ['nsfw', 'adult', 'explicit', 'sexual', 'violence', 'death', 'suicide', 'terrorist', 'bomb', 'gun', 'weapon'];
+      const hasBlockedContent = blockedKeywords.some(word => 
+        title.toLowerCase().includes(word) || description.toLowerCase().includes(word)
+      );
+      
+      if (hasBlockedContent && safeMode === 'strict') {
+        console.log('Blocked content detected, using fallback');
+        return generateHeuristicQuestion(keyword, maxEmojis, style);
+      }
+      
       return {
-        title: parsed.title.substring(0, style === 'goofy' ? 90 : 100),
-        description: parsed.description.substring(0, style === 'goofy' ? 240 : 280),
+        title: title.substring(0, style === 'genz' ? 100 : 100),
+        description: description.substring(0, style === 'genz' ? 240 : 280),
         tags: parsed.tags.slice(0, 7)
       };
     } catch (parseError) {
       console.error('Failed to parse OpenAI response:', parseError);
-      return generateHeuristicQuestion(keyword, maxEmojis);
+      return generateHeuristicQuestion(keyword, maxEmojis, style);
     }
   } catch (error) {
     console.error('OpenAI API error:', error);
-    return generateHeuristicQuestion(keyword, maxEmojis);
+    return generateHeuristicQuestion(keyword, maxEmojis, style);
   }
 }
 
-function generateHeuristicQuestion(keyword: string, maxEmojis: number = 2): { title: string; description: string; tags: string[] } {
-  const goofyStarters = [
-    "Is", "Should", "Can", "Will", "Are", "Do", "Does"
-  ];
-  
-  const goofyEndings = [
-    "actually a thing? 🤔",
-    "the future or just hype?",
-    "worth the drama? 😅", 
-    "genius or madness?",
-    "changing everything? ✨",
-    "overrated or underrated?",
-    "a game changer? 🎮"
-  ];
+function generateHeuristicQuestion(keyword: string, maxEmojis: number = 2, style: string = 'genz'): { title: string; description: string; tags: string[] } {
+  if (style === 'genz') {
+    const genzStarters = [
+      "Is", "Are", "Should", "Can", "Will", "Do"
+    ];
+    
+    const genzMiddles = [
+      "actually", "really", "low-key", "literally", "kinda"
+    ];
+    
+    const genzEndings = [
+      "helping us or replacing us?",
+      "worth the hype or overrated?",
+      "the future or just vibes?",
+      "connecting us or frying our brains?",
+      "a flex or just expensive?",
+      "genius or chaos?",
+      "changing everything or nothing?",
+      "authentic or just aesthetic?"
+    ];
 
-  // Find relevant emojis based on keyword
-  let relevantEmojis: string[] = [];
-  for (const [category, emojis] of Object.entries(emojiMap)) {
-    if (keyword.toLowerCase().includes(category)) {
-      relevantEmojis = emojis;
-      break;
+    // Find relevant emojis based on keyword
+    let relevantEmojis: string[] = [];
+    for (const [category, emojis] of Object.entries(emojiMap)) {
+      if (keyword.toLowerCase().includes(category.toLowerCase())) {
+        relevantEmojis = emojis;
+        break;
+      }
     }
+    
+    const starter = genzStarters[Math.floor(Math.random() * genzStarters.length)];
+    const middle = Math.random() > 0.5 ? genzMiddles[Math.floor(Math.random() * genzMiddles.length)] + ' ' : '';
+    const ending = genzEndings[Math.floor(Math.random() * genzEndings.length)];
+    
+    // Add 1-2 emojis if relevant ones found and maxEmojis allows it
+    let emojis = '';
+    if (relevantEmojis.length > 0 && maxEmojis > 0) {
+      const numEmojis = Math.min(maxEmojis, Math.floor(Math.random() * 2) + 1);
+      const selectedEmojis = [];
+      for (let i = 0; i < numEmojis; i++) {
+        const emoji = relevantEmojis[Math.floor(Math.random() * relevantEmojis.length)];
+        if (!selectedEmojis.includes(emoji)) {
+          selectedEmojis.push(emoji);
+        }
+      }
+      emojis = ' ' + selectedEmojis.join('');
+    }
+    
+    const title = `${starter} ${keyword} ${middle}${ending}${emojis}`.substring(0, 100);
+    
+    const genzDescriptions = [
+      `Honestly kinda split on this one. Some people are totally here for it, others think it's overrated. What's your take?`,
+      `This hits different for everyone. Some say it's the future, others think it's just hype. Where do you stand?`,
+      `People have opinions on this one. Some are loving it, others are questioning everything. What's your vibe?`,
+      `This topic is literally everywhere right now. Some think it's genius, others are skeptical. Be honest - what do you think?`,
+      `Everyone's talking about this but nobody agrees. Some are all in, others are like nah. What's your honest opinion?`
+    ];
+    
+    const description = genzDescriptions[Math.floor(Math.random() * genzDescriptions.length)];
+    
+    // Generate tags from keyword
+    const tags = keyword.toLowerCase()
+      .split(/[\s\-]+/)
+      .filter(word => word.length > 2)
+      .slice(0, 5);
+    
+    return { title, description, tags };
+  } else {
+    // Fallback to professional style
+    const starters = ["Is", "Should", "Can", "Will", "Are", "Do", "Does"];
+    const endings = [
+      "the future or just hype?",
+      "worth the investment?", 
+      "changing everything?",
+      "overrated or underrated?",
+      "a game changer?"
+    ];
+
+    const starter = starters[Math.floor(Math.random() * starters.length)];
+    const ending = endings[Math.floor(Math.random() * endings.length)];
+    
+    const title = `${starter} ${keyword} ${ending}`.substring(0, 100);
+    const description = `This topic has people divided. Some believe it's revolutionary, while others remain skeptical. What's your perspective on ${keyword}?`;
+    
+    const tags = keyword.toLowerCase()
+      .split(/[\s\-]+/)
+      .filter(word => word.length > 2)
+      .slice(0, 5);
+    
+    return { title, description, tags };
   }
-  
-  const starter = goofyStarters[Math.floor(Math.random() * goofyStarters.length)];
-  const ending = goofyEndings[Math.floor(Math.random() * goofyEndings.length)];
-  
-  // Add emoji if we found relevant ones and maxEmojis allows it
-  let emoji = '';
-  if (relevantEmojis.length > 0 && maxEmojis > 0 && Math.random() > 0.3) {
-    emoji = ' ' + relevantEmojis[Math.floor(Math.random() * relevantEmojis.length)];
-  }
-  
-  const title = `${starter} ${keyword} ${ending}${emoji}`.substring(0, 90);
-  const description = `People are split on this one! Some are totally here for it, others think it's overrated. What's your hot take on ${keyword}?`;
-  
-  // Generate tags from keyword
-  const tags = keyword.toLowerCase()
-    .split(/[\s\-]+/)
-    .filter(word => word.length > 2)
-    .slice(0, 5);
-  
-  return { title, description, tags };
 }
 
 async function fetchGoogleTrends(): Promise<string[]> {
@@ -254,24 +338,24 @@ serve(async (req) => {
 
   try {
     // Parse request parameters
-    let style = 'goofy';
+    let style = 'genz';  // Default to Gen Z style
     let maxEmojis = 2;
     let forceRefresh = false;
-    let safeMode = true;
+    let safeMode = 'strict';
     
     if (req.method === 'POST') {
       try {
         const body = await req.json();
-        style = body.style || 'goofy';
+        style = body.style || 'genz';
         maxEmojis = body.maxEmojis ?? 2;
         forceRefresh = body.forceRefresh || false;
-        safeMode = body.safeMode ?? true;
+        safeMode = body.safeMode || 'strict';
       } catch (e) {
         console.log('No valid JSON body, using defaults');
       }
     }
     
-    console.log(`Fetching trending topics with style: ${style}, maxEmojis: ${maxEmojis}, forceRefresh: ${forceRefresh}`);
+    console.log(`Fetching trending topics with style: ${style}, maxEmojis: ${maxEmojis}, forceRefresh: ${forceRefresh}, safeMode: ${safeMode}`);
     
     // Check if we have recent cached topics (less than 12 hours old)
     const { data: existingTopics, error: fetchError } = await supabase

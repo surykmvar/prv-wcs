@@ -102,10 +102,10 @@ export function useTrendingThoughts() {
     console.log('No cached topics found, triggering refresh...');
     const { data, error } = await supabase.functions.invoke('fetch-trending-topics', {
       body: { 
-        style: 'goofy', 
+        style: 'genz', 
         maxEmojis: 2, 
-        forceRefresh: true, // Force refresh initially to see new style
-        safeMode: true 
+        forceRefresh: true, // Force refresh initially to see new Gen Z style
+        safeMode: 'strict' 
       }
     });
 
@@ -125,10 +125,10 @@ export function useTrendingThoughts() {
     const fallbackTopics = [
       {
         id: 'fallback-1',
-        title: 'Is artificial intelligence truly revolutionizing our world?',
-        description: 'AI is everywhere now - from your phone to your job. Some say it\'s the future, others worry about job losses. What\'s your take on the AI revolution?',
-        tags: ['AI', 'technology', 'future'],
-        google_trends_keyword: 'artificial intelligence',
+        title: 'Is AI helping us or low-key replacing us? 🤖😬',
+        description: 'Feels smart and super handy, but also kinda scary for jobs. Is AI leveling us up or pushing people out? Drop your hot take. 🔥',
+        tags: ['AI', 'jobs', 'automation', 'future', 'tech'],
+        google_trends_keyword: 'AI helping vs replacing',
         region: 'US',
         created_at: new Date().toISOString(),
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -136,10 +136,10 @@ export function useTrendingThoughts() {
       },
       {
         id: 'fallback-2',
-        title: 'Is social media actually connecting us or dividing us?',
-        description: 'Social platforms promise to bring us together, but some argue they\'re creating echo chambers. What\'s your experience with social media?',
-        tags: ['social-media', 'connection', 'technology'],
-        google_trends_keyword: 'social media impact',
+        title: 'Are EVs actually greener or just vibes? 🚗⚡',
+        description: 'Zero tailpipe ≠ zero impact. Batteries + grid matter. Are EVs the real climate win or overhyped? Be honest. 🌍',
+        tags: ['EVs', 'climate', 'environment', 'sustainability', 'cars'],
+        google_trends_keyword: 'EVs actually greener',
         region: 'US',
         created_at: new Date().toISOString(),
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -147,10 +147,21 @@ export function useTrendingThoughts() {
       },
       {
         id: 'fallback-3',
-        title: 'Are electric cars really better for the environment?',
-        description: 'EVs promise zero emissions, but manufacturing batteries creates pollution. Plus, the power grid still relies heavily on fossil fuels. Is electric really greener?',
-        tags: ['electric-cars', 'environment', 'transportation'],
-        google_trends_keyword: 'electric vehicles',
+        title: 'Is social media connecting us or frying our brains? 📱🧠',
+        description: 'Community feels great, doomscrolling doesn\'t. Are we bonding or burning out? What\'s your screen-time reality? ⏳',
+        tags: ['social-media', 'mental-health', 'connection', 'doomscrolling', 'tech'],
+        google_trends_keyword: 'social media brain frying',
+        region: 'US',
+        created_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        is_active: true
+      },
+      {
+        id: 'fallback-4',
+        title: 'Sneaker drops: culture or controlled chaos? 👟🔥',
+        description: 'Limited releases got people camping online for hours. Is it about the shoes or the flex? What\'s your sneaker game? 💯',
+        tags: ['sneakers', 'fashion', 'culture', 'hype', 'drops'],
+        google_trends_keyword: 'sneaker drop culture',
         region: 'US',
         created_at: new Date().toISOString(),
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
