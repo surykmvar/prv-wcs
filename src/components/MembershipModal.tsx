@@ -32,8 +32,9 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   if (!user) return null;
 
   const currentPoints = creditsInfo?.balance || 0;
-  const totalCredits = 2048; // Max credits for progress bar
-  const progressPercentage = (currentPoints / totalCredits) * 100;
+  // Use total purchased credits or default to 30 for new users
+  const totalCredits = creditsInfo?.totalPurchased || 30;
+  const progressPercentage = totalCredits > 0 ? (currentPoints / totalCredits) * 100 : 0;
 
   const handlePurchase = async (packageId?: string) => {
     if (!regionInfo || regionError) {
@@ -149,8 +150,8 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
           
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Credits used</span>
-              <span>{Math.min(currentPoints, totalCredits)} of {totalCredits.toLocaleString()}</span>
+              <span>Credits remaining</span>
+              <span>{currentPoints} of {totalCredits.toLocaleString()}</span>
             </div>
             <Progress value={Math.min(progressPercentage, 100)} className="h-2" />
           </div>
