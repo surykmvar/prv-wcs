@@ -153,7 +153,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
         tags: tags.length > 0 ? tags : null,
         max_woices_allowed: maxWoicesAllowed,
         thought_scope: scope,
-        country_code: scope === 'regional' ? (countryCode?.toUpperCase() || null) : null,
+        country_code: countryCode?.toUpperCase() || null,
         city: scope === 'regional' && city.trim() ? city.trim() : null
       })
       
@@ -330,53 +330,6 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
             {/* Step 2: Location & Scope */}
             <section className="w-1/2 px-1 sm:px-2 space-y-4 sm:space-y-5">
               <div className="space-y-2">
-                <Label className="text-sm sm:text-base font-medium">Where are you right now?</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="city" className="text-xs">City <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="city"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="e.g., Berlin"
-                      className="mt-1"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="country" className="text-xs">Country code <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="country"
-                      value={countryCode}
-                      onChange={(e) => setCountryCode(e.target.value.toUpperCase().slice(0,2))}
-                      placeholder="e.g., DE, IN, US"
-                      className="mt-1 uppercase"
-                      maxLength={2}
-                      required
-                    />
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Detected: {flagEmojiFromCountryCode(countryCode)} {countryCode || 'Unknown'}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <Button type="button" variant="outline" size="sm" onClick={detectLocation} disabled={detectingLocation}>
-                    <LocateFixed className="h-4 w-4 mr-2" />
-                    {detectingLocation ? 'Detecting...' : 'Use my current location'}
-                  </Button>
-                  {city && countryCode && (
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {city}, {countryCode} {flagEmojiFromCountryCode(countryCode)}
-                    </div>
-                  )}
-                </div>
-                {locationError && (
-                  <p className="text-xs text-destructive mt-1">{locationError}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
                 <Label className="text-sm sm:text-base font-medium">Choose posting scope</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
@@ -407,12 +360,244 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                 </p>
               </div>
 
+              <div className="space-y-2">
+                <Label className="text-sm sm:text-base font-medium">Tell the viewers/voices where are you thinking from?</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {scope === 'regional' && (
+                    <div>
+                      <Label htmlFor="city" className="text-xs">City <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="city"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="e.g., Berlin"
+                        className="mt-1"
+                        required
+                      />
+                    </div>
+                  )}
+                  <div className={scope === 'regional' ? '' : 'sm:col-span-2'}>
+                    <Label htmlFor="country" className="text-xs">
+                      Country code {scope === 'regional' ? <span className="text-destructive">*</span> : '(optional)'}
+                    </Label>
+                    <select
+                      id="country"
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                      required={scope === 'regional'}
+                    >
+                      <option value="">Select country...</option>
+                      <option value="US">🇺🇸 United States (US)</option>
+                      <option value="IN">🇮🇳 India (IN)</option>
+                      <option value="GB">🇬🇧 United Kingdom (GB)</option>
+                      <option value="DE">🇩🇪 Germany (DE)</option>
+                      <option value="FR">🇫🇷 France (FR)</option>
+                      <option value="CA">🇨🇦 Canada (CA)</option>
+                      <option value="AU">🇦🇺 Australia (AU)</option>
+                      <option value="JP">🇯🇵 Japan (JP)</option>
+                      <option value="BR">🇧🇷 Brazil (BR)</option>
+                      <option value="MX">🇲🇽 Mexico (MX)</option>
+                      <option value="IT">🇮🇹 Italy (IT)</option>
+                      <option value="ES">🇪🇸 Spain (ES)</option>
+                      <option value="NL">🇳🇱 Netherlands (NL)</option>
+                      <option value="SE">🇸🇪 Sweden (SE)</option>
+                      <option value="NO">🇳🇴 Norway (NO)</option>
+                      <option value="DK">🇩🇰 Denmark (DK)</option>
+                      <option value="FI">🇫🇮 Finland (FI)</option>
+                      <option value="CH">🇨🇭 Switzerland (CH)</option>
+                      <option value="AT">🇦🇹 Austria (AT)</option>
+                      <option value="BE">🇧🇪 Belgium (BE)</option>
+                      <option value="PL">🇵🇱 Poland (PL)</option>
+                      <option value="CZ">🇨🇿 Czech Republic (CZ)</option>
+                      <option value="HU">🇭🇺 Hungary (HU)</option>
+                      <option value="RO">🇷🇴 Romania (RO)</option>
+                      <option value="BG">🇧🇬 Bulgaria (BG)</option>
+                      <option value="HR">🇭🇷 Croatia (HR)</option>
+                      <option value="SI">🇸🇮 Slovenia (SI)</option>
+                      <option value="SK">🇸🇰 Slovakia (SK)</option>
+                      <option value="LT">🇱🇹 Lithuania (LT)</option>
+                      <option value="LV">🇱🇻 Latvia (LV)</option>
+                      <option value="EE">🇪🇪 Estonia (EE)</option>
+                      <option value="IE">🇮🇪 Ireland (IE)</option>
+                      <option value="PT">🇵🇹 Portugal (PT)</option>
+                      <option value="GR">🇬🇷 Greece (GR)</option>
+                      <option value="CY">🇨🇾 Cyprus (CY)</option>
+                      <option value="MT">🇲🇹 Malta (MT)</option>
+                      <option value="LU">🇱🇺 Luxembourg (LU)</option>
+                      <option value="IS">🇮🇸 Iceland (IS)</option>
+                      <option value="LI">🇱🇮 Liechtenstein (LI)</option>
+                      <option value="MC">🇲🇨 Monaco (MC)</option>
+                      <option value="SM">🇸🇲 San Marino (SM)</option>
+                      <option value="VA">🇻🇦 Vatican City (VA)</option>
+                      <option value="AD">🇦🇩 Andorra (AD)</option>
+                      <option value="RU">🇷🇺 Russia (RU)</option>
+                      <option value="UA">🇺🇦 Ukraine (UA)</option>
+                      <option value="BY">🇧🇾 Belarus (BY)</option>
+                      <option value="MD">🇲🇩 Moldova (MD)</option>
+                      <option value="CN">🇨🇳 China (CN)</option>
+                      <option value="KR">🇰🇷 South Korea (KR)</option>
+                      <option value="TW">🇹🇼 Taiwan (TW)</option>
+                      <option value="HK">🇭🇰 Hong Kong (HK)</option>
+                      <option value="MO">🇲🇴 Macau (MO)</option>
+                      <option value="SG">🇸🇬 Singapore (SG)</option>
+                      <option value="MY">🇲🇾 Malaysia (MY)</option>
+                      <option value="TH">🇹🇭 Thailand (TH)</option>
+                      <option value="VN">🇻🇳 Vietnam (VN)</option>
+                      <option value="PH">🇵🇭 Philippines (PH)</option>
+                      <option value="ID">🇮🇩 Indonesia (ID)</option>
+                      <option value="BD">🇧🇩 Bangladesh (BD)</option>
+                      <option value="PK">🇵🇰 Pakistan (PK)</option>
+                      <option value="LK">🇱🇰 Sri Lanka (LK)</option>
+                      <option value="NP">🇳🇵 Nepal (NP)</option>
+                      <option value="BT">🇧🇹 Bhutan (BT)</option>
+                      <option value="MV">🇲🇻 Maldives (MV)</option>
+                      <option value="AF">🇦🇫 Afghanistan (AF)</option>
+                      <option value="AE">🇦🇪 UAE (AE)</option>
+                      <option value="SA">🇸🇦 Saudi Arabia (SA)</option>
+                      <option value="QA">🇶🇦 Qatar (QA)</option>
+                      <option value="KW">🇰🇼 Kuwait (KW)</option>
+                      <option value="BH">🇧🇭 Bahrain (BH)</option>
+                      <option value="OM">🇴🇲 Oman (OM)</option>
+                      <option value="YE">🇾🇪 Yemen (YE)</option>
+                      <option value="IQ">🇮🇶 Iraq (IQ)</option>
+                      <option value="IR">🇮🇷 Iran (IR)</option>
+                      <option value="TR">🇹🇷 Turkey (TR)</option>
+                      <option value="IL">🇮🇱 Israel (IL)</option>
+                      <option value="PS">🇵🇸 Palestine (PS)</option>
+                      <option value="JO">🇯🇴 Jordan (JO)</option>
+                      <option value="LB">🇱🇧 Lebanon (LB)</option>
+                      <option value="SY">🇸🇾 Syria (SY)</option>
+                      <option value="CY">🇨🇾 Cyprus (CY)</option>
+                      <option value="GE">🇬🇪 Georgia (GE)</option>
+                      <option value="AM">🇦🇲 Armenia (AM)</option>
+                      <option value="AZ">🇦🇿 Azerbaijan (AZ)</option>
+                      <option value="KZ">🇰🇿 Kazakhstan (KZ)</option>
+                      <option value="UZ">🇺🇿 Uzbekistan (UZ)</option>
+                      <option value="TM">🇹🇲 Turkmenistan (TM)</option>
+                      <option value="KG">🇰🇬 Kyrgyzstan (KG)</option>
+                      <option value="TJ">🇹🇯 Tajikistan (TJ)</option>
+                      <option value="MN">🇲🇳 Mongolia (MN)</option>
+                      <option value="ZA">🇿🇦 South Africa (ZA)</option>
+                      <option value="EG">🇪🇬 Egypt (EG)</option>
+                      <option value="MA">🇲🇦 Morocco (MA)</option>
+                      <option value="DZ">🇩🇿 Algeria (DZ)</option>
+                      <option value="TN">🇹🇳 Tunisia (TN)</option>
+                      <option value="LY">🇱🇾 Libya (LY)</option>
+                      <option value="SD">🇸🇩 Sudan (SD)</option>
+                      <option value="ET">🇪🇹 Ethiopia (ET)</option>
+                      <option value="KE">🇰🇪 Kenya (KE)</option>
+                      <option value="UG">🇺🇬 Uganda (UG)</option>
+                      <option value="TZ">🇹🇿 Tanzania (TZ)</option>
+                      <option value="RW">🇷🇼 Rwanda (RW)</option>
+                      <option value="BI">🇧🇮 Burundi (BI)</option>
+                      <option value="DJ">🇩🇯 Djibouti (DJ)</option>
+                      <option value="SO">🇸🇴 Somalia (SO)</option>
+                      <option value="ER">🇪🇷 Eritrea (ER)</option>
+                      <option value="SS">🇸🇸 South Sudan (SS)</option>
+                      <option value="CF">🇨🇫 Central African Republic (CF)</option>
+                      <option value="TD">🇹🇩 Chad (TD)</option>
+                      <option value="CM">🇨🇲 Cameroon (CM)</option>
+                      <option value="GQ">🇬🇶 Equatorial Guinea (GQ)</option>
+                      <option value="GA">🇬🇦 Gabon (GA)</option>
+                      <option value="CG">🇨🇬 Republic of Congo (CG)</option>
+                      <option value="CD">🇨🇩 Democratic Republic of Congo (CD)</option>
+                      <option value="AO">🇦🇴 Angola (AO)</option>
+                      <option value="ZM">🇿🇲 Zambia (ZM)</option>
+                      <option value="ZW">🇿🇼 Zimbabwe (ZW)</option>
+                      <option value="BW">🇧🇼 Botswana (BW)</option>
+                      <option value="NA">🇳🇦 Namibia (NA)</option>
+                      <option value="SZ">🇸🇿 Eswatini (SZ)</option>
+                      <option value="LS">🇱🇸 Lesotho (LS)</option>
+                      <option value="MW">🇲🇼 Malawi (MW)</option>
+                      <option value="MZ">🇲🇿 Mozambique (MZ)</option>
+                      <option value="MG">🇲🇬 Madagascar (MG)</option>
+                      <option value="MU">🇲🇺 Mauritius (MU)</option>
+                      <option value="SC">🇸🇨 Seychelles (SC)</option>
+                      <option value="KM">🇰🇲 Comoros (KM)</option>
+                      <option value="ST">🇸🇹 São Tomé and Príncipe (ST)</option>
+                      <option value="CV">🇨🇻 Cape Verde (CV)</option>
+                      <option value="GW">🇬🇼 Guinea-Bissau (GW)</option>
+                      <option value="GN">🇬🇳 Guinea (GN)</option>
+                      <option value="SL">🇸🇱 Sierra Leone (SL)</option>
+                      <option value="LR">🇱🇷 Liberia (LR)</option>
+                      <option value="CI">🇨🇮 Côte d'Ivoire (CI)</option>
+                      <option value="GH">🇬🇭 Ghana (GH)</option>
+                      <option value="TG">🇹🇬 Togo (TG)</option>
+                      <option value="BJ">🇧🇯 Benin (BJ)</option>
+                      <option value="BF">🇧🇫 Burkina Faso (BF)</option>
+                      <option value="NE">🇳🇪 Niger (NE)</option>
+                      <option value="ML">🇲🇱 Mali (ML)</option>
+                      <option value="SN">🇸🇳 Senegal (SN)</option>
+                      <option value="GM">🇬🇲 Gambia (GM)</option>
+                      <option value="MR">🇲🇷 Mauritania (MR)</option>
+                      <option value="EH">🇪🇭 Western Sahara (EH)</option>
+                      <option value="AR">🇦🇷 Argentina (AR)</option>
+                      <option value="CL">🇨🇱 Chile (CL)</option>
+                      <option value="UY">🇺🇾 Uruguay (UY)</option>
+                      <option value="PY">🇵🇾 Paraguay (PY)</option>
+                      <option value="BO">🇧🇴 Bolivia (BO)</option>
+                      <option value="PE">🇵🇪 Peru (PE)</option>
+                      <option value="EC">🇪🇨 Ecuador (EC)</option>
+                      <option value="CO">🇨🇴 Colombia (CO)</option>
+                      <option value="VE">🇻🇪 Venezuela (VE)</option>
+                      <option value="GY">🇬🇾 Guyana (GY)</option>
+                      <option value="SR">🇸🇷 Suriname (SR)</option>
+                      <option value="GF">🇬🇫 French Guiana (GF)</option>
+                      <option value="FK">🇫🇰 Falkland Islands (FK)</option>
+                      <option value="GS">🇬🇸 South Georgia (GS)</option>
+                      <option value="NZ">🇳🇿 New Zealand (NZ)</option>
+                      <option value="FJ">🇫🇯 Fiji (FJ)</option>
+                      <option value="PG">🇵🇬 Papua New Guinea (PG)</option>
+                      <option value="SB">🇸🇧 Solomon Islands (SB)</option>
+                      <option value="VU">🇻🇺 Vanuatu (VU)</option>
+                      <option value="NC">🇳🇨 New Caledonia (NC)</option>
+                      <option value="PF">🇵🇫 French Polynesia (PF)</option>
+                      <option value="WF">🇼🇫 Wallis and Futuna (WF)</option>
+                      <option value="CK">🇨🇰 Cook Islands (CK)</option>
+                      <option value="NU">🇳🇺 Niue (NU)</option>
+                      <option value="TK">🇹🇰 Tokelau (TK)</option>
+                      <option value="WS">🇼🇸 Samoa (WS)</option>
+                      <option value="AS">🇦🇸 American Samoa (AS)</option>
+                      <option value="TO">🇹🇴 Tonga (TO)</option>
+                      <option value="TV">🇹🇻 Tuvalu (TV)</option>
+                      <option value="KI">🇰🇮 Kiribati (KI)</option>
+                      <option value="NR">🇳🇷 Nauru (NR)</option>
+                      <option value="MH">🇲🇭 Marshall Islands (MH)</option>
+                      <option value="FM">🇫🇲 Micronesia (FM)</option>
+                      <option value="PW">🇵🇼 Palau (PW)</option>
+                      <option value="MP">🇲🇵 Northern Mariana Islands (MP)</option>
+                      <option value="GU">🇬🇺 Guam (GU)</option>
+                    </select>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Selected: {flagEmojiFromCountryCode(countryCode)} {countryCode || 'None'}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <Button type="button" variant="outline" size="sm" onClick={detectLocation} disabled={detectingLocation}>
+                    <LocateFixed className="h-4 w-4 mr-2" />
+                    {detectingLocation ? 'Detecting...' : 'Use my current location'}
+                  </Button>
+                  {city && countryCode && (
+                    <div className="text-xs text-muted-foreground flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {city}, {countryCode} {flagEmojiFromCountryCode(countryCode)}
+                    </div>
+                  )}
+                </div>
+                {locationError && (
+                  <p className="text-xs text-destructive mt-1">{locationError}</p>
+                )}
+              </div>
+
+
               <div className="flex flex-col gap-2 mt-4">
                 <Button variant="outline" className="w-full" onClick={() => setStep(1)}>Back</Button>
                 <Button 
                   onClick={handleSubmit}
                   className="w-full hover-scale bg-gradient-to-r from-woices-violet to-woices-mint hover:from-woices-violet/90 hover:to-woices-mint/90 text-white py-3 sm:py-3 text-base sm:text-lg font-medium rounded-xl shadow-md transition-all duration-300"
-                  disabled={loading || !city.trim() || !countryCode}
+                  disabled={loading || (scope === 'regional' && (!city.trim() || !countryCode))}
                 >
                   {loading ? 'Posting...' : 'Post and Wait for Woices'}
                 </Button>

@@ -91,15 +91,25 @@ export function Header() {
           {user ? (
             <div className="flex items-center gap-2">
               {!creditsLoading && creditsInfo && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setMembershipModalOpen(true)}
-                  className="flex items-center gap-1.5 px-2 py-1 h-8 text-xs font-medium rounded-full border border-border/50 hover:bg-accent hover:border-border transition-colors"
-                >
-                  <Coins className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-                  <span className="text-foreground">{creditsInfo.balance}</span>
-                </Button>
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setMembershipModalOpen(true)}
+                    className="flex items-center gap-1.5 px-2 py-1 h-8 text-xs font-medium rounded-full border border-border/50 hover:bg-accent hover:border-border transition-colors"
+                  >
+                    <Coins className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                    <span className="text-foreground">{Math.floor(creditsInfo.balance * 100) / 100}</span>
+                  </Button>
+                  {/* Low credits warning dot */}
+                  {(() => {
+                    const totalCredits = creditsInfo.totalPurchased || 30;
+                    const warningThreshold = totalCredits * 0.2;
+                    return creditsInfo.balance <= warningThreshold && (
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    );
+                  })()}
+                </div>
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

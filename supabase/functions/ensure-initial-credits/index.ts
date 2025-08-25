@@ -47,9 +47,9 @@ serve(async (req) => {
 
     // If no subscription exists, this is a first-time login
     if (!existingSubscription) {
-      console.log("First-time user detected, allocating 50 initial credits");
+      console.log("First-time user detected, allocating 30 initial credits");
       
-      // Allocate initial 50 credits
+      // Allocate initial 30 credits
       const { error: creditError } = await supabaseService.rpc(
         "allocate_activity_credits",
         {
@@ -66,8 +66,8 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: "Initial 50 credits allocated",
-          credits_allocated: 50
+          message: "Initial 30 credits allocated",
+          credits_allocated: 30
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },

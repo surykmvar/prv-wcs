@@ -648,12 +648,20 @@ export type Database = {
     }
     Functions: {
       allocate_activity_credits: {
-        Args: {
-          activity_type: string
-          reference_thought_id?: string
-          target_user_uuid?: string
-          user_uuid: string
-        }
+        Args:
+          | {
+              activity_type: string
+              reference_thought_id?: string
+              target_user_uuid?: string
+              user_uuid: string
+            }
+          | {
+              activity_type: string
+              reference_thought_id?: string
+              target_user_uuid?: string
+              user_uuid: string
+              woices_count?: number
+            }
         Returns: boolean
       }
       allocate_activity_points: {

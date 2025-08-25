@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { useCreditPackages } from '@/hooks/useCreditPackages';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface MembershipModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   const [customPoints, setCustomPoints] = useState<string>('');
   const [isCustom, setIsCustom] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
+  const [showLowCreditsAlert, setShowLowCreditsAlert] = useState(false);
 
   if (!user) return null;
 
@@ -35,6 +37,14 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   // Use total purchased credits or default to 30 for new users
   const totalCredits = creditsInfo?.totalPurchased || 30;
   const progressPercentage = totalCredits > 0 ? (currentPoints / totalCredits) * 100 : 0;
+  const isLowCredits = currentPoints <= totalCredits * 0.2;
+
+  // Check if opened due to low credits warning
+  useEffect(() => {
+    if (open && isLowCredits) {
+      setShowLowCreditsAlert(true);
+    }
+  }, [open, isLowCredits]);
 
   const handlePurchase = async (packageId?: string) => {
     if (!regionInfo || regionError) {
@@ -134,6 +144,16 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
         <DialogHeader className="pb-4">
           <DialogTitle className="text-2xl font-bold">Woices Credits</DialogTitle>
         </DialogHeader>
+        
+        {/* Low Credits Alert */}
+        {showLowCreditsAlert && (
+          <Alert className="mb-4 border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
+            <AlertDescription className="text-red-800 dark:text-red-200">
+              ⚠️ Your credits are running low! You have {Math.floor(currentPoints * 100) / 100} credits remaining. 
+              Get more credits to continue posting thoughts and voice replies.
+            </AlertDescription>
+          </Alert>
+        )}
         
         {/* Current Credits Display */}
         <div className="mb-6 p-6 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20">
