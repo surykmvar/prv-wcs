@@ -101,14 +101,10 @@ export function Header() {
                     <Coins className="h-3 w-3 text-amber-600 dark:text-amber-400" />
                     <span className="text-foreground">{Math.floor(creditsInfo.balance * 100) / 100}</span>
                   </Button>
-                  {/* Low credits warning dot */}
-                  {(() => {
-                    const totalCredits = creditsInfo.totalPurchased || 30;
-                    const warningThreshold = totalCredits * 0.2;
-                    return creditsInfo.balance <= warningThreshold && (
-                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                    );
-                  })()}
+                   {/* Low credits warning dot */}
+                   {creditsInfo.balance < 45 && (
+                     <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                   )}
                 </div>
               )}
               <DropdownMenu>
