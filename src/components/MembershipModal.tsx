@@ -31,8 +31,6 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   const [purchasing, setPurchasing] = useState(false);
   const [showLowCreditsAlert, setShowLowCreditsAlert] = useState(false);
 
-  if (!user) return null;
-
   const currentPoints = creditsInfo?.balance || 0;
   // Use total purchased credits or default to 30 for new users
   const totalCredits = creditsInfo?.totalPurchased || 30;
@@ -45,6 +43,8 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
       setShowLowCreditsAlert(true);
     }
   }, [open, isLowCredits]);
+
+  if (!user) return null;
 
   const handlePurchase = async (packageId?: string) => {
     if (!regionInfo || regionError) {
