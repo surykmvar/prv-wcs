@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Check, Zap, Star, Crown, Settings, FileText, HeadphonesIcon, Sparkles, Users, Phone } from 'lucide-react';
 import { useCredits } from '@/hooks/useCredits';
 import { useRegionDetection } from '@/hooks/useRegionDetection';
@@ -21,10 +22,10 @@ interface MembershipModalProps {
 export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
   const { user } = useAuth();
   const { creditsInfo, loading: creditsLoading } = useCredits();
-  const { regionInfo, loading: regionLoading, error: regionError, calculatePrice, getCurrencySymbol } = useRegionDetection();
+  const { regionInfo, loading: regionLoading, error: regionError } = useRegionDetection();
   const { packages, loading: packagesLoading } = useCreditPackages(regionInfo?.region);
   const { toast } = useToast();
-  const [planType, setPlanType] = useState<'usage' | 'annual'>('usage');
+  const [planType, setPlanType] = useState<'annual' | 'usage'>('annual'); // Default to annual
   const [customPoints, setCustomPoints] = useState<number | null>(null);
   const [purchasing, setPurchasing] = useState(false);
   const [showLowCreditsAlert, setShowLowCreditsAlert] = useState(false);
@@ -41,7 +42,33 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
 
   if (!user) return null;
 
-  const handlePurchase = async (packageId?: string) => {
+  // Helper functions for pricing
+  const formatPrice = (priceInCents: number, currency: string = regionInfo?.currency || 'EUR') => {
+    const price = priceInCents / 100;
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(price);
+  };
+
+  const calculatePlanPrice = (basePoints: number, basePrice: number) => {
+    if (!regionInfo) return { points: basePoints, price: basePrice };
+    
+    // Usage-based: 1.2x multiplier
+    const multiplier = planType === 'usage' ? 1.2 : 1.0;
+    const adjustedPrice = Math.round(basePrice * multiplier);
+    
+    return {
+      points: basePoints,
+      price: adjustedPrice
+    };
+  };
+
+  const handlePurchase = async (points: number, planDetails?: { name: string; features: string[] }) => {
+    console.log('Starting purchase:', { points, planType, regionInfo, planDetails });
+    
     if (!regionInfo || regionError) {
       toast({
         title: 'Region Error',
@@ -51,7 +78,6 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
       return;
     }
 
-    const points = customPoints || 0;
     if (points < 10) {
       toast({
         title: 'Invalid Amount',
@@ -66,7 +92,8 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { 
           points,
-          packageId: packageId || null,
+          planType,
+          planDetails,
           region: regionInfo.region,
           currency: regionInfo.currency,
           pricePerPoint: regionInfo.pricePerPoint
@@ -137,8 +164,8 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
               Credits remaining
             </p>
             {isLowCredits && (
-              <Alert className="mt-4 border-red-500 bg-red-50">
-                <AlertDescription className="text-red-700">
+              <Alert className="mt-4 border-destructive bg-destructive/10">
+                <AlertDescription className="text-destructive">
                   ⚠️ Low credits! Get more credits to continue posting thoughts and voice replies.
                 </AlertDescription>
               </Alert>
@@ -146,184 +173,376 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
           </div>
 
           {/* Plan Selection Tabs */}
-          <div className="flex bg-gray-100 p-1 rounded-lg mb-6">
-            <button 
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-                planType === 'usage' 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-              onClick={() => setPlanType('usage')}
-            >
-              Usage-based
-            </button>
-            <button 
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-                planType === 'annual' 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-              onClick={() => setPlanType('annual')}
-            >
-              Annual
-            </button>
-          </div>
+          <Tabs value={planType} onValueChange={(value: 'annual' | 'usage') => setPlanType(value)} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 h-12">
+              <TabsTrigger value="annual" className="text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
+                Annual Plans
+                <Badge variant="secondary" className="ml-2 text-xs">Best Value</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="usage" className="text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
+                Usage-based
+                <Badge variant="outline" className="ml-2 text-xs">Pay as you go</Badge>
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Credit Plans Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Starter Plan */}
-            <div className="border rounded-lg p-6 space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold">Starter</h3>
-                <p className="text-sm text-gray-600">Perfect for occasional users</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl font-bold">$10</div>
-                <div className="text-sm text-gray-600">100 credits</div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-500" />
-                  Basic features
+            <TabsContent value="annual" className="space-y-6 mt-6">
+              {/* Annual Credit Plans Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Starter Plan */}
+                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Starter</h3>
+                    <p className="text-sm text-muted-foreground">Perfect for occasional users</p>
+                  </div>
+                  <div className="space-y-2">
+                    {(() => {
+                      const plan = calculatePlanPrice(100, regionInfo ? Math.round(100 * regionInfo.pricePerPoint) : 1000);
+                      return (
+                        <>
+                          <div className="text-3xl font-bold text-foreground">
+                            {formatPrice(plan.price, regionInfo?.currency)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{plan.points} credits</div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Basic features
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Voice recording
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => handlePurchase(100, { 
+                      name: 'Starter', 
+                      features: ['Basic features', 'Voice recording'] 
+                    })}
+                    className="w-full"
+                    disabled={purchasing}
+                  >
+                    {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Get Started'}
+                  </Button>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-500" />
-                  Voice recording
-                </div>
-              </div>
-              <Button 
-                onClick={() => {
-                  setCustomPoints(100);
-                  handlePurchase();
-                }}
-                className="w-full"
-                disabled={purchasing}
-              >
-                Get Started
-              </Button>
-            </div>
 
-            {/* Creator+ Plan */}
-            <div className="border-2 border-woices-violet rounded-lg p-6 space-y-4 relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-woices-violet text-white px-3 py-1 rounded-full text-xs font-medium">
-                  Popular
-                </span>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">Creator+</h3>
-                <p className="text-sm text-gray-600">Advanced tools for content creators</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-3xl font-bold">$25</div>
-                <div className="text-sm text-gray-600">300 credits</div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-500" />
-                  All Starter features
+                {/* Creator+ Plan */}
+                <div className="border-2 border-primary rounded-xl p-6 space-y-4 relative bg-card hover:shadow-xl transition-all duration-300 scale-105">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
+                      Popular
+                    </Badge>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Creator+</h3>
+                    <p className="text-sm text-muted-foreground">Advanced tools for content creators</p>
+                  </div>
+                  <div className="space-y-2">
+                    {(() => {
+                      const plan = calculatePlanPrice(300, regionInfo ? Math.round(300 * regionInfo.pricePerPoint) : 2500);
+                      return (
+                        <>
+                          <div className="text-3xl font-bold text-foreground">
+                            {formatPrice(plan.price, regionInfo?.currency)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{plan.points} credits</div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      All Starter features
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Settings className="h-4 w-4 text-blue-500" />
+                      Zapier integration
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <FileText className="h-4 w-4 text-blue-500" />
+                      Notion integration
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <HeadphonesIcon className="h-4 w-4 text-purple-500" />
+                      Voice bundling
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Sparkles className="h-4 w-4 text-purple-500" />
+                      AI summarization
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Star className="h-4 w-4 text-yellow-500" />
+                      Priority support
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => handlePurchase(300, { 
+                      name: 'Creator+', 
+                      features: ['All Starter features', 'Zapier integration', 'Notion integration', 'Voice bundling', 'AI summarization', 'Priority support'] 
+                    })}
+                    className="w-full bg-primary hover:bg-primary/90"
+                    disabled={purchasing}
+                  >
+                    {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Upgrade Now'}
+                  </Button>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Settings className="h-4 w-4 text-blue-500" />
-                  Zapier integration
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <FileText className="h-4 w-4 text-blue-500" />
-                  Notion integration
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <HeadphonesIcon className="h-4 w-4 text-purple-500" />
-                  Voice bundling
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Sparkles className="h-4 w-4 text-purple-500" />
-                  AI summarization
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Star className="h-4 w-4 text-yellow-500" />
-                  Priority support
-                </div>
-              </div>
-              <Button 
-                onClick={() => {
-                  setCustomPoints(300);
-                  handlePurchase();
-                }}
-                className="w-full bg-woices-violet hover:bg-woices-violet/90"
-                disabled={purchasing}
-              >
-                Upgrade Now
-              </Button>
-            </div>
 
-            {/* Business Plan */}
-            <div className="border rounded-lg p-6 space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold">Business</h3>
-                <p className="text-sm text-gray-600">Complete solution for businesses</p>
+                {/* Business Plan */}
+                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Business</h3>
+                    <p className="text-sm text-muted-foreground">Complete solution for businesses</p>
+                  </div>
+                  <div className="space-y-2">
+                    {(() => {
+                      const plan = calculatePlanPrice(700, regionInfo ? Math.round(700 * regionInfo.pricePerPoint) : 5000);
+                      return (
+                        <>
+                          <div className="text-3xl font-bold text-foreground">
+                            {formatPrice(plan.price, regionInfo?.currency)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{plan.points} credits</div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      All Creator+ features
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="h-4 w-4 text-emerald-500" />
+                      Swift customer consultation
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users className="h-4 w-4 text-emerald-500" />
+                      Advanced analytics
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Crown className="h-4 w-4 text-emerald-500" />
+                      Custom integrations
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => handlePurchase(700, { 
+                      name: 'Business', 
+                      features: ['All Creator+ features', 'Swift customer consultation', 'Advanced analytics', 'Custom integrations'] 
+                    })}
+                    className="w-full"
+                    disabled={purchasing}
+                  >
+                    {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Contact Sales'}
+                  </Button>
+                </div>
               </div>
-              <div className="space-y-2">
-                <div className="text-3xl font-bold">$50</div>
-                <div className="text-sm text-gray-600">700 credits</div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-500" />
-                  All Creator+ features
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-emerald-500" />
-                  Swift customer consultation
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Users className="h-4 w-4 text-emerald-500" />
-                  Advanced analytics
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Crown className="h-4 w-4 text-emerald-500" />
-                  Custom integrations
-                </div>
-              </div>
-              <Button 
-                onClick={() => {
-                  setCustomPoints(700);
-                  handlePurchase();
-                }}
-                className="w-full"
-                disabled={purchasing}
-              >
-                Contact Sales
-              </Button>
-            </div>
-          </div>
+            </TabsContent>
 
-          {/* Custom Amount Section */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-medium text-center mb-4">Custom Amount</h3>
-            <div className="max-w-sm mx-auto space-y-4">
-              <Input
-                type="number"
-                placeholder="Enter number of credits"
-                value={customPoints || ''}
-                onChange={(e) => setCustomPoints(e.target.value ? parseInt(e.target.value) : null)}
-                min="1"
-                max="10000"
-                className="text-center"
-              />
-              {customPoints && customPoints > 0 && (
-                <div className="text-center text-sm text-muted-foreground">
-                  Total: ${((customPoints * (regionInfo?.pricePerPoint || 1)) / 100).toFixed(2)} {regionInfo?.currency?.toUpperCase() || 'USD'}
+            <TabsContent value="usage" className="space-y-6 mt-6">
+              {/* Usage-based Credit Plans Grid */}
+              <div className="bg-muted/30 p-4 rounded-lg mb-6">
+                <p className="text-sm text-muted-foreground text-center">
+                  Usage-based plans include a 20% premium for flexible, pay-as-you-go pricing
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Starter Plan */}
+                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Starter</h3>
+                    <p className="text-sm text-muted-foreground">Perfect for occasional users</p>
+                  </div>
+                  <div className="space-y-2">
+                    {(() => {
+                      const plan = calculatePlanPrice(100, regionInfo ? Math.round(100 * regionInfo.pricePerPoint) : 1000);
+                      return (
+                        <>
+                          <div className="text-3xl font-bold text-foreground">
+                            {formatPrice(plan.price, regionInfo?.currency)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{plan.points} credits</div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Basic features
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      Voice recording
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Zap className="h-4 w-4 text-orange-500" />
+                      Instant billing
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => handlePurchase(100, { 
+                      name: 'Starter (Usage-based)', 
+                      features: ['Basic features', 'Voice recording', 'Instant billing'] 
+                    })}
+                    className="w-full"
+                    disabled={purchasing}
+                  >
+                    {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Get Started'}
+                  </Button>
                 </div>
-              )}
-              <Button 
-                onClick={() => handlePurchase()}
-                className="w-full"
-                disabled={purchasing || !customPoints || customPoints <= 0}
-              >
-                {purchasing ? 'Processing...' : 'Buy Custom Amount'}
-              </Button>
+
+                {/* Creator+ Plan */}
+                <div className="border-2 border-primary rounded-xl p-6 space-y-4 relative bg-card hover:shadow-xl transition-all duration-300 scale-105">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
+                      Popular
+                    </Badge>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Creator+</h3>
+                    <p className="text-sm text-muted-foreground">Advanced tools for content creators</p>
+                  </div>
+                  <div className="space-y-2">
+                    {(() => {
+                      const plan = calculatePlanPrice(300, regionInfo ? Math.round(300 * regionInfo.pricePerPoint) : 2500);
+                      return (
+                        <>
+                          <div className="text-3xl font-bold text-foreground">
+                            {formatPrice(plan.price, regionInfo?.currency)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{plan.points} credits</div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      All Starter features
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Settings className="h-4 w-4 text-blue-500" />
+                      Zapier integration
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <FileText className="h-4 w-4 text-blue-500" />
+                      Notion integration
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <HeadphonesIcon className="h-4 w-4 text-purple-500" />
+                      Voice bundling
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Sparkles className="h-4 w-4 text-purple-500" />
+                      AI summarization
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Zap className="h-4 w-4 text-orange-500" />
+                      Instant billing
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => handlePurchase(300, { 
+                      name: 'Creator+ (Usage-based)', 
+                      features: ['All Starter features', 'Zapier integration', 'Notion integration', 'Voice bundling', 'AI summarization', 'Instant billing'] 
+                    })}
+                    className="w-full bg-primary hover:bg-primary/90"
+                    disabled={purchasing}
+                  >
+                    {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Upgrade Now'}
+                  </Button>
+                </div>
+
+                {/* Business Plan */}
+                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Business</h3>
+                    <p className="text-sm text-muted-foreground">Complete solution for businesses</p>
+                  </div>
+                  <div className="space-y-2">
+                    {(() => {
+                      const plan = calculatePlanPrice(700, regionInfo ? Math.round(700 * regionInfo.pricePerPoint) : 5000);
+                      return (
+                        <>
+                          <div className="text-3xl font-bold text-foreground">
+                            {formatPrice(plan.price, regionInfo?.currency)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{plan.points} credits</div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
+                      All Creator+ features
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="h-4 w-4 text-emerald-500" />
+                      Swift customer consultation
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users className="h-4 w-4 text-emerald-500" />
+                      Advanced analytics
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Crown className="h-4 w-4 text-emerald-500" />
+                      Custom integrations
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Zap className="h-4 w-4 text-orange-500" />
+                      Instant billing
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => handlePurchase(700, { 
+                      name: 'Business (Usage-based)', 
+                      features: ['All Creator+ features', 'Swift customer consultation', 'Advanced analytics', 'Custom integrations', 'Instant billing'] 
+                    })}
+                    className="w-full"
+                    disabled={purchasing}
+                  >
+                    {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Contact Sales'}
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Custom Amount Section */}
+            <div className="border-t border-border pt-6 mt-6">
+              <h3 className="text-lg font-medium text-center mb-4">Custom Amount</h3>
+              <div className="max-w-sm mx-auto space-y-4">
+                <Input
+                  type="number"
+                  placeholder="Enter number of credits"
+                  value={customPoints || ''}
+                  onChange={(e) => setCustomPoints(e.target.value ? parseInt(e.target.value) : null)}
+                  min="10"
+                  max="10000"
+                  className="text-center"
+                />
+                {customPoints && customPoints > 0 && regionInfo && (
+                  <div className="text-center text-sm text-muted-foreground">
+                    Total: {formatPrice(Math.round(customPoints * regionInfo.pricePerPoint), regionInfo.currency)}
+                  </div>
+                )}
+                <Button 
+                  onClick={() => handlePurchase(customPoints || 0, { 
+                    name: 'Custom Amount', 
+                    features: ['Custom credit amount'] 
+                  })}
+                  className="w-full"
+                  disabled={purchasing || !customPoints || customPoints < 10}
+                >
+                  {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Buy Custom Amount'}
+                </Button>
+              </div>
             </div>
-          </div>
+          </Tabs>
         </div>
       </DialogContent>
     </Dialog>

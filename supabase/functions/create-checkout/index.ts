@@ -42,9 +42,9 @@ serve(async (req) => {
     if (!user?.email) throw new Error('User not authenticated or email not available');
     logStep('User authenticated', { userId: user.id, email: user.email });
 
-    const { points, region, currency, pricePerPoint } = await req.json();
+    const { points, planType, planDetails, region, currency, pricePerPoint } = await req.json();
     if (!points || points < 10) throw new Error('Invalid points amount');
-    logStep('Request parsed', { points, region, currency, pricePerPoint });
+    logStep('Request parsed', { points, planType, planDetails, region, currency, pricePerPoint });
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
 
@@ -58,9 +58,18 @@ serve(async (req) => {
       logStep('No existing customer found');
     }
 
-    // Calculate total price in cents
-    const totalPrice = Math.round(points * pricePerPoint * 100);
-    logStep('Price calculated', { points, pricePerPoint, totalPrice });
+    // Calculate total price in cents with plan multiplier
+    const multiplier = planType === 'usage' ? 1.2 : 1.0;
+    const basePrice = Math.round(points * pricePerPoint);
+    const totalPrice = Math.round(basePrice * multiplier);
+    logStep('Price calculated', { points, pricePerPoint, multiplier, basePrice, totalPrice });
+
+    // Create product name and description based on plan details
+    const planName = planDetails?.name || 'Custom Amount';
+    const productName = `${planName} - ${points} Woices Credits`;
+    const productDescription = planType === 'usage' 
+      ? `${planName} usage-based plan with ${points} credits (${region} pricing)`
+      : `${planName} annual plan with ${points} credits (${region} pricing)`;
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -71,8 +80,8 @@ serve(async (req) => {
           price_data: {
             currency: currency.toLowerCase(),
             product_data: {
-              name: `${points} Woices Credits`,
-              description: `Premium credits for enhanced Woices experience (${region} pricing)`,
+              name: productName,
+              description: productDescription,
             },
             unit_amount: totalPrice,
           },
@@ -86,6 +95,8 @@ serve(async (req) => {
         user_id: user.id,
         points: points.toString(),
         region: region,
+        plan_type: planType || 'custom',
+        plan_name: planName,
       },
     });
     logStep('Checkout session created', { sessionId: session.id });
