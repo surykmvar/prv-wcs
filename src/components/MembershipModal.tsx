@@ -174,14 +174,24 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
 
           {/* Plan Selection Tabs */}
           <Tabs value={planType} onValueChange={(value: 'annual' | 'usage') => setPlanType(value)} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 h-12">
-              <TabsTrigger value="annual" className="text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
-                Annual Plans
-                <Badge variant="secondary" className="ml-2 text-xs">Best Value</Badge>
+            <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-muted/80 to-muted/60 p-1.5 h-14 rounded-xl shadow-inner border border-border/50">
+              <TabsTrigger 
+                value="annual" 
+                className="text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/90 data-[state=active]:to-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
+              >
+                <div className="flex items-center gap-2">
+                  Annual Plans
+                  <Badge variant="secondary" className="ml-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">Best Value</Badge>
+                </div>
               </TabsTrigger>
-              <TabsTrigger value="usage" className="text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
-                Usage-based
-                <Badge variant="outline" className="ml-2 text-xs">Pay as you go</Badge>
+              <TabsTrigger 
+                value="usage" 
+                className="text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/90 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
+              >
+                <div className="flex items-center gap-2">
+                  Usage-based
+                  <Badge variant="outline" className="ml-1 text-xs bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400 border-orange-200 dark:border-orange-700">Pay as you go</Badge>
+                </div>
               </TabsTrigger>
             </TabsList>
 
@@ -189,9 +199,9 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
               {/* Annual Credit Plans Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Starter Plan */}
-                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                <div className="group border border-border/60 rounded-2xl p-6 space-y-4 bg-gradient-to-br from-card to-card/80 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500 hover:-translate-y-1">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">Starter</h3>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">Starter</h3>
                     <p className="text-sm text-muted-foreground">Perfect for occasional users</p>
                   </div>
                   <div className="space-y-2">
@@ -230,10 +240,10 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
                 </div>
 
                 {/* Creator+ Plan */}
-                <div className="border-2 border-primary rounded-xl p-6 space-y-4 relative bg-card hover:shadow-xl transition-all duration-300 scale-105">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
-                      Popular
+                <div className="group border-2 border-primary/70 rounded-2xl p-6 space-y-4 relative bg-gradient-to-br from-primary/5 via-card to-primary/5 hover:shadow-2xl hover:shadow-primary/15 transition-all duration-500 scale-105 hover:scale-110 hover:border-primary">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-1.5 text-xs font-semibold rounded-full shadow-lg">
+                      🌟 Most Popular
                     </Badge>
                   </div>
                   <div>
@@ -292,9 +302,9 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
                 </div>
 
                 {/* Business Plan */}
-                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                <div className="group border border-border/60 rounded-2xl p-6 space-y-4 bg-gradient-to-br from-card to-card/80 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/20 transition-all duration-500 hover:-translate-y-1">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">Business</h3>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Business</h3>
                     <p className="text-sm text-muted-foreground">Complete solution for businesses</p>
                   </div>
                   <div className="space-y-2">
@@ -344,16 +354,16 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
 
             <TabsContent value="usage" className="space-y-6 mt-6">
               {/* Usage-based Credit Plans Grid */}
-              <div className="bg-muted/30 p-4 rounded-lg mb-6">
-                <p className="text-sm text-muted-foreground text-center">
-                  Usage-based plans include a 20% premium for flexible, pay-as-you-go pricing
+              <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 p-4 rounded-xl mb-6 border border-orange-200/50 dark:border-orange-800/50">
+                <p className="text-sm text-orange-700 dark:text-orange-300 text-center font-medium">
+                  ⚡ Usage-based plans include a 20% premium for flexible, pay-as-you-go pricing
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Starter Plan */}
-                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                <div className="group border border-orange-200/60 dark:border-orange-800/60 rounded-2xl p-6 space-y-4 bg-gradient-to-br from-orange-50/50 to-card dark:from-orange-950/10 dark:to-card hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-300 dark:hover:border-orange-700 transition-all duration-500 hover:-translate-y-1">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">Starter</h3>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">Starter</h3>
                     <p className="text-sm text-muted-foreground">Perfect for occasional users</p>
                   </div>
                   <div className="space-y-2">
@@ -396,10 +406,10 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
                 </div>
 
                 {/* Creator+ Plan */}
-                <div className="border-2 border-primary rounded-xl p-6 space-y-4 relative bg-card hover:shadow-xl transition-all duration-300 scale-105">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
-                      Popular
+                <div className="group border-2 border-orange-400/70 dark:border-orange-600/70 rounded-2xl p-6 space-y-4 relative bg-gradient-to-br from-orange-100/30 via-card to-orange-100/30 dark:from-orange-900/20 dark:via-card dark:to-orange-900/20 hover:shadow-2xl hover:shadow-orange-500/15 transition-all duration-500 scale-105 hover:scale-110 hover:border-orange-500 dark:hover:border-orange-500">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-1.5 text-xs font-semibold rounded-full shadow-lg">
+                      ⚡ Usage Popular
                     </Badge>
                   </div>
                   <div>
@@ -458,9 +468,9 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
                 </div>
 
                 {/* Business Plan */}
-                <div className="border border-border rounded-xl p-6 space-y-4 bg-card hover:shadow-lg transition-all duration-300">
+                <div className="group border border-orange-200/60 dark:border-orange-800/60 rounded-2xl p-6 space-y-4 bg-gradient-to-br from-orange-50/50 to-card dark:from-orange-950/10 dark:to-card hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-300 dark:hover:border-orange-700 transition-all duration-500 hover:-translate-y-1">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">Business</h3>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">Business</h3>
                     <p className="text-sm text-muted-foreground">Complete solution for businesses</p>
                   </div>
                   <div className="space-y-2">
@@ -513,32 +523,62 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
             </TabsContent>
 
             {/* Custom Amount Section */}
-            <div className="border-t border-border pt-6 mt-6">
-              <h3 className="text-lg font-medium text-center mb-4">Custom Amount</h3>
-              <div className="max-w-sm mx-auto space-y-4">
-                <Input
-                  type="number"
-                  placeholder="Enter number of credits"
-                  value={customPoints || ''}
-                  onChange={(e) => setCustomPoints(e.target.value ? parseInt(e.target.value) : null)}
-                  min="10"
-                  max="10000"
-                  className="text-center"
-                />
-                {customPoints && customPoints > 0 && regionInfo && (
-                  <div className="text-center text-sm text-muted-foreground">
-                    Total: {formatPrice(Math.round(customPoints * regionInfo.pricePerPoint), regionInfo.currency)}
+            <div className="border-t border-border/30 pt-6 mt-6">
+              <h3 className="text-xl font-semibold text-center mb-6 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">💎 Custom Amount</h3>
+              <div className="max-w-md mx-auto space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="custom-amount" className="text-sm font-medium text-center block">
+                    Number of Credits (minimum 10)
+                  </Label>
+                  <Input
+                    id="custom-amount"
+                    type="number"
+                    placeholder="Enter number of credits..."
+                    value={customPoints || ''}
+                    onChange={(e) => setCustomPoints(e.target.value ? parseInt(e.target.value) : null)}
+                    min="10"
+                    max="10000"
+                    className="text-center text-lg font-medium border-border/60 focus:border-primary/50 transition-all duration-300"
+                  />
+                </div>
+                {customPoints && customPoints >= 10 && regionInfo && (
+                  <div className="space-y-3 p-4 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl border border-border/30">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Credits:</span>
+                      <span className="font-semibold">{customPoints.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Rate per credit:</span>
+                      <span className="font-medium">{formatPrice(regionInfo.pricePerPoint, regionInfo.currency)}</span>
+                    </div>
+                    {planType === 'usage' && (
+                      <div className="flex justify-between text-sm text-orange-600 dark:text-orange-400">
+                        <span>Usage premium (20%):</span>
+                        <span className="font-medium">+{formatPrice(Math.round(customPoints * regionInfo.pricePerPoint * 0.2), regionInfo.currency)}</span>
+                      </div>
+                    )}
+                    <div className="border-t border-border/30 pt-3">
+                      <div className="flex justify-between text-lg font-bold">
+                        <span>Total:</span>
+                        <span className="text-primary">
+                          {formatPrice(
+                            Math.round(customPoints * regionInfo.pricePerPoint * (planType === 'usage' ? 1.2 : 1.0)),
+                            regionInfo.currency
+                          )}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 )}
                 <Button 
-                  onClick={() => handlePurchase(customPoints || 0, { 
-                    name: 'Custom Amount', 
-                    features: ['Custom credit amount'] 
+                  onClick={() => customPoints && handlePurchase(customPoints, { 
+                    name: `Custom ${planType === 'usage' ? 'Usage-based' : 'Annual'}`, 
+                    features: ['Custom credit amount', 'Flexible purchase'] 
                   })}
-                  className="w-full"
+                  className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-primary-foreground font-semibold text-base transition-all duration-300 hover:shadow-lg"
                   disabled={purchasing || !customPoints || customPoints < 10}
                 >
-                  {purchasing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Buy Custom Amount'}
+                  {purchasing ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Purchase Custom Amount'}
                 </Button>
               </div>
             </div>
