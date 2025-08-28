@@ -305,6 +305,39 @@ export type Database = {
         }
         Relationships: []
       }
+      sales_inquiries: {
+        Row: {
+          address: string | null
+          company_name: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_name?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
       saved_thoughts: {
         Row: {
           created_at: string | null
