@@ -338,6 +338,33 @@ export type Database = {
         }
         Relationships: []
       }
+      sales_inquiry_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          inquiry_id: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          inquiry_id?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          inquiry_id?: string | null
+        }
+        Relationships: []
+      }
       saved_thoughts: {
         Row: {
           created_at: string | null
@@ -704,6 +731,14 @@ export type Database = {
           user_uuid: string
         }
         Returns: boolean
+      }
+      check_sales_inquiry_rate_limit: {
+        Args: { p_email: string; p_max_per_hour?: number; p_user_id: string }
+        Returns: boolean
+      }
+      cleanup_old_sales_inquiries: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       evaluate_thought_status: {
         Args: Record<PropertyKey, never>
