@@ -7,11 +7,12 @@ import { Label } from '@/components/ui/label'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
-import { Eye, EyeOff, X, Mail, Phone } from 'lucide-react'
+import { Eye, EyeOff, X, Mail, Phone, CheckCircle } from 'lucide-react'
 import { isPasswordLeaked } from '@/utils/security'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import authOrb from '@/assets/auth-orb-woices.webp'
+import woicesLogo from '@/assets/woices-logo.jpg'
 type AuthMode = 'signin' | 'signup'
 type AuthMethod = 'email' | 'phone'
 
@@ -35,6 +36,7 @@ export default function Auth() {
   const [otpSent, setOtpSent] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
   const [comingSoon, setComingSoon] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -105,6 +107,7 @@ export default function Auth() {
 
       if (error) throw error
 
+      setEmailSent(true)
       toast({
         title: "Check your email",
         description: "We've sent you a confirmation link to complete your signup.",
@@ -537,8 +540,45 @@ export default function Auth() {
             </p>
           </header>
 
-          {renderAuthMethodToggle()}
-          {authMethod === 'email' ? renderEmailForm() : renderPhoneForm()}
+          {!emailSent && renderAuthMethodToggle()}
+          
+          {emailSent ? (
+            <div className="text-center space-y-6 animate-fade-in">
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Check your inbox</h2>
+                <p className="text-muted-foreground">
+                  We've sent a confirmation link to <span className="font-medium text-foreground">{email}</span>
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Click the link in the email to verify your account and complete your registration.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setEmailSent(false)}
+                  className="flex-1"
+                >
+                  Try different email
+                </Button>
+                <Button 
+                  variant="default"
+                  onClick={() => navigate('/')}
+                  className="flex-1"
+                >
+                  Continue to app
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Didn't receive the email? Check your spam folder or try again with a different email address.
+              </p>
+            </div>
+          ) : (
+            authMethod === 'email' ? renderEmailForm() : renderPhoneForm()
+          )}
 
           {comingSoon && (
             <div className="absolute inset-0 z-20 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
@@ -560,6 +600,15 @@ export default function Auth() {
             className="h-full w-full object-cover object-center"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
+          
+          {/* Woices Logo Overlay */}
+          <div className="absolute top-6 left-6 z-10">
+            <img 
+              src={woicesLogo} 
+              alt="Woices Logo" 
+              className="w-24 h-12 object-contain filter drop-shadow-sm"
+            />
+          </div>
         </aside>
       </section>
     </main>
