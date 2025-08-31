@@ -315,6 +315,7 @@ export type Database = {
           message: string
           name: string
           status: string | null
+          user_id: string | null
         }
         Insert: {
           address?: string | null
@@ -325,6 +326,7 @@ export type Database = {
           message: string
           name: string
           status?: string | null
+          user_id?: string | null
         }
         Update: {
           address?: string | null
@@ -335,6 +337,7 @@ export type Database = {
           message?: string
           name?: string
           status?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

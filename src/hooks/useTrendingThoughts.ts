@@ -250,8 +250,7 @@ export function useTrendingThoughts() {
       // Otherwise, materialize the trending topic via edge function
       const { data, error } = await supabase.functions.invoke('materialize-trending', {
         body: {
-          trendingTopicId,
-          userId
+          trendingTopicId
         }
       });
 

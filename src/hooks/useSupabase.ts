@@ -73,8 +73,20 @@ export function useSupabase() {
   const uploadAudioFile = async (audioBlob: Blob, thoughtId: string) => {
     setLoading(true)
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to upload audio.",
+          variant: "destructive"
+        })
+        return null
+      }
+
       const fileName = `${thoughtId}_${Date.now()}.webm`
-      const filePath = `voice-responses/${fileName}`
+      const filePath = `${user.id}/${fileName}` // User-specific folder
 
       const { data, error } = await supabase.storage
         .from(STORAGE_BUCKETS.VOICE_RECORDINGS)
@@ -85,14 +97,10 @@ export function useSupabase() {
 
       if (error) throw error
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from(STORAGE_BUCKETS.VOICE_RECORDINGS)
-        .getPublicUrl(filePath)
-
+      // Store the path instead of public URL since bucket is private
       return {
         path: data.path,
-        url: urlData.publicUrl
+        url: data.path // Store path, will be converted to signed URL when needed
       }
     } catch (error) {
       console.error('Error uploading audio:', error)
@@ -113,6 +121,15 @@ export function useSupabase() {
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to post a voice response.",
+          variant: "destructive"
+        })
+        return null
+      }
       
       // Ensure we always have a user_session value (required by database NOT NULL constraint)
       let userSessionValue = voiceResponse.user_session
@@ -136,7 +153,7 @@ export function useSupabase() {
         .from('voice_responses')
         .insert({
           ...voiceResponse,
-          user_id: user?.id || null,
+          user_id: user.id,
           user_session: userSessionValue
         })
         .select()
@@ -320,7 +337,11 @@ export function useSupabase() {
       }
 
       // Upload audio file
-      const { url } = await uploadAudioFile(audioBlob, thoughtId)
+      const uploadResult = await uploadAudioFile(audioBlob, thoughtId)
+      if (!uploadResult) {
+        return null // uploadAudioFile already showed the error toast
+      }
+      const { url } = uploadResult
       
       // Create voice response record
       const voiceResponse = await createVoiceResponse({

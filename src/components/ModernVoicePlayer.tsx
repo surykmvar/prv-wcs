@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 import { Slider } from '@/components/ui/slider'
 import { VotingButtons } from './VotingButtons'
+import { useAudioUrl } from '@/hooks/useAudioUrl'
 
 interface ModernVoicePlayerProps {
   voiceResponseId: string
@@ -29,10 +30,39 @@ export function ModernVoicePlayer({
   const [audioDuration, setAudioDuration] = useState(duration || 0)
   const [playbackRate, setPlaybackRate] = useState(1)
   const audioRef = useRef<HTMLAudioElement>(null)
+  
+  // Get signed URL for audio playback
+  const { signedUrl, loading: urlLoading, error: urlError } = useAudioUrl(audioUrl)
 
   // Don't render if invalid audio
   if (!audioUrl || duration <= 0) {
     return null
+  }
+
+  // Show loading state while URL is being fetched
+  if (urlLoading) {
+    return (
+      <Card className={`rounded-xl shadow-md ${className}`}>
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-center justify-center">
+            <span className="text-sm text-muted-foreground">Loading audio...</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Show error state if URL failed to load
+  if (urlError || !signedUrl) {
+    return (
+      <Card className={`rounded-xl shadow-md ${className}`}>
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-center justify-center">
+            <span className="text-sm text-muted-foreground">Unable to load audio</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
   }
 
   useEffect(() => {
@@ -68,7 +98,7 @@ export function ModernVoicePlayer({
       audio.removeEventListener('loadeddata', handleLoadedData)
       audio.removeEventListener('ended', handleEnded)
     }
-  }, [audioUrl, duration])
+  }, [signedUrl, duration])
 
   const togglePlayPause = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -152,7 +182,7 @@ export function ModernVoicePlayer({
   return (
     <Card className={`rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${className}`}>
       <CardContent className="p-3 sm:p-4">
-        <audio ref={audioRef} src={audioUrl} preload="metadata" />
+        <audio ref={audioRef} src={signedUrl} preload="metadata" />
         
         {/* Main Player */}
         <div className="space-y-3 sm:space-y-4">

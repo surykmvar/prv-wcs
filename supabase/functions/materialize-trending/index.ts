@@ -18,11 +18,36 @@ serve(async (req) => {
   }
 
   try {
-    const { trendingTopicId, userId } = await req.json();
-
-    if (!trendingTopicId || !userId) {
+    // Get user from JWT token
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'trendingTopicId and userId are required' }),
+        JSON.stringify({ error: 'Authorization header required' }),
+        { 
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        { 
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const { trendingTopicId } = await req.json();
+
+    if (!trendingTopicId) {
+      return new Response(
+        JSON.stringify({ error: 'trendingTopicId is required' }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -30,7 +55,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Materializing trending topic ${trendingTopicId} for user ${userId}`);
+    console.log(`Materializing trending topic ${trendingTopicId} for user ${user.id}`);
 
     // Get the trending topic from cache
     const { data: trendingTopic, error: fetchError } = await supabase
@@ -88,7 +113,7 @@ serve(async (req) => {
       title: trendingTopic.title,
       description: trendingTopic.description,
       tags: trendingTopic.tags,
-      user_id: userId,
+      user_id: user.id,
       thought_scope: 'global' as const,
       max_woices_allowed: 10, // This will be enforced by the trigger we created
       status: 'active' as const,
