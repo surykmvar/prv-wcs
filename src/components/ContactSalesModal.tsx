@@ -36,13 +36,63 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
       return;
     }
 
+    // Validate message length
+    if (formData.message.length < 10) {
+      toast({
+        title: 'Message Too Short',
+        description: 'Please provide at least 10 characters in your message.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (formData.message.length > 5000) {
+      toast({
+        title: 'Message Too Long',
+        description: 'Please keep your message under 5000 characters.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Validate name length
+    if (formData.name.length < 2) {
+      toast({
+        title: 'Invalid Name',
+        description: 'Please provide at least 2 characters for your name.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { error } = await supabase
         .from('sales_inquiries')
         .insert([formData]);
 
-      if (error) throw error;
+      if (error) {
+        // Handle specific error messages
+        if (error.message.includes('rate limit') || error.message.includes('check_sales_inquiry_rate_limit')) {
+          toast({
+            title: 'Submission Limit Reached',
+            description: 'You can only submit 3 inquiries per hour. Please try again later.',
+            variant: 'destructive'
+          });
+          return;
+        }
+        
+        if (error.message.includes('valid_email_format')) {
+          toast({
+            title: 'Invalid Email',
+            description: 'Please provide a valid email address.',
+            variant: 'destructive'
+          });
+          return;
+        }
+        
+        throw error;
+      }
 
       toast({
         title: 'Inquiry Sent!',
@@ -63,7 +113,7 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
       console.error('Error submitting inquiry:', error);
       toast({
         title: 'Submission Failed',
-        description: 'Unable to submit your inquiry. Please try again.',
+        description: 'Unable to submit your inquiry. Please try again later.',
         variant: 'destructive'
       });
     } finally {
