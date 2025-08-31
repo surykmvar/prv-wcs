@@ -4,13 +4,16 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-task-secret',
 };
 
-// Initialize Supabase client
+// Initialize Supabase client with service role for secure operations
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Get the secret for authenticating cron jobs
+const FETCH_TRENDING_SECRET = Deno.env.get('FETCH_TRENDING_SECRET');
 
 // Gen Z style fallback topics with authentic vibe and emojis
 const fallbackTopics = [
@@ -337,6 +340,18 @@ serve(async (req) => {
   }
 
   try {
+    // Check for task secret authentication (for cron jobs)
+    const taskSecret = req.headers.get('x-task-secret');
+    if (!taskSecret || taskSecret !== FETCH_TRENDING_SECRET) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid or missing task secret' }),
+        { 
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     // Parse request parameters
     let style = 'genz';  // Default to Gen Z style
     let maxEmojis = 2;
