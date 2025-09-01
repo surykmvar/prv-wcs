@@ -12,8 +12,8 @@ export function useAudioUrl(audioPath: string | null) {
       return
     }
 
-    // If it's already a full URL, use it directly (for backwards compatibility)
-    if (audioPath.startsWith('http')) {
+    // If it's already a full URL or a local blob/data URL, use directly
+    if (audioPath.startsWith('http') || audioPath.startsWith('blob:') || audioPath.startsWith('data:')) {
       setSignedUrl(audioPath)
       return
     }
