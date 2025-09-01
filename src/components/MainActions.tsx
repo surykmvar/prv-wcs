@@ -104,21 +104,9 @@ export function MainActions() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-10 items-stretch justify-items-center">
           <button
             type="button"
-            onClick={() => {
-              // Show trending thought dropdown instead of redirecting
-              setShowTrendingDropdown(true)
-              
-              // Auto-scroll to dropdown on larger screens after a short delay
-              setTimeout(() => {
-                const isLarge = typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches
-                if (isLarge) {
-                  window.scrollTo({
-                    top: window.scrollY + 400,
-                    behavior: 'smooth'
-                  })
-                }
-              }, 300)
-            }}
+             onClick={() => {
+               navigate('/feed')
+             }}
             className="group relative flex w-full max-w-sm flex-col items-center text-center rounded-2xl p-4 sm:p-6 panel surface-elevated supports-[backdrop-filter]:backdrop-blur-md hover:shadow-lg transition-all min-h-[150px] sm:min-h-[180px]"
             aria-label="Break the ice and record a 60 second voice reply"
           >
