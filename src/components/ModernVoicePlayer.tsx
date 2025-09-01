@@ -34,37 +34,7 @@ export function ModernVoicePlayer({
   // Get signed URL for audio playback
   const { signedUrl, loading: urlLoading, error: urlError } = useAudioUrl(audioUrl)
 
-  // Don't render if invalid audio
-  if (!audioUrl || duration <= 0) {
-    return null
-  }
-
-  // Show loading state while URL is being fetched
-  if (urlLoading) {
-    return (
-      <Card className={`rounded-xl shadow-md ${className}`}>
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex items-center justify-center">
-            <span className="text-sm text-muted-foreground">Loading audio...</span>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  // Show error state if URL failed to load
-  if (urlError || !signedUrl) {
-    return (
-      <Card className={`rounded-xl shadow-md ${className}`}>
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex items-center justify-center">
-            <span className="text-sm text-muted-foreground">Unable to load audio</span>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
+  // Audio event handlers setup - MUST be called before any early returns
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
@@ -99,6 +69,37 @@ export function ModernVoicePlayer({
       audio.removeEventListener('ended', handleEnded)
     }
   }, [signedUrl, duration])
+
+  // Don't render if invalid audio
+  if (!audioUrl || duration <= 0) {
+    return null
+  }
+
+  // Show loading state while URL is being fetched
+  if (urlLoading) {
+    return (
+      <Card className={`rounded-xl shadow-md ${className}`}>
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-center justify-center">
+            <span className="text-sm text-muted-foreground">Loading audio...</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Show error state if URL failed to load
+  if (urlError || !signedUrl) {
+    return (
+      <Card className={`rounded-xl shadow-md ${className}`}>
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-center justify-center">
+            <span className="text-sm text-muted-foreground">Unable to load audio</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   const togglePlayPause = (e: React.MouseEvent) => {
     e.stopPropagation()
