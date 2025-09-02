@@ -24,7 +24,7 @@ const Feed = () => {
 
   if (recordingThoughtId) {
     return (
-      <div className="relative min-h-screen bg-gradient-to-br from-background via-[hsl(var(--surface-1))] to-[hsl(var(--surface-2))] font-inter">
+      <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background font-inter">
         <Helmet>
           <title>Record Voice Reply | Woices</title>
           <meta name="description" content="Record your 60-second voice reply to trending topics." />
@@ -35,15 +35,13 @@ const Feed = () => {
 
         <div className="relative">
           <Header />
-          <main className="py-6 sm:py-10 md:py-16">
-            <div className="w-full max-w-6xl mx-auto px-4 sm:px-8">
-              <div className="surface-modern p-8">
-                <VoiceRecorder 
-                  thoughtId={recordingThoughtId} 
-                  onClose={() => setRecordingThoughtId(null)}
-                  onSuccess={handleRecordingSuccess}
-                />
-              </div>
+          <main className="py-4 sm:py-8 md:py-12">
+            <div className="w-full max-w-6xl mx-auto px-3 sm:px-6">
+              <VoiceRecorder 
+                thoughtId={recordingThoughtId} 
+                onClose={() => setRecordingThoughtId(null)}
+                onSuccess={handleRecordingSuccess}
+              />
             </div>
           </main>
         </div>
@@ -52,7 +50,7 @@ const Feed = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-background via-[hsl(var(--surface-1))] to-[hsl(var(--surface-2))] font-inter">
+    <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background font-inter">
       <Helmet>
         <title>Break the Ice Feed | Woices</title>
         <meta name="description" content="Break the Ice voice feed – record and listen to 60-second Woice replies." />
@@ -63,12 +61,12 @@ const Feed = () => {
 
       <div className="relative">
         <Header />
-        <main className="py-6 sm:py-10 md:py-16">
+        <main className="py-4 sm:py-8 md:py-12">
           <h1 className="sr-only">Break the Ice – Voice Feed</h1>
-          <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 space-y-8">
+          <div className="w-full max-w-6xl mx-auto px-3 sm:px-6">
             {/* Trending Thoughts Header Section */}
             {showTrendingDropdown && (
-              <div className="surface-modern p-6 hover:shadow-[var(--shadow-strong)] transition-all duration-300">
+              <div className="mb-8">
                 <TrendingThoughtDropdown 
                   isOpen={true}
                   onStartRecording={handleStartRecording}
@@ -79,12 +77,10 @@ const Feed = () => {
             )}
             
             {/* Random Thought Recorder */}
-            <div className="surface-modern p-8 hover:shadow-[var(--shadow-strong)] transition-all duration-300">
-              <RandomThoughtRecorder 
-                key={refreshKey}
-                onBack={() => navigate(-1)} 
-              />
-            </div>
+            <RandomThoughtRecorder 
+              key={refreshKey}
+              onBack={() => navigate(-1)} 
+            />
           </div>
         </main>
       </div>
