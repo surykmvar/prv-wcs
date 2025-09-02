@@ -6,11 +6,12 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 222.2 84% 3.2%;
+    /* Enhanced modern light mode colors with better depth */
+    --background: 0 0% 98%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222.2 84% 6.2%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
@@ -18,38 +19,45 @@
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 95%;
+    --secondary: 210 40% 96.5%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 94.5%;
-    --muted-foreground: 215.4 16.3% 35%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 38%;
 
-    --accent: 210 40% 93%;
+    --accent: 210 40% 94%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 76%;
-    --input: 214.3 31.8% 76%;
+    --border: 214.3 31.8% 88%;
+    --input: 214.3 31.8% 91%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Enhanced surface colors for better depth */
+    --surface-1: 0 0% 99%;
+    --surface-2: 210 20% 97%;
+    --surface-3: 210 25% 95%;
+    
+    /* Modern gradients */
+    --gradient-subtle: linear-gradient(135deg, hsl(var(--surface-1)), hsl(var(--surface-2)));
+    --gradient-depth: linear-gradient(145deg, hsl(var(--surface-1)), hsl(var(--surface-3)));
+    
+    /* Enhanced shadows for depth */
+    --shadow-soft: 0 2px 8px -2px hsl(var(--foreground) / 0.08);
+    --shadow-medium: 0 4px 16px -4px hsl(var(--foreground) / 0.12);
+    --shadow-strong: 0 8px 32px -8px hsl(var(--foreground) / 0.16);
 
+    --sidebar-background: 0 0% 99%;
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
+    --sidebar-accent: 240 4.8% 97%;
     --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
+    --sidebar-border: 220 13% 92%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -98,10 +106,19 @@
 
 @layer components {
   .panel {
-    @apply rounded-3xl border border-border bg-card supports-[backdrop-filter]:backdrop-blur-xl shadow-2xl;
+    @apply rounded-2xl border border-border bg-card shadow-[var(--shadow-medium)] supports-[backdrop-filter]:backdrop-blur-xl;
   }
   .surface-elevated {
-    @apply bg-card border-border shadow-[0_18px_40px_-16px_hsl(var(--ring)/0.18)];
+    @apply bg-card border-border shadow-[var(--shadow-strong)] rounded-xl;
+  }
+  .surface-modern {
+    @apply bg-gradient-to-br from-[hsl(var(--surface-1))] to-[hsl(var(--surface-2))] border border-border shadow-[var(--shadow-soft)] rounded-xl;
+  }
+  .button-modern {
+    @apply px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-medium)] hover:-translate-y-0.5;
+  }
+  .card-modern {
+    @apply bg-gradient-to-br from-[hsl(var(--surface-1))] to-[hsl(var(--surface-2))] border border-border shadow-[var(--shadow-medium)] rounded-2xl p-6 hover:shadow-[var(--shadow-strong)] transition-all duration-300;
   }
 }
 
