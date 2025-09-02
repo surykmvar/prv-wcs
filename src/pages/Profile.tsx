@@ -210,30 +210,22 @@ export default function Profile() {
 
         {/* Credits Card */}
         {!creditsLoading && creditsInfo && (
-          <Card className="mb-6">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Coins className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                Credits
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="text-2xl font-bold text-foreground">
-                    {creditsInfo.balance}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    available credits
-                  </div>
+          <Card className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-amber-200 dark:border-amber-800">
+            <CardContent className="p-4">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="flex items-center gap-2">
+                  <Coins className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  <span className="text-sm font-medium text-muted-foreground">Credits Balance</span>
+                </div>
+                <div className="text-3xl font-bold text-foreground">
+                  {creditsInfo.balance}
                 </div>
                 <Button
                   onClick={() => setMembershipModalOpen(true)}
-                  size="sm"
-                  className="flex items-center gap-1.5"
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 px-6"
                 >
                   <Plus className="h-4 w-4" />
-                  Top up
+                  Top up Credits
                 </Button>
               </div>
             </CardContent>
