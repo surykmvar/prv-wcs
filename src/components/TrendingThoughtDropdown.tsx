@@ -122,7 +122,7 @@ export function TrendingThoughtDropdown({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="w-full mx-auto mt-3 px-2 sm:px-4 lg:px-6 z-20"
+          className="w-full max-w-4xl mx-auto mt-3 px-2 sm:px-4 lg:px-6 z-20"
         >
           <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/5 via-background to-accent/5 border border-border/50 backdrop-blur-sm">
             {/* Background pattern */}
