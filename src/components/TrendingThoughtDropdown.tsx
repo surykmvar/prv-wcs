@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, RefreshCw, ArrowUp, Sparkles, Hash, User, X, Users } from 'lucide-react';
+import { Mic, RefreshCw, ArrowUp, Sparkles, Hash, User, X, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +27,7 @@ export function TrendingThoughtDropdown({
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleRecordClick = () => {
     if (!user) {
@@ -112,48 +113,64 @@ export function TrendingThoughtDropdown({
     );
   }
 
-  // Desktop/Tablet: Show as slide-down panel
+  // Desktop/Tablet: Show as compact banner with toggle
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 300, 
-            damping: 30,
-            duration: 0.3 
-          }}
-          className="w-full mx-auto mt-4 px-2 sm:px-4 lg:px-6 z-20"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="w-full mx-auto mt-3 px-2 sm:px-4 lg:px-6 z-20"
         >
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/5 via-background to-accent/5 border border-border/50 backdrop-blur-sm">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/5 via-background to-accent/5 border border-border/50 backdrop-blur-sm">
             {/* Background pattern */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.1),transparent_70%)]" />
             
             {/* Content container */}
             <div className="relative">
-              {/* Header bar */}
-              <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-gradient-to-r from-muted/30 to-transparent border-b border-border/30">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Live Trending</h3>
+              {/* Compact Header bar - always visible */}
+              <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gradient-to-r from-muted/30 to-transparent">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Live Trending</h3>
+                  {!isCollapsed && currentTopic && (
+                    <span className="text-xs text-foreground font-medium truncate ml-2">
+                      {currentTopic.title}
+                    </span>
+                  )}
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onClose}
-                  className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-background/50 rounded-full"
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground hover:bg-background/50 rounded-full"
                 >
-                  <X className="h-3.5 w-3.5" />
+                  {isCollapsed ? (
+                    <ChevronDown className="h-3 w-3" />
+                  ) : (
+                    <ChevronUp className="h-3 w-3" />
+                  )}
                 </Button>
               </div>
               
-              {/* Main content */}
-              <div className="px-4 sm:px-6 py-4 sm:py-5">
-                {renderContent()}
-              </div>
+              {/* Expandable content */}
+              <AnimatePresence>
+                {!isCollapsed && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-3 sm:px-4 pb-3 border-t border-border/30">
+                      {renderCompactContent()}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </motion.div>
@@ -291,6 +308,95 @@ export function TrendingThoughtDropdown({
                 </Button>
               </div>
             )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  function renderCompactContent() {
+    return (
+      <div>
+        {loading || !currentTopic ? (
+          <div className="text-center py-3">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="inline-block"
+            >
+              <Sparkles className="h-4 w-4 text-primary" />
+            </motion.div>
+            <p className="text-xs text-muted-foreground mt-1">Loading...</p>
+          </div>
+        ) : (
+          <div className="space-y-2 pt-2">
+            {/* Source indicator */}
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              {showFeedThought ? (
+                <>
+                  <User className="h-2.5 w-2.5" />
+                  <span>Community</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-2.5 w-2.5" />
+                  <span>AI Generated</span>
+                </>
+              )}
+            </div>
+
+            {/* Description */}
+            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+              {currentTopic.description}
+            </p>
+
+            {/* Tags - compact */}
+            {currentTopic.tags && currentTopic.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {currentTopic.tags.slice(0, 2).map((tag, index) => (
+                  <Badge 
+                    key={index} 
+                    variant="secondary" 
+                    className="text-xs px-1.5 py-0.5 h-5 bg-muted/50 text-muted-foreground border-0"
+                  >
+                    <Hash className="h-2 w-2 mr-0.5" />
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* Compact action buttons */}
+            <div className="flex gap-2 pt-1">
+              <Button
+                onClick={handleRecordClick}
+                className="flex-1 h-7 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium"
+                size="sm"
+              >
+                <Mic className="h-3 w-3 mr-1" />
+                Record Reply
+              </Button>
+
+              <Button
+                onClick={handleRefresh}
+                variant="outline"
+                size="sm"
+                disabled={isRefreshing}
+                className="h-7 w-7 p-0 border-border hover:bg-accent"
+              >
+                <RefreshCw 
+                  className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} 
+                />
+              </Button>
+            </div>
+
+            {/* Compact help text */}
+            <p className="text-xs text-muted-foreground/70 text-center">
+              {user 
+                ? "Limited: 10 replies max" 
+                : "Sign in to join"
+              }
+            </p>
           </div>
         )}
       </div>
