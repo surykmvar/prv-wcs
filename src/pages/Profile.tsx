@@ -221,8 +221,9 @@ export default function Profile() {
                   {creditsInfo.balance}
                 </div>
                 <Button
+                  variant="cta"
                   onClick={() => setMembershipModalOpen(true)}
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 px-6"
+                  className="flex items-center gap-2 px-6"
                 >
                   <Plus className="h-4 w-4" />
                   Top up Credits

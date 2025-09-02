@@ -6,33 +6,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 222.2 84% 3.2%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 95%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 210 40% 94.5%;
-    --muted-foreground: 215.4 16.3% 35%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 210 40% 93%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 220 14% 92%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 76%;
-    --input: 214.3 31.8% 76%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262 83% 58%;
+
+    --brand-yellow: 45 93% 47%;
 
     --radius: 0.5rem;
 
@@ -98,10 +100,10 @@
 
 @layer components {
   .panel {
-    @apply rounded-3xl border border-border bg-card supports-[backdrop-filter]:backdrop-blur-xl shadow-2xl;
+    @apply rounded-3xl border border-border bg-card supports-[backdrop-filter]:backdrop-blur-xl shadow-lg;
   }
   .surface-elevated {
-    @apply bg-card border-border shadow-[0_18px_40px_-16px_hsl(var(--ring)/0.18)];
+    @apply bg-card border-border shadow-[0_8px_24px_-8px_hsl(0_0%_0%/0.12),0_2px_8px_-2px_hsl(0_0%_0%/0.08)];
   }
 }
 
