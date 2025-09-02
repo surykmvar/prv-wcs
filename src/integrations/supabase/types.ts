@@ -197,34 +197,43 @@ export type Database = {
       profiles: {
         Row: {
           auth_method: string | null
+          avatar_url: string | null
+          bio: string | null
           created_at: string
           display_name: string | null
           first_name: string | null
           id: string
           last_name: string | null
           phone: string | null
+          show_email: boolean | null
           updated_at: string
           user_id: string
         }
         Insert: {
           auth_method?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
           phone?: string | null
+          show_email?: boolean | null
           updated_at?: string
           user_id: string
         }
         Update: {
           auth_method?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
           phone?: string | null
+          show_email?: boolean | null
           updated_at?: string
           user_id?: string
         }

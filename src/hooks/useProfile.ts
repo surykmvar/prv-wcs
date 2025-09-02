@@ -11,6 +11,9 @@ interface ProfileData {
   last_name: string | null
   phone: string | null
   auth_method: string | null
+  avatar_url: string | null
+  bio: string | null
+  show_email: boolean | null
   created_at: string
   updated_at: string
 }

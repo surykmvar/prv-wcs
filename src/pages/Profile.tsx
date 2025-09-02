@@ -202,6 +202,10 @@ export default function Profile() {
           facts={getVoteBreakdown().facts}
           myths={getVoteBreakdown().myths}
           unclear={getVoteBreakdown().unclear}
+          avatarUrl={profile?.avatar_url}
+          bio={profile?.bio}
+          showEmail={profile?.show_email}
+          onProfileUpdate={fetchUserData}
         />
 
         {/* Credits Card */}
