@@ -126,25 +126,34 @@ export function TrendingThoughtDropdown({
             damping: 30,
             duration: 0.3 
           }}
-          className="w-full max-w-2xl mx-auto mt-4 px-4 z-20"
+          className="w-full mx-auto mt-4 px-2 sm:px-4 lg:px-6 z-20"
         >
-          <div className="panel surface-elevated bg-background border border-border">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold">Trending Thoughts</h3>
-              <div className="flex items-center gap-2">
-                {/* Removed redundant Feed button for desktop */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/5 via-background to-accent/5 border border-border/50 backdrop-blur-sm">
+            {/* Background pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.1),transparent_70%)]" />
+            
+            {/* Content container */}
+            <div className="relative">
+              {/* Header bar */}
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-gradient-to-r from-muted/30 to-transparent border-b border-border/30">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Live Trending</h3>
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onClose}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-background/50 rounded-full"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                 </Button>
               </div>
-            </div>
-            <div className="p-6">
-              {renderContent()}
+              
+              {/* Main content */}
+              <div className="px-4 sm:px-6 py-4 sm:py-5">
+                {renderContent()}
+              </div>
             </div>
           </div>
         </motion.div>
