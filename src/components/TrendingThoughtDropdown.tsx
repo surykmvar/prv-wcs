@@ -55,9 +55,7 @@ export function TrendingThoughtDropdown({
     onClose();
   };
 
-  if (!currentTopic && !loading) {
-    return null;
-  }
+  // Always render the container - don't return null to prevent vanishing
 
   if (isMobile) {
     // Mobile: Show as modal with backdrop
@@ -92,14 +90,7 @@ export function TrendingThoughtDropdown({
                 <div className="flex items-center justify-between p-4 border-b">
                   <h3 className="text-lg font-semibold">Trending Thoughts</h3>
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleGoToFeed}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <Mic className="h-4 w-4" />
-                    </Button>
+                  {/* Removed redundant Feed button for mobile */}
                     <Button
                       variant="ghost"
                       size="sm"
@@ -135,21 +126,13 @@ export function TrendingThoughtDropdown({
             damping: 30,
             duration: 0.3 
           }}
-          className="w-full max-w-2xl mx-auto mt-4 px-4"
+          className="w-full max-w-2xl mx-auto mt-4 px-4 z-20"
         >
-          <div className="panel surface-elevated">
+          <div className="panel surface-elevated bg-background border border-border">
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">Trending Thoughts</h3>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleGoToFeed}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Users className="h-4 w-4 mr-1" />
-                  Feed
-                </Button>
+                {/* Removed redundant Feed button for desktop */}
                 <Button
                   variant="ghost"
                   size="sm"

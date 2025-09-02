@@ -98,7 +98,12 @@ export function useTrendingThoughts() {
     // since it requires a secret header. Let's use cached topics instead.
     console.log('Client-side request - using cached topics only');
     const shuffled = cachedTopics ? [...cachedTopics].sort(() => 0.5 - Math.random()) : [];
-    setTrendingTopics(shuffled);
+    if (shuffled.length === 0) {
+      console.log('No cached topics available, using fallback topics');
+      await setFallbackTopics();
+    } else {
+      setTrendingTopics(shuffled);
+    }
 
   };
 
