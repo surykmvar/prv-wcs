@@ -20,7 +20,7 @@ const Index = () => {
       <Helmet>
         <title>Woices | Speak or Write</title>
         <meta name="description" content="Speak your Woice or write a thought. Minimal, human-friendly voice social." />
-        <link rel="canonical" href="/" />
+        <link rel="canonical" href="https://woices.app/" />
       </Helmet>
       <div className="relative">
         <Header />

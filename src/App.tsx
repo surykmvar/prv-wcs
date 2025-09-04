@@ -1,5 +1,5 @@
 
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,7 +20,25 @@ import PaymentSuccess from './pages/PaymentSuccess'
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  // Redirect from lovable.app to custom domain
+  useEffect(() => {
+    if (window.location.hostname.includes('lovable.app')) {
+      window.location.replace(`https://woices.app${window.location.pathname}${window.location.search}${window.location.hash}`);
+    }
+  }, []);
+
+  // Add noindex for lovable.app domains
+  useEffect(() => {
+    if (window.location.hostname.includes('lovable.app')) {
+      const noindexMeta = document.createElement('meta');
+      noindexMeta.name = 'robots';
+      noindexMeta.content = 'noindex, nofollow';
+      document.head.appendChild(noindexMeta);
+    }
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light" storageKey="woices-ui-theme">
       <HelmetProvider>
@@ -67,6 +85,7 @@ const App = () => (
       </HelmetProvider>
     </ThemeProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
