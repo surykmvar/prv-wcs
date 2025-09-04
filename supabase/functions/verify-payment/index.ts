@@ -3,9 +3,8 @@ import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://ijtpdrsoddgjwyeiqalg.supabase.co, http://localhost:3000',
+  'Access-Control-Allow-Origin': 'https://ijtpdrsoddgjwyeiqalg.supabase.co',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 const logStep = (step: string, details?: any) => {
@@ -21,13 +20,10 @@ serve(async (req) => {
   try {
     logStep('Function started');
 
-    // SECURITY: Verify JWT token is present
+    // Verify user is authenticated
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 401,
-      });
+    if (!authHeader) {
+      throw new Error('Authorization header required');
     }
 
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
@@ -36,23 +32,21 @@ serve(async (req) => {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      { auth: { persistSession: false } }
+      { 
+        auth: { persistSession: false },
+        global: { headers: { Authorization: authHeader } }
+      }
     );
 
-    // SECURITY: Get user from JWT token
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    // Get authenticated user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
     if (userError || !user) {
-      logStep('Invalid token', userError);
-      return new Response(JSON.stringify({ error: 'Invalid token' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 401,
-      });
+      throw new Error('User authentication failed');
     }
 
     const { sessionId } = await req.json();
     if (!sessionId) throw new Error('Session ID is required');
-    logStep('Session ID received', { sessionId });
+    logStep('Session ID received', { sessionId, userId: user.id });
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
 
@@ -81,15 +75,6 @@ serve(async (req) => {
     if (orderError) {
       logStep('Order not found or unauthorized', { error: orderError });
       throw new Error('Order not found or you are not authorized to access this order');
-    }
-
-    // SECURITY: Verify the order belongs to the authenticated user
-    if (order.user_id !== user.id) {
-      logStep('Order user mismatch', { orderUserId: order.user_id, tokenUserId: user.id });
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 403,
-      });
     }
 
     // Check if already processed
