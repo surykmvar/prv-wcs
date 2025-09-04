@@ -59,55 +59,79 @@ export function TrendingThoughtDropdown({
   // Always render the container - don't return null to prevent vanishing
 
   if (isMobile) {
-    // Mobile: Show as modal with backdrop
+    // Mobile: Show as sticky banner like desktop
     return (
       <AnimatePresence>
         {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-              onClick={onClose}
-            />
-            
-            {/* Modal */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 300, 
-                damping: 30,
-                duration: 0.3 
-              }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            >
-              <div className="panel surface-elevated w-full max-w-sm max-h-[85vh] overflow-y-auto">
-                <div className="flex items-center justify-between p-4 border-b">
-                  <h3 className="text-lg font-semibold">Trending Thoughts</h3>
-                  <div className="flex items-center gap-2">
-                  {/* Removed redundant Feed button for mobile */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={onClose}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/50"
+          >
+            <div className="w-full px-4 py-3">
+              <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/10 via-background to-accent/10 border border-border/50">
+                {/* Background pattern */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.1),transparent_70%)]" />
+                
+                {/* Content container */}
+                <div className="relative">
+                  {/* Compact Header bar - always visible */}
+                  <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-muted/30 to-transparent">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Live Trending</h3>
+                      {!isCollapsed && currentTopic && (
+                        <span className="text-xs text-foreground font-medium truncate ml-1">
+                          {currentTopic.title}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground hover:bg-background/50 rounded-full"
+                      >
+                        {isCollapsed ? (
+                          <ChevronDown className="h-3 w-3" />
+                        ) : (
+                          <ChevronUp className="h-3 w-3" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={onClose}
+                        className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground hover:bg-background/50 rounded-full"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="p-5">
-                  {renderContent()}
+                  
+                  {/* Expandable content */}
+                  <AnimatePresence>
+                    {!isCollapsed && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-3 pb-3 border-t border-border/30">
+                          {renderMobileContent()}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     );
@@ -395,6 +419,108 @@ export function TrendingThoughtDropdown({
               {user 
                 ? "Limited: 10 replies max" 
                 : "Sign in to join"
+              }
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  function renderMobileContent() {
+    return (
+      <div>
+        {loading || !currentTopic ? (
+          <div className="text-center py-4">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="inline-block"
+            >
+              <Sparkles className="h-5 w-5 text-primary" />
+            </motion.div>
+            <p className="text-sm text-muted-foreground mt-2">Loading...</p>
+          </div>
+        ) : (
+          <div className="space-y-3 pt-2">
+            {/* Source indicator */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {showFeedThought ? (
+                <>
+                  <User className="h-3 w-3" />
+                  <span>Community</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-3 w-3" />
+                  <span>AI Generated</span>
+                </>
+              )}
+            </div>
+
+            {/* Description */}
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {currentTopic.description}
+            </p>
+
+            {/* Tags - mobile optimized */}
+            {currentTopic.tags && currentTopic.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {currentTopic.tags.slice(0, 3).map((tag, index) => (
+                  <Badge 
+                    key={index} 
+                    variant="secondary" 
+                    className="text-xs px-2 py-1 bg-muted/50 text-muted-foreground border-0"
+                  >
+                    <Hash className="h-2.5 w-2.5 mr-1" />
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* Mobile action buttons */}
+            <div className="flex flex-col gap-2 pt-2">
+              <Button
+                onClick={handleRecordClick}
+                className="w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                size="sm"
+              >
+                <Mic className="h-4 w-4 mr-2" />
+                Record Your Reply
+              </Button>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleRefresh}
+                  variant="outline"
+                  size="sm"
+                  disabled={isRefreshing}
+                  className="flex-1 border-border hover:bg-accent"
+                >
+                  <RefreshCw 
+                    className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} 
+                  />
+                  Refresh
+                </Button>
+
+                <Button
+                  onClick={handleGoToFeed}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 border-border hover:bg-accent"
+                >
+                  <ArrowUp className="h-4 w-4 mr-2" />
+                  More
+                </Button>
+              </div>
+            </div>
+
+            {/* Mobile help text */}
+            <p className="text-xs text-muted-foreground/70 text-center pt-1">
+              {user 
+                ? "Limited: 10 replies max" 
+                : "Sign in to join the conversation"
               }
             </p>
           </div>

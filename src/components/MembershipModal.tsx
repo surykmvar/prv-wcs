@@ -179,23 +179,23 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
 
           {/* Plan Selection Tabs */}
           <Tabs value={planType} onValueChange={(value: 'annual' | 'usage') => setPlanType(value)} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-muted/80 to-muted/60 p-1.5 h-14 rounded-xl shadow-inner border border-border/50">
+            <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-muted/80 to-muted/60 p-1.5 sm:h-14 h-12 rounded-xl shadow-inner border border-border/50">
               <TabsTrigger 
                 value="annual" 
-                className="text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/90 data-[state=active]:to-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
+                className="sm:text-sm text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/90 data-[state=active]:to-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
               >
-                <div className="flex items-center gap-2">
-                  Annual Plans
-                  <Badge variant="secondary" className="ml-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 data-[state=active]:bg-emerald-200 data-[state=active]:text-emerald-800 data-[state=active]:dark:bg-emerald-800 data-[state=active]:dark:text-emerald-200">Best Value</Badge>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span className="truncate">Annual Plans</span>
+                  <Badge variant="secondary" className="hidden sm:block ml-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 data-[state=active]:bg-emerald-200 data-[state=active]:text-emerald-800 data-[state=active]:dark:bg-emerald-800 data-[state=active]:dark:text-emerald-200">Best Value</Badge>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="usage" 
-                className="text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/90 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
+                className="sm:text-sm text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/90 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
               >
-                <div className="flex items-center gap-2">
-                  Usage-based
-                  <Badge variant="outline" className="ml-1 text-xs bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400 border-orange-200 dark:border-orange-700 data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 data-[state=active]:dark:bg-orange-800 data-[state=active]:dark:text-orange-200 data-[state=active]:border-orange-300">Pay as you go</Badge>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span className="truncate">Usage-based</span>
+                  <Badge variant="outline" className="hidden sm:block ml-1 text-xs bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400 border-orange-200 dark:border-orange-700 data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 data-[state=active]:dark:bg-orange-800 data-[state=active]:dark:text-orange-200 data-[state=active]:border-orange-300">Pay as you go</Badge>
                 </div>
               </TabsTrigger>
             </TabsList>
@@ -357,8 +357,8 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
 
             {/* Custom Amount Section */}
             <div className="border-t border-border/30 pt-6 mt-6">
-              <h3 className="text-xl font-semibold text-center mb-6 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">💎 Custom Amount</h3>
-              <div className="max-w-md mx-auto space-y-6">
+              <h3 className="sm:text-xl text-lg font-semibold text-center mb-4 sm:mb-6 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">💎 Custom Amount</h3>
+              <div className="max-w-md mx-auto space-y-4 sm:space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="custom-amount" className="text-sm font-medium text-center block">
                     Number of Credits (minimum 10)
