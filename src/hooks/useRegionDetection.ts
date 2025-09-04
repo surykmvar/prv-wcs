@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getBrowserCountryCode } from '@/utils/locale';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface RegionInfo {
   region: string;
@@ -19,6 +20,7 @@ export function useRegionDetection() {
   const [regionInfo, setRegionInfo] = useState<RegionInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     detectRegion();
@@ -44,38 +46,61 @@ export function useRegionDetection() {
       // Map country code to region
       const region = mapCountryToRegion(countryCode);
       
-      // Fetch regional pricing from database
-      const { data: pricingData, error: pricingError } = await supabase
-        .from('regional_pricing')
-        .select('*')
-        .eq('region', region)
-        .single();
+      // Fetch regional pricing - use edge function for unauthenticated users
+      if (!user) {
+        const { data: publicPricingData, error: publicPricingError } = await supabase.functions.invoke('public-pricing', {
+          body: { region }
+        });
 
-      if (pricingError) {
-        // Fallback to Europe pricing if region not found
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('regional_pricing')
-          .select('*')
-          .eq('region', 'Europe')
-          .single();
+        if (publicPricingError) {
+          throw new Error('Unable to fetch pricing information');
+        }
 
-        if (fallbackError) {
+        const { regionalPricing } = publicPricingData;
+        if (!regionalPricing) {
           throw new Error('Unable to fetch pricing information');
         }
 
         setRegionInfo({
-          region: 'Europe',
-          currency: fallbackData.currency,
-          pricePerPoint: Number(fallbackData.price_per_point),
+          region: regionalPricing.region,
+          currency: regionalPricing.currency,
+          pricePerPoint: Number(regionalPricing.price_per_point),
           isVpnDetected: false
         });
       } else {
-        setRegionInfo({
-          region: pricingData.region,
-          currency: pricingData.currency,
-          pricePerPoint: Number(pricingData.price_per_point),
-          isVpnDetected: false
-        });
+        // Authenticated users can access database directly
+        const { data: pricingData, error: pricingError } = await supabase
+          .from('regional_pricing')
+          .select('*')
+          .eq('region', region)
+          .single();
+
+        if (pricingError) {
+          // Fallback to Europe pricing if region not found
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('regional_pricing')
+            .select('*')
+            .eq('region', 'Europe')
+            .single();
+
+          if (fallbackError) {
+            throw new Error('Unable to fetch pricing information');
+          }
+
+          setRegionInfo({
+            region: 'Europe',
+            currency: fallbackData.currency,
+            pricePerPoint: Number(fallbackData.price_per_point),
+            isVpnDetected: false
+          });
+        } else {
+          setRegionInfo({
+            region: pricingData.region,
+            currency: pricingData.currency,
+            pricePerPoint: Number(pricingData.price_per_point),
+            isVpnDetected: false
+          });
+        }
       }
     } catch (err) {
       console.error('Region detection error:', err);

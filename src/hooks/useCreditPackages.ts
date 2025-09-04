@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface CreditPackage {
   id: string;
@@ -22,27 +23,43 @@ export function useCreditPackages(region?: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const fetchPackages = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      let query = supabase
-        .from('credit_packages')
-        .select('*')
-        .eq('is_active', true)
-        .order('points', { ascending: true });
+      // Use edge function for unauthenticated users when region is specified
+      if (!user && region) {
+        const { data: publicPricingData, error: publicPricingError } = await supabase.functions.invoke('public-pricing', {
+          body: { region }
+        });
 
-      if (region) {
-        query = query.eq('region', region);
+        if (publicPricingError) throw publicPricingError;
+
+        setPackages(publicPricingData.creditPackages || []);
+      } else if (user) {
+        // Authenticated users can access database directly
+        let query = supabase
+          .from('credit_packages')
+          .select('*')
+          .eq('is_active', true)
+          .order('points', { ascending: true });
+
+        if (region) {
+          query = query.eq('region', region);
+        }
+
+        const { data, error: fetchError } = await query;
+
+        if (fetchError) throw fetchError;
+
+        setPackages(data || []);
+      } else {
+        // No region specified and no user - return empty array
+        setPackages([]);
       }
-
-      const { data, error: fetchError } = await query;
-
-      if (fetchError) throw fetchError;
-
-      setPackages(data || []);
     } catch (err) {
       console.error('Failed to fetch credit packages:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch packages');
