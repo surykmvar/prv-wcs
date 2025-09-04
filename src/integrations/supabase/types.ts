@@ -38,6 +38,39 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string | null
+          operation: string
+          record_id: string | null
+          table_name: string
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          operation: string
+          record_id?: string | null
+          table_name: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          operation?: string
+          record_id?: string | null
+          table_name?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       credit_packages: {
         Row: {
           created_at: string
@@ -855,6 +888,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_sensitive_data_access: {
+        Args: {
+          operation: string
+          record_id: string
+          table_name: string
+          user_id?: string
+        }
+        Returns: undefined
+      }
+      sanitize_html_input: {
+        Args: { input_text: string }
+        Returns: string
+      }
       update_expired_thoughts: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -871,6 +917,10 @@ export type Database = {
       }
       user_has_replied_to_thought: {
         Args: { thought_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
+      validate_email_format: {
+        Args: { email: string }
         Returns: boolean
       }
     }
