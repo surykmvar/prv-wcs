@@ -52,8 +52,17 @@ export function TrendingThoughtDropdown({
   };
 
   const handleGoToFeed = () => {
-    navigate('/feed');
-    onClose();
+    // Minimize (collapse) the banner instead of closing it
+    setIsCollapsed(true);
+    // Smooth scroll to the feed after the collapse animation
+    setTimeout(() => {
+      const el = document.getElementById('feed') || document.querySelector('[data-feed-root]');
+      if (el) {
+        (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+      }
+    }, 250);
   };
 
   // Always render the container - don't return null to prevent vanishing
@@ -510,7 +519,7 @@ export function TrendingThoughtDropdown({
                   size="sm"
                   className="flex-1 border-border hover:bg-accent"
                 >
-                  <ArrowUp className="h-4 w-4 mr-2" />
+                  <ChevronDown className="h-4 w-4 mr-2" />
                   More
                 </Button>
               </div>
