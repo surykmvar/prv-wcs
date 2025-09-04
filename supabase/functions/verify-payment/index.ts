@@ -3,8 +3,9 @@ import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://ijtpdrsoddgjwyeiqalg.supabase.co, http://localhost:3000',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 const logStep = (step: string, details?: any) => {
@@ -20,6 +21,15 @@ serve(async (req) => {
   try {
     logStep('Function started');
 
+    // SECURITY: Verify JWT token is present
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
+
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) throw new Error('STRIPE_SECRET_KEY is not set');
 
@@ -28,6 +38,17 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       { auth: { persistSession: false } }
     );
+
+    // SECURITY: Get user from JWT token
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    if (userError || !user) {
+      logStep('Invalid token', userError);
+      return new Response(JSON.stringify({ error: 'Invalid token' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
 
     const { sessionId } = await req.json();
     if (!sessionId) throw new Error('Session ID is required');
@@ -59,6 +80,15 @@ serve(async (req) => {
     if (orderError) {
       logStep('Order not found', { error: orderError });
       throw new Error('Order not found');
+    }
+
+    // SECURITY: Verify the order belongs to the authenticated user
+    if (order.user_id !== user.id) {
+      logStep('Order user mismatch', { orderUserId: order.user_id, tokenUserId: user.id });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 403,
+      });
     }
 
     // Check if already processed

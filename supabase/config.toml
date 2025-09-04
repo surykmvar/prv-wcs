@@ -7,7 +7,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.verify-payment]
-verify_jwt = false
+verify_jwt = true
 
 [functions.fetch-trending-topics]
 verify_jwt = false

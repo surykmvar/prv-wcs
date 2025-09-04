@@ -716,7 +716,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_app_settings: {
+        Row: {
+          description: string | null
+          key: string | null
+          value: Json | null
+        }
+        Insert: {
+          description?: string | null
+          key?: string | null
+          value?: Json | null
+        }
+        Update: {
+          description?: string | null
+          key?: string | null
+          value?: Json | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       allocate_activity_credits: {
@@ -860,21 +877,13 @@ export type Database = {
         Returns: undefined
       }
       update_user_credits: {
-        Args:
-          | {
-              credit_amount: number
-              description?: string
-              reference_uuid?: string
-              transaction_type: string
-              user_uuid: string
-            }
-          | {
-              credit_amount: number
-              description?: string
-              reference_uuid?: string
-              transaction_type: string
-              user_uuid: string
-            }
+        Args: {
+          credit_amount: number
+          description?: string
+          reference_uuid?: string
+          transaction_type: string
+          user_uuid: string
+        }
         Returns: boolean
       }
       user_has_replied_to_thought: {
