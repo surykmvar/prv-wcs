@@ -70,16 +70,17 @@ serve(async (req) => {
       });
     }
 
-    // Get order from database
+    // Get order from database and verify it belongs to the authenticated user
     const { data: order, error: orderError } = await supabaseClient
       .from('orders')
       .select('*')
       .eq('stripe_session_id', sessionId)
+      .eq('user_id', user.id)
       .single();
 
     if (orderError) {
-      logStep('Order not found', { error: orderError });
-      throw new Error('Order not found');
+      logStep('Order not found or unauthorized', { error: orderError });
+      throw new Error('Order not found or you are not authorized to access this order');
     }
 
     // SECURITY: Verify the order belongs to the authenticated user
