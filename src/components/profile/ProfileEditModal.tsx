@@ -43,11 +43,12 @@ export function ProfileEditModal({
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
+    // Validate file type - only allow safe image formats
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
       toast({
         title: 'Invalid file type',
-        description: 'Please select an image file.',
+        description: 'Please upload a JPEG, PNG, or WebP image.',
         variant: 'destructive'
       });
       return;
@@ -76,12 +77,14 @@ export function ProfileEditModal({
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data } = supabase.storage
+      // Get signed URL for private access (24 hours expiry)
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from('avatars')
-        .getPublicUrl(fileName);
+        .createSignedUrl(fileName, 86400); // 24 hours
 
-      setAvatarUrl(data.publicUrl);
+      if (signedUrlError) throw signedUrlError;
+
+      setAvatarUrl(signedUrlData.signedUrl);
       
       toast({
         title: 'Avatar uploaded',

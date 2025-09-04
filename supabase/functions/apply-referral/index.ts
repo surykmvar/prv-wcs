@@ -135,12 +135,12 @@ serve(async (req) => {
     );
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Error applying referral code:', {
-      error: error.message,
-      stack: error.stack,
-      timestamp: new Date().toISOString(),
-      userId: userData?.user?.id || 'unknown'
+      error: errorMessage,
+      timestamp: new Date().toISOString()
     });
+    
     return new Response(
       JSON.stringify({ 
         success: false, 
