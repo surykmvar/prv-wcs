@@ -133,15 +133,21 @@ export function useRegionDetection() {
     try {
       // Multiple IP check services to detect VPN
       const checks = await Promise.allSettled([
-        fetch('https://ipapi.co/json/').then(r => r.json()),
-        fetch('https://ip-api.com/json/').then(r => r.json())
+        fetch('https://ipapi.co/json/').then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        }),
+        // Note: ip-api.com requires payment for SSL, so we'll skip it for now
+        // fetch('https://ip-api.com/json/').then(r => r.json())
       ]);
 
       let vpnIndicators = 0;
+      let successfulChecks = 0;
 
       // Check results from IP services
       checks.forEach(result => {
         if (result.status === 'fulfilled') {
+          successfulChecks++;
           const data = result.value;
           // Look for VPN indicators
           if (data.org?.toLowerCase().includes('vpn') ||
@@ -155,8 +161,8 @@ export function useRegionDetection() {
         }
       });
 
-      // If multiple services indicate VPN, consider it detected
-      return vpnIndicators >= 1;
+      // Only flag as VPN if we have successful checks and indicators
+      return successfulChecks > 0 && vpnIndicators >= 1;
     } catch (error) {
       console.warn('VPN detection failed:', error);
       // If VPN detection fails, allow access
