@@ -182,11 +182,11 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
             <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-muted/80 to-muted/60 p-1.5 sm:h-14 h-12 rounded-xl shadow-inner border border-border/50">
               <TabsTrigger 
                 value="annual" 
-                className="group sm:text-sm text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/90 data-[state=active]:to-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
+                className="group sm:text-sm text-xs font-semibold data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/80 transition-all duration-300 rounded-lg"
               >
                 <div className="flex items-center gap-1 sm:gap-2">
                   <span className="truncate">Annual Plans</span>
-                  <Badge variant="secondary" className="hidden sm:block ml-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 group-data-[state=active]:bg-black group-data-[state=active]:text-white group-data-[state=active]:border-black group-data-[state=active]:dark:bg-black group-data-[state=active]:dark:text-white group-data-[state=active]:dark:border-black">Best Value</Badge>
+                  <Badge variant="secondary" className="hidden sm:block ml-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 group-data-[state=active]:bg-white group-data-[state=active]:text-emerald-600 group-data-[state=active]:border-white group-data-[state=active]:dark:bg-white group-data-[state=active]:dark:text-emerald-600 group-data-[state=active]:dark:border-white">Best Value</Badge>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
