@@ -716,24 +716,7 @@ export type Database = {
       }
     }
     Views: {
-      public_app_settings: {
-        Row: {
-          description: string | null
-          key: string | null
-          value: Json | null
-        }
-        Insert: {
-          description?: string | null
-          key?: string | null
-          value?: Json | null
-        }
-        Update: {
-          description?: string | null
-          key?: string | null
-          value?: Json | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       allocate_activity_credits: {
