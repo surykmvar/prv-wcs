@@ -3,7 +3,7 @@ import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://ijtpdrsoddgjwyeiqalg.supabase.co',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -42,9 +42,25 @@ serve(async (req) => {
     if (!user?.email) throw new Error('User not authenticated or email not available');
     logStep('User authenticated', { userId: user.id, email: user.email });
 
-    const { points, planType, planDetails, region, currency, pricePerPoint } = await req.json();
+    const { points, planType, planDetails, region, currency } = await req.json();
     if (!points || points < 10) throw new Error('Invalid points amount');
-    logStep('Request parsed', { points, planType, planDetails, region, currency, pricePerPoint });
+    if (!region || !currency) throw new Error('Invalid region or currency');
+    logStep('Request parsed', { points, planType, planDetails, region, currency });
+
+    // Lookup pricing server-side from regional_pricing table
+    const { data: pricingData, error: pricingError } = await supabaseClient
+      .from('regional_pricing')
+      .select('price_per_point')
+      .eq('region', region)
+      .eq('currency', currency.toLowerCase())
+      .single();
+    
+    if (pricingError || !pricingData) {
+      throw new Error(`Pricing not found for region ${region} with currency ${currency}`);
+    }
+    
+    const pricePerPoint = pricingData.price_per_point;
+    logStep('Pricing lookup completed', { region, currency, pricePerPoint });
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
 
@@ -71,6 +87,10 @@ serve(async (req) => {
       ? `${planName} usage-based plan with ${points} credits (${region} pricing)`
       : `${planName} annual plan with ${points} credits (${region} pricing)`;
 
+    // Get trusted frontend URL from environment
+    const frontendUrl = Deno.env.get('FRONTEND_URL') || 'https://ijtpdrsoddgjwyeiqalg.supabase.co';
+    logStep('Using frontend URL', { frontendUrl });
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -89,8 +109,8 @@ serve(async (req) => {
         },
       ],
       mode: 'payment',
-      success_url: `${req.headers.get('origin')}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get('origin')}/`,
+      success_url: `${frontendUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${frontendUrl}/`,
       metadata: {
         user_id: user.id,
         points: points.toString(),
