@@ -66,7 +66,7 @@ export function ProfileEditModal({
 
     setIsUploading(true);
 
-    try {
+  try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/avatar.${fileExt}`;
       
@@ -77,14 +77,12 @@ export function ProfileEditModal({
 
       if (uploadError) throw uploadError;
 
-      // Get signed URL for private access (24 hours expiry)
-      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+      // Get public URL (no expiry since bucket is public)
+      const { data: publicUrlData } = supabase.storage
         .from('avatars')
-        .createSignedUrl(fileName, 86400); // 24 hours
+        .getPublicUrl(fileName);
 
-      if (signedUrlError) throw signedUrlError;
-
-      setAvatarUrl(signedUrlData.signedUrl);
+      setAvatarUrl(publicUrlData.publicUrl);
       
       toast({
         title: 'Avatar uploaded',
