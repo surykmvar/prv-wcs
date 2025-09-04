@@ -7,6 +7,7 @@ import { useSupabase } from "@/hooks/useSupabase"
 import { useUserSession } from "@/hooks/useUserSession"
 import { useState, useEffect } from "react"
 import { flagEmojiFromCountryCode } from "@/utils/locale"
+import { SecureContent } from "@/components/SecureContent"
 
 type Thought = {
   id: string
@@ -52,7 +53,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
       <CardHeader className="p-0 mb-4">
         <div className="flex justify-between items-start gap-4">
           <CardTitle className="text-lg sm:text-xl font-semibold leading-tight">
-            {thought.title}
+            <SecureContent content={thought.title} className="block" maxLength={200} />
           </CardTitle>
           <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
             <Clock className="w-4 h-4" />
@@ -62,7 +63,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
         
         {thought.description && (
           <p className="text-sm sm:text-base text-muted-foreground mt-3 leading-relaxed">
-            {thought.description}
+            <SecureContent content={thought.description} maxLength={600} />
           </p>
         )}
         
@@ -70,7 +71,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
           <div className="flex flex-wrap gap-2 mt-3">
             {thought.tags.map((tag) => (
               <Badge key={tag} variant="secondary" className="text-xs">
-                #{tag}
+                #<SecureContent content={tag} maxLength={30} />
               </Badge>
             ))}
           </div>

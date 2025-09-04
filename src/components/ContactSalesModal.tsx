@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Mail, Building, MapPin, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { sanitizeText, sanitizeName, validateEmail } from '@/utils/sanitization';
 
 interface ContactSalesModalProps {
   open: boolean;
@@ -31,6 +32,16 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
       toast({
         title: 'Missing Information',
         description: 'Please fill in all required fields.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Validate email format
+    if (!validateEmail(formData.email)) {
+      toast({
+        title: 'Invalid Email',
+        description: 'Please provide a valid email address.',
         variant: 'destructive'
       });
       return;
@@ -67,9 +78,18 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
 
     setSubmitting(true);
     try {
+      // Sanitize all inputs before sending to database
+      const sanitizedData = {
+        name: sanitizeName(formData.name),
+        email: sanitizeText(formData.email).toLowerCase(),
+        company_name: formData.company_name ? sanitizeText(formData.company_name) : '',
+        address: formData.address ? sanitizeText(formData.address) : '',
+        message: sanitizeText(formData.message)
+      };
+
       const { error } = await supabase
         .from('sales_inquiries')
-        .insert([formData]);
+        .insert([sanitizedData]);
 
       if (error) {
         // Handle specific error messages
@@ -122,7 +142,18 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    // Basic client-side sanitization for real-time feedback
+    let sanitizedValue = value;
+    
+    if (field === 'name' || field === 'company_name') {
+      sanitizedValue = sanitizeName(value);
+    } else if (field === 'email') {
+      sanitizedValue = sanitizeText(value).toLowerCase();
+    } else if (field === 'address' || field === 'message') {
+      sanitizedValue = sanitizeText(value);
+    }
+    
+    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
   };
 
   return (

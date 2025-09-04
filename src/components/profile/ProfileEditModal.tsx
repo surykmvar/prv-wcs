@@ -9,6 +9,7 @@ import { Camera, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { sanitizeName, sanitizeBio, validateFileType, validateFileSize } from '@/utils/sanitization';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -43,9 +44,11 @@ export function ProfileEditModal({
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Validate file type - only allow safe image formats
+    // Enhanced security validation
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+    if (!validateFileType(file, allowedTypes)) {
       toast({
         title: 'Invalid file type',
         description: 'Please upload a JPEG, PNG, or WebP image.',
@@ -54,11 +57,26 @@ export function ProfileEditModal({
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    if (!validateFileSize(file, maxFileSize)) {
       toast({
         title: 'File too large',
         description: 'Please select an image smaller than 5MB.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Additional MIME type verification for security
+    const buffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(buffer.slice(0, 4));
+    const fileSignature = Array.from(uint8Array).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    
+    // Check file signatures to prevent malicious uploads
+    const validSignatures = ['ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8', '89504e47', '52494646'];
+    if (!validSignatures.some(sig => fileSignature.startsWith(sig))) {
+      toast({
+        title: 'Invalid file format',
+        description: 'File appears to be corrupted or not a valid image.',
         variant: 'destructive'
       });
       return;
@@ -100,15 +118,17 @@ export function ProfileEditModal({
     }
   };
 
-  const validateBio = (bioText: string): boolean => {
+  const validateBioLength = (bioText: string): boolean => {
     if (!bioText.trim()) return true;
     const wordCount = bioText.trim().split(/\s+/).length;
     return wordCount <= 6;
   };
 
   const handleBioChange = (value: string) => {
-    if (validateBio(value)) {
-      setBio(value);
+    const sanitizedValue = sanitizeBio(value, 6);
+    
+    if (validateBioLength(sanitizedValue)) {
+      setBio(sanitizedValue);
     } else {
       toast({
         title: 'Bio too long',
@@ -121,7 +141,7 @@ export function ProfileEditModal({
   const handleSave = async () => {
     if (!user) return;
 
-    if (!validateBio(bio)) {
+    if (!validateBioLength(bio)) {
       toast({
         title: 'Invalid bio',
         description: 'Bio must be 6 words or less.',
@@ -133,11 +153,15 @@ export function ProfileEditModal({
     setIsSaving(true);
 
     try {
+      // Sanitize all inputs before saving
+      const sanitizedDisplayName = sanitizeName(displayName.trim());
+      const sanitizedBio = bio.trim() ? sanitizeBio(bio.trim(), 6) : null;
+      
       const { error } = await supabase
         .from('profiles')
         .update({
-          display_name: displayName.trim(),
-          bio: bio.trim() || null,
+          display_name: sanitizedDisplayName,
+          bio: sanitizedBio,
           show_email: showEmail,
           avatar_url: avatarUrl || null
         })
@@ -199,7 +223,7 @@ export function ProfileEditModal({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
               onChange={handleAvatarUpload}
               className="hidden"
             />
@@ -214,7 +238,7 @@ export function ProfileEditModal({
             <Input
               id="displayName"
               value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              onChange={(e) => setDisplayName(sanitizeName(e.target.value))}
               placeholder="Enter your display name"
               maxLength={50}
             />

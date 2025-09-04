@@ -12,6 +12,7 @@ import { useSupabase } from "@/hooks/useSupabase"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { flagEmojiFromCountryCode, getBrowserCountryCode } from "@/utils/locale"
+import { sanitizeText, sanitizeName } from "@/utils/sanitization"
 
 interface WriteNoteDialogProps {
   open: boolean
@@ -45,7 +46,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
   }
 
   const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
+    const value = sanitizeText(e.target.value)
     
     // Check for manual hashtag entry
     if (value.includes('#')) {
@@ -147,14 +148,20 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
     }
     
     try {
+      // Sanitize all inputs before creating thought
+      const sanitizedTitle = sanitizeText(title.trim());
+      const sanitizedDescription = description.trim() ? sanitizeText(description.trim()) : null;
+      const sanitizedTags = tags.length > 0 ? tags.map(tag => sanitizeText(tag)) : null;
+      const sanitizedCity = scope === 'regional' && city.trim() ? sanitizeName(city.trim()) : null;
+      
       const thought = await createThought({
-        title: title.trim(),
-        description: description.trim() || null,
-        tags: tags.length > 0 ? tags : null,
+        title: sanitizedTitle,
+        description: sanitizedDescription,
+        tags: sanitizedTags,
         max_woices_allowed: maxWoicesAllowed,
         thought_scope: scope,
         country_code: countryCode?.toUpperCase() || null,
-        city: scope === 'regional' && city.trim() ? city.trim() : null
+        city: sanitizedCity
       })
       
       // Reset form and clear draft
@@ -225,9 +232,10 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                 <Input
                   id="title"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => setTitle(sanitizeText(e.target.value))}
                   placeholder="What's on your mind?"
                   className="w-full text-sm sm:text-base rounded-lg border-2 focus:border-woices-violet/50 transition-colors"
+                  maxLength={200}
                 />
               </div>
 
@@ -241,7 +249,7 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                 <Textarea
                   id="description"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => setDescription(sanitizeText(e.target.value))}
                   placeholder="Provide more details about your thought or question..."
                   className="w-full min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base rounded-lg border-2 focus:border-woices-violet/50 transition-colors"
                   maxLength={600}
@@ -369,9 +377,10 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
                       <Input
                         id="city"
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => setCity(sanitizeName(e.target.value))}
                         placeholder="e.g., Berlin"
                         className="mt-1"
+                        maxLength={50}
                         required
                       />
                     </div>

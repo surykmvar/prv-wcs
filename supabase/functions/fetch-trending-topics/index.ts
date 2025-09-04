@@ -7,6 +7,28 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-task-secret',
 };
 
+// Rate limiting for security
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 10; // Max 10 requests per minute per IP
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const current = rateLimitMap.get(ip);
+  
+  if (!current || now > current.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  
+  if (current.count >= RATE_LIMIT_MAX) {
+    return false;
+  }
+  
+  current.count++;
+  return true;
+}
+
 // Initialize Supabase client with service role for secure operations
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -340,9 +362,24 @@ serve(async (req) => {
   }
 
   try {
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || 'unknown';
+    
+    // Apply rate limiting
+    if (!checkRateLimit(clientIP)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { 
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     // Check for task secret authentication (for cron jobs)
     const taskSecret = req.headers.get('x-task-secret');
     if (!taskSecret || taskSecret !== FETCH_TRENDING_SECRET) {
+      console.warn(`Unauthorized access attempt from IP: ${clientIP}`);
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Invalid or missing task secret' }),
         { 

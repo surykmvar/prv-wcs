@@ -8,6 +8,9 @@
     <meta name="description" content="Post a thought or speak on someone else's. One voice at a time." />
     <meta name="author" content="Woices" />
     
+    <!-- Content Security Policy for XSS Protection -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://api.openai.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: blob:; media-src 'self' blob: https://*.supabase.co; object-src 'none'; frame-ancestors 'self';" />
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
