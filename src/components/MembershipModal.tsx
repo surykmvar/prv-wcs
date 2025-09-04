@@ -186,7 +186,7 @@ export function MembershipModal({ open, onOpenChange }: MembershipModalProps) {
               >
                 <div className="flex items-center gap-1 sm:gap-2">
                   <span className="truncate">Annual Plans</span>
-                  <Badge variant="secondary" className="hidden sm:block ml-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 group-data-[state=active]:bg-white/90 group-data-[state=active]:text-emerald-700 group-data-[state=active]:border-white/20 group-data-[state=active]:dark:bg-white/90 group-data-[state=active]:dark:text-emerald-700 group-data-[state=active]:dark:border-white/20">Best Value</Badge>
+                  <Badge variant="secondary" className="hidden sm:block ml-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 group-data-[state=active]:bg-black group-data-[state=active]:text-white group-data-[state=active]:border-black group-data-[state=active]:dark:bg-black group-data-[state=active]:dark:text-white group-data-[state=active]:dark:border-black">Best Value</Badge>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
