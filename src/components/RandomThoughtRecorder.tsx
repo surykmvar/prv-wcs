@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Bookmark, BookmarkCheck } from "lucide-react"
+import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Bookmark, BookmarkCheck, Play, Pause, Share } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useAuth } from "@/hooks/useAuth"
 import { supabase } from "@/integrations/supabase/client"
@@ -11,6 +11,7 @@ import { VotingExplanationModal } from "@/components/VotingExplanationModal"
 import { ThoughtActionButton } from "@/components/ThoughtActionButton"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { formatTimeAgo } from "@/utils/timeUtils"
+import { useSequentialAudioPlayer } from "@/hooks/useSequentialAudioPlayer"
 
 type VoiceResponse = {
   id: string
@@ -47,8 +48,17 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   const [savedThoughts, setSavedThoughts] = useState<Set<string>>(new Set())
   const [showVotingModal, setShowVotingModal] = useState(false)
   const [profiles, setProfiles] = useState<Record<string, any>>({})
+  const [listeningThoughts, setListeningThoughts] = useState<Set<string>>(new Set())
   const { getThoughts } = useSupabase()
   const { user } = useAuth()
+  const { 
+    isPlaying, 
+    currentIndex, 
+    startSequentialPlay, 
+    stopSequentialPlay, 
+    pauseSequentialPlay, 
+    resumeSequentialPlay 
+  } = useSequentialAudioPlayer()
 
   const getProfileInitials = (userId?: string) => {
     const p = userId ? profiles[userId] : undefined
@@ -149,6 +159,64 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
       }
     }
     setExpandedThoughts(newExpanded)
+  }
+
+  const handleListen = (thoughtId: string, voiceResponses: VoiceResponse[]) => {
+    const validResponses = voiceResponses.filter(response => response.duration > 0 && response.audio_url)
+    
+    if (validResponses.length === 0) return
+    
+    // Expand the thought to show replies
+    const newExpanded = new Set(expandedThoughts)
+    newExpanded.add(thoughtId)
+    setExpandedThoughts(newExpanded)
+    
+    // Start listening mode for this thought
+    const newListening = new Set(listeningThoughts)
+    newListening.add(thoughtId)
+    setListeningThoughts(newListening)
+    
+    // Start sequential audio playback
+    startSequentialPlay(validResponses)
+    
+    // Show voting explanation modal on first listen if user hasn't seen it
+    const hasSeenVotingExplanation = localStorage.getItem('hasSeenVotingExplanation')
+    if (!hasSeenVotingExplanation) {
+      setShowVotingModal(true)
+    }
+  }
+
+  const handleStopListening = (thoughtId: string) => {
+    const newListening = new Set(listeningThoughts)
+    newListening.delete(thoughtId)
+    setListeningThoughts(newListening)
+    stopSequentialPlay()
+  }
+
+  const handleShareThought = async (thought: Thought) => {
+    const shareData = {
+      title: thought.title,
+      text: `Check out this thought: ${thought.title}${thought.description ? '\n\n' + thought.description : ''}`,
+      url: window.location.href
+    }
+
+    if (navigator.share && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        console.log('Share cancelled')
+      }
+    } else {
+      // Fallback to copying to clipboard
+      const textToCopy = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`
+      try {
+        await navigator.clipboard.writeText(textToCopy)
+        // You could add a toast notification here
+        console.log('Copied to clipboard')
+      } catch (err) {
+        console.error('Failed to copy to clipboard:', err)
+      }
+    }
   }
 
   const toggleSaved = async (thoughtId: string) => {
@@ -254,6 +322,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
             const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)))
             const isExpanded = expandedThoughts.has(thought.id)
             const isSaved = savedThoughts.has(thought.id)
+            const isListening = listeningThoughts.has(thought.id)
 
             return (
               <li key={thought.id} className="py-3 sm:py-6">
@@ -314,19 +383,33 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                             {formatTimeAgo(thought.created_at)} • {responseCount} voice{responseCount === 1 ? '' : 's'}
                           </span>
                           {responseCount > 0 && (
-                            <button
-                              type="button"
-                              onClick={() => toggleExpanded(thought.id)}
-                              className="inline-flex items-center gap-1 text-foreground hover:underline text-xs sm:text-sm"
-                              aria-expanded={isExpanded}
-                            >
-                              {isExpanded ? 'Hide replies' : 'View replies'}
-                              {isExpanded ? (
-                                <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
-                              ) : (
-                                <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
-                              )}
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => isListening 
+                                  ? handleStopListening(thought.id)
+                                  : handleListen(thought.id, thought.voice_responses || [])
+                                }
+                                className="h-6 px-2 text-xs gap-1"
+                              >
+                                {isListening && isPlaying ? (
+                                  <Pause className="w-3 h-3" />
+                                ) : (
+                                  <Play className="w-3 h-3" />
+                                )}
+                                Listen
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleShareThought(thought)}
+                                className="h-6 px-2 text-xs gap-1"
+                              >
+                                <Share className="w-3 h-3" />
+                                Share
+                              </Button>
+                            </div>
                           )}
                         </div>
                         {thought.final_status !== 'pending' && (
@@ -348,8 +431,13 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                       <div className="mt-3 sm:mt-4 pl-4 sm:pl-5 border-l border-border space-y-2 sm:space-y-3">
                         {thought.voice_responses
                           ?.filter((response) => response.duration > 0 && response.audio_url)
-                          ?.map((response) => (
-                            <div key={response.id} className="space-y-1 sm:space-y-2">
+                          ?.map((response, index) => (
+                            <div 
+                              key={response.id} 
+                              className={`space-y-1 sm:space-y-2 ${
+                                isListening && index === currentIndex ? 'ring-2 ring-primary ring-opacity-30 rounded-lg p-2 bg-primary/5' : ''
+                              }`}
+                            >
                               <ModernVoicePlayer
                                 voiceResponseId={response.id}
                                 audioUrl={response.audio_url}
@@ -358,8 +446,11 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                                 factVotes={response.fact_votes || 0}
                                 unclearVotes={response.unclear_votes || 0}
                               />
-                              <div className="text-xs text-muted-foreground pl-1">
-                                {formatTimeAgo(response.created_at)}
+                              <div className="text-xs text-muted-foreground pl-1 flex items-center gap-2">
+                                <span>{formatTimeAgo(response.created_at)}</span>
+                                {isListening && index === currentIndex && isPlaying && (
+                                  <span className="text-primary font-medium">• Now playing</span>
+                                )}
                               </div>
                             </div>
                           ))}
