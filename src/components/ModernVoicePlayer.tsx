@@ -14,6 +14,17 @@ interface ModernVoicePlayerProps {
   factVotes: number
   unclearVotes: number
   className?: string
+  // Controlled mode props
+  controlled?: boolean
+  isActive?: boolean
+  isPlaying?: boolean
+  currentTime?: number
+  durationOverride?: number
+  playbackRate?: number
+  onTogglePlayPause?: () => void
+  onSeek?: (seconds: number) => void
+  onRestart?: () => void
+  onToggleSpeed?: () => void
 }
 
 export function ModernVoicePlayer({ 
@@ -23,35 +34,53 @@ export function ModernVoicePlayer({
   mythVotes,
   factVotes,
   unclearVotes,
-  className
+  className,
+  controlled = false,
+  isActive = false,
+  isPlaying: controlledIsPlaying = false,
+  currentTime: controlledCurrentTime = 0,
+  durationOverride,
+  playbackRate: controlledPlaybackRate = 1,
+  onTogglePlayPause,
+  onSeek,
+  onRestart,
+  onToggleSpeed
 }: ModernVoicePlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [audioDuration, setAudioDuration] = useState(duration || 0)
-  const [playbackRate, setPlaybackRate] = useState(1)
+  const [internalIsPlaying, setInternalIsPlaying] = useState(false)
+  const [internalCurrentTime, setInternalCurrentTime] = useState(0)
+  const [internalAudioDuration, setInternalAudioDuration] = useState(duration || 0)
+  const [internalPlaybackRate, setInternalPlaybackRate] = useState(1)
   const audioRef = useRef<HTMLAudioElement>(null)
   
-  // Get signed URL for audio playback
-  const { signedUrl, loading: urlLoading, error: urlError } = useAudioUrl(audioUrl)
+  // Use controlled or internal state
+  const isPlaying = controlled ? controlledIsPlaying : internalIsPlaying
+  const currentTime = controlled ? controlledCurrentTime : internalCurrentTime
+  const audioDuration = controlled ? (durationOverride || duration || 0) : internalAudioDuration
+  const playbackRate = controlled ? controlledPlaybackRate : internalPlaybackRate
+  
+  // Get signed URL for audio playback (only if not controlled)
+  const { signedUrl, loading: urlLoading, error: urlError } = useAudioUrl(controlled && !isActive ? null : audioUrl)
 
-  // Audio event handlers setup - MUST be called before any early returns
+  // Audio event handlers setup - only for uncontrolled mode
   useEffect(() => {
+    if (controlled) return
+    
     const audio = audioRef.current
     if (!audio) return
 
     // Reset states when audio URL changes
-    setIsPlaying(false)
-    setCurrentTime(0)
-    setAudioDuration(duration || 0)
+    setInternalIsPlaying(false)
+    setInternalCurrentTime(0)
+    setInternalAudioDuration(duration || 0)
 
-    const updateTime = () => setCurrentTime(audio.currentTime)
+    const updateTime = () => setInternalCurrentTime(audio.currentTime)
     const updateDuration = () => {
       const validDuration = audio.duration && isFinite(audio.duration) ? audio.duration : duration || 0
-      setAudioDuration(validDuration)
+      setInternalAudioDuration(validDuration)
     }
     const handleEnded = () => {
-      setIsPlaying(false)
-      setCurrentTime(0)
+      setInternalIsPlaying(false)
+      setInternalCurrentTime(0)
     }
     const handleLoadedData = () => {
       updateDuration()
@@ -68,7 +97,7 @@ export function ModernVoicePlayer({
       audio.removeEventListener('loadeddata', handleLoadedData)
       audio.removeEventListener('ended', handleEnded)
     }
-  }, [signedUrl, duration])
+  }, [signedUrl, duration, controlled])
 
   // Don't render if invalid audio
   if (!audioUrl || duration <= 0) {
@@ -103,6 +132,12 @@ export function ModernVoicePlayer({
 
   const togglePlayPause = (e: React.MouseEvent) => {
     e.stopPropagation()
+    
+    if (controlled && onTogglePlayPause) {
+      onTogglePlayPause()
+      return
+    }
+    
     const audio = audioRef.current
     if (!audio) return
 
@@ -111,32 +146,49 @@ export function ModernVoicePlayer({
     } else {
       audio.play()
     }
-    setIsPlaying(!isPlaying)
+    setInternalIsPlaying(!isPlaying)
   }
 
   const restart = (e: React.MouseEvent) => {
     e.stopPropagation()
+    
+    if (controlled && onRestart) {
+      onRestart()
+      return
+    }
+    
     const audio = audioRef.current
     if (!audio) return
 
     audio.currentTime = 0
-    setCurrentTime(0)
+    setInternalCurrentTime(0)
     if (isPlaying) {
       audio.play()
     }
   }
 
   const handleSliderChange = (value: number[]) => {
+    if (controlled && onSeek) {
+      onSeek(value[0])
+      return
+    }
+    
     const audio = audioRef.current
     if (!audio) return
 
     const newTime = value[0]
     audio.currentTime = newTime
-    setCurrentTime(newTime)
+    setInternalCurrentTime(newTime)
   }
 
   const togglePlaybackSpeed = (e: React.MouseEvent) => {
     e.stopPropagation()
+    
+    if (controlled && onToggleSpeed) {
+      onToggleSpeed()
+      return
+    }
+    
     const audio = audioRef.current
     if (!audio) return
 
@@ -145,7 +197,7 @@ export function ModernVoicePlayer({
     const nextIndex = (currentIndex + 1) % speeds.length
     const newRate = speeds[nextIndex]
     
-    setPlaybackRate(newRate)
+    setInternalPlaybackRate(newRate)
     audio.playbackRate = newRate
   }
 
@@ -183,7 +235,7 @@ export function ModernVoicePlayer({
   return (
     <Card className={`rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${className}`}>
       <CardContent className="p-3 sm:p-4">
-        <audio ref={audioRef} src={signedUrl} preload="metadata" />
+        {!controlled && <audio ref={audioRef} src={signedUrl} preload="metadata" />}
         
         {/* Main Player */}
         <div className="space-y-3 sm:space-y-4">

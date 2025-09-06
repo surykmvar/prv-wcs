@@ -54,10 +54,16 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   const { 
     isPlaying, 
     currentIndex, 
-    startSequentialPlay, 
-    stopSequentialPlay, 
-    pauseSequentialPlay, 
-    resumeSequentialPlay 
+    currentTime,
+    duration: audioDuration,
+    playbackRate,
+    currentResponse,
+    start: startAudio, 
+    stop: stopAudio, 
+    toggle: toggleAudio,
+    playIndex,
+    seek,
+    cycleRate
   } = useSequentialAudioPlayer()
 
   const getProfileInitials = (userId?: string) => {
@@ -166,18 +172,22 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
     
     if (validResponses.length === 0) return
     
+    // Stop any currently playing thought first
+    if (listeningThoughts.size > 0) {
+      setListeningThoughts(new Set())
+      stopAudio()
+    }
+    
     // Expand the thought to show replies
     const newExpanded = new Set(expandedThoughts)
     newExpanded.add(thoughtId)
     setExpandedThoughts(newExpanded)
     
-    // Start listening mode for this thought
-    const newListening = new Set(listeningThoughts)
-    newListening.add(thoughtId)
-    setListeningThoughts(newListening)
+    // Start listening mode for this thought only
+    setListeningThoughts(new Set([thoughtId]))
     
     // Start sequential audio playback
-    startSequentialPlay(validResponses)
+    startAudio(validResponses)
     
     // Show voting explanation modal on first listen if user hasn't seen it
     const hasSeenVotingExplanation = localStorage.getItem('hasSeenVotingExplanation')
@@ -187,13 +197,28 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   }
 
   const handleStopListening = (thoughtId: string) => {
-    const newListening = new Set(listeningThoughts)
-    newListening.delete(thoughtId)
-    setListeningThoughts(newListening)
-    stopSequentialPlay()
+    setListeningThoughts(new Set())
+    stopAudio()
   }
 
-  const handleShareThought = async (thought: Thought) => {
+  const handleShareThought = async (thought: Thought, voiceResponses?: VoiceResponse[]) => {
+    // If we have voice responses and we're listening, share the current or first audio
+    if (voiceResponses && voiceResponses.length > 0) {
+      const { shareAudioFile } = await import('@/utils/shareAudio')
+      const targetResponse = currentResponse || voiceResponses[0]
+      
+      if (targetResponse) {
+        try {
+          await shareAudioFile(targetResponse.audio_url, `Voice Reply - ${thought.title}`)
+          return
+        } catch (error) {
+          console.error('Failed to share audio:', error)
+          // Fall through to text sharing
+        }
+      }
+    }
+    
+    // Fallback to sharing thought as text
     const shareData = {
       title: thought.title,
       text: `Check out this thought: ${thought.title}${thought.description ? '\n\n' + thought.description : ''}`,
@@ -211,7 +236,6 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
       const textToCopy = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`
       try {
         await navigator.clipboard.writeText(textToCopy)
-        // You could add a toast notification here
         console.log('Copied to clipboard')
       } catch (err) {
         console.error('Failed to copy to clipboard:', err)
@@ -403,7 +427,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => handleShareThought(thought)}
+                                onClick={() => handleShareThought(thought, thought.voice_responses)}
                                 className="h-6 px-2 text-xs gap-1"
                               >
                                 <Share className="w-3 h-3" />
@@ -431,29 +455,42 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                       <div className="mt-3 sm:mt-4 pl-4 sm:pl-5 border-l border-border space-y-2 sm:space-y-3">
                         {thought.voice_responses
                           ?.filter((response) => response.duration > 0 && response.audio_url)
-                          ?.map((response, index) => (
-                            <div 
-                              key={response.id} 
-                              className={`space-y-1 sm:space-y-2 ${
-                                isListening && index === currentIndex ? 'ring-2 ring-primary ring-opacity-30 rounded-lg p-2 bg-primary/5' : ''
-                              }`}
-                            >
-                              <ModernVoicePlayer
-                                voiceResponseId={response.id}
-                                audioUrl={response.audio_url}
-                                duration={response.duration}
-                                mythVotes={response.myth_votes || 0}
-                                factVotes={response.fact_votes || 0}
-                                unclearVotes={response.unclear_votes || 0}
-                              />
-                              <div className="text-xs text-muted-foreground pl-1 flex items-center gap-2">
-                                <span>{formatTimeAgo(response.created_at)}</span>
-                                {isListening && index === currentIndex && isPlaying && (
-                                  <span className="text-primary font-medium">• Now playing</span>
-                                )}
+                          ?.map((response, index) => {
+                            const isCurrentlyPlaying = isListening && index === currentIndex
+                            return (
+                              <div 
+                                key={response.id} 
+                                className={`space-y-1 sm:space-y-2 ${
+                                  isCurrentlyPlaying ? 'ring-2 ring-primary ring-opacity-30 rounded-lg p-2 bg-primary/5' : ''
+                                }`}
+                              >
+                                <ModernVoicePlayer
+                                  voiceResponseId={response.id}
+                                  audioUrl={response.audio_url}
+                                  duration={response.duration}
+                                  mythVotes={response.myth_votes || 0}
+                                  factVotes={response.fact_votes || 0}
+                                  unclearVotes={response.unclear_votes || 0}
+                                  controlled={isListening}
+                                  isActive={isCurrentlyPlaying}
+                                  isPlaying={isCurrentlyPlaying && isPlaying}
+                                  currentTime={isCurrentlyPlaying ? currentTime : 0}
+                                  durationOverride={isCurrentlyPlaying ? audioDuration : undefined}
+                                  playbackRate={isCurrentlyPlaying ? playbackRate : 1}
+                                  onTogglePlayPause={() => isCurrentlyPlaying ? toggleAudio() : playIndex(index)}
+                                  onSeek={isCurrentlyPlaying ? seek : undefined}
+                                  onRestart={isCurrentlyPlaying ? () => seek(0) : undefined}
+                                  onToggleSpeed={isCurrentlyPlaying ? cycleRate : undefined}
+                                />
+                                <div className="text-xs text-muted-foreground pl-1 flex items-center gap-2">
+                                  <span>{formatTimeAgo(response.created_at)}</span>
+                                  {isCurrentlyPlaying && isPlaying && (
+                                    <span className="text-primary font-medium">• Now playing</span>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            )
+                          })}
                       </div>
                     )}
                   </div>
