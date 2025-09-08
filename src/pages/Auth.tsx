@@ -604,9 +604,9 @@ export default function Auth() {
           {/* Woices Logo Overlay */}
           <div className="absolute top-6 left-6 z-10">
             <img 
-              src={woicesLogo} 
+              src="/lovable-uploads/5c6896cc-82b0-42c3-b631-ad33af4fc6c2.png" 
               alt="Woices Logo" 
-              className="w-24 h-12 object-contain filter drop-shadow-sm"
+              className="h-12 object-contain filter drop-shadow-sm"
             />
           </div>
         </aside>

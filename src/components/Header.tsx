@@ -46,15 +46,18 @@ export function Header() {
     <header className="w-full px-4 sm:px-6 py-3 sm:py-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center mt-2 sm:mt-3 md:mt-4">
         <div 
-          className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-woices-violet to-woices-mint bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity relative"
+          className="cursor-pointer hover:opacity-80 transition-opacity relative"
           onClick={(e) => {
             console.log('Woices header clicked'); // Debug log
             e.preventDefault();
             navigate('/');
           }}
-          style={{ WebkitBackgroundClip: 'text', backgroundClip: 'text' }}
         >
-          Woices
+          <img 
+            src="/lovable-uploads/5c6896cc-82b0-42c3-b631-ad33af4fc6c2.png" 
+            alt="Woices" 
+            className="h-8 sm:h-10"
+          />
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
