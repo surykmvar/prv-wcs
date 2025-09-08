@@ -18,8 +18,10 @@ const Index = () => {
         {/* <DynamicBackground /> */}
       </div>
       <Helmet>
-        <title>Woices | Speak or Write</title>
-        <meta name="description" content="Speak your Woice or write a thought. Minimal, human-friendly voice social." />
+        <title>Woices</title>
+        <meta name="description" content="Woices — meaningful voice feedback, one voice at a time." />
+        <meta property="og:title" content="Woices" />
+        <meta name="twitter:title" content="Woices" />
         <link rel="canonical" href="https://woices.app/" />
       </Helmet>
       <div className="relative">

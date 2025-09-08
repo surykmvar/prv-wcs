@@ -25,14 +25,21 @@
     <meta name="twitter:site" content="@woices_app" />
     <meta name="twitter:image" content="https://woices.app/lovable-uploads/430af206-177d-472b-a053-00896f201fd9.png" />
 
-    <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png">
+    <link rel="shortcut icon" href="/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png?v=2" type="image/png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png?v=2">
     
     <!-- Immediate redirect and SEO handling for lovable.app -->
     <script>
       (function() {
+        // Preload new favicon to avoid old cache flashes
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = '/lovable-uploads/f5a9cdd9-7747-4ea2-8875-a4c2ba93ce73.png?v=2';
+        document.head.appendChild(link);
+
         if (window.location.hostname.includes('lovable.app')) {
           // Add noindex immediately
           var noindexMeta = document.createElement('meta');
