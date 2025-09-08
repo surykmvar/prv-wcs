@@ -89,22 +89,9 @@ export function SmartThoughtInput({ onFocus, className }: SmartThoughtInputProps
           
           {/* Icon container */}
           <div className="flex items-center gap-2">
-            <motion.div
-              animate={{ rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="w-8 h-8 rounded-lg bg-gradient-to-br from-woices-violet/20 to-woices-mint/20 flex items-center justify-center"
-            >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-woices-violet/20 to-woices-mint/20 flex items-center justify-center">
               <PenTool className="w-4 h-4 text-woices-violet" />
-            </motion.div>
-            
-            {/* Sparkle indicator */}
-            <motion.div
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-2 h-2"
-            >
-              <Sparkles className="w-full h-full text-woices-mint" />
-            </motion.div>
+            </div>
           </div>
         </div>
       </button>

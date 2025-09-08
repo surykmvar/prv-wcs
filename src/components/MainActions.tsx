@@ -96,9 +96,9 @@ export function MainActions() {
       <div className="relative">
         <SparkleField className="hidden sm:block absolute inset-0 -z-10 opacity-60" density={18} />
         
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+        <div className="flex items-center justify-center gap-3 max-w-2xl mx-auto">
           {/* Smart Thought Input */}
-          <div className="flex-1 w-full max-w-md">
+          <div className="flex-1">
             <GuidanceTooltip
               id="thought-input"
               title="Start a conversation"
@@ -118,11 +118,11 @@ export function MainActions() {
           >
             <motion.button
               onClick={() => navigate('/feed')}
-              className="group relative w-16 h-16 rounded-2xl bg-gradient-to-br from-woices-violet to-woices-bloom shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center"
+              className="group relative w-14 h-14 rounded-2xl bg-card/80 backdrop-blur-sm border border-border shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center shrink-0"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Mic className="w-7 h-7 text-white" />
+              <Mic className="w-5 h-5 text-foreground/80" />
               
               {/* Pulse rings */}
               <span className="ring-pulse r1" />

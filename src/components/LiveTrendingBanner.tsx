@@ -25,13 +25,9 @@ export function LiveTrendingBanner({ onOpenAuth, onStartRecording }: LiveTrendin
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="w-6 h-6 rounded-full bg-gradient-to-br from-woices-violet to-woices-mint flex items-center justify-center"
-            >
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-woices-violet to-woices-mint flex items-center justify-center">
               <TrendingUp className="w-3 h-3 text-white" />
-            </motion.div>
+            </div>
             
             <div className="text-left">
               <div className="text-xs font-medium text-woices-violet mb-1">
