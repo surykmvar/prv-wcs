@@ -56,7 +56,7 @@ export function Header() {
           <img 
             src="/lovable-uploads/ccb13ffe-01c5-48bb-9a1d-19f49502baa9.png" 
             alt="Woices" 
-            className="h-10 sm:h-12 rounded-full"
+            className="h-12 sm:h-14 rounded-full"
           />
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
