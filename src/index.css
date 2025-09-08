@@ -37,6 +37,12 @@
     --brand-yellow: 45 93% 47%;
     --brand-orange: 25 95% 53%;
 
+    /* Woices brand colors */
+    --woices-violet: 262 83% 58%;
+    --woices-bloom: 291 64% 42%;
+    --woices-sky: 199 89% 48%;
+    --woices-mint: 162 63% 41%;
+
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;

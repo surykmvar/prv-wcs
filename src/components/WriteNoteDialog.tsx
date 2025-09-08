@@ -18,9 +18,10 @@ interface WriteNoteDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess?: (thoughtId: string) => void
+  initialTitle?: string
 }
 
-export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDialogProps) {
+export function WriteNoteDialog({ open, onOpenChange, onSuccess, initialTitle }: WriteNoteDialogProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [tagInput, setTagInput] = useState("")
@@ -185,25 +186,31 @@ export function WriteNoteDialog({ open, onOpenChange, onSuccess }: WriteNoteDial
   useEffect(() => {
     if (open) {
       setStep(1)
-      try {
-        const raw = localStorage.getItem('writeDraft')
-        if (raw) {
-          const draft = JSON.parse(raw)
-          setTitle(draft.title || '')
-          setDescription(draft.description || '')
-          setTags(Array.isArray(draft.tags) ? draft.tags : [])
-          setMaxWoicesAllowed(draft.maxWoicesAllowed || 10)
-          setCity(draft.city || '')
-          setCountryCode(draft.countryCode || getBrowserCountryCode() || '')
-          setScope(draft.scope === 'regional' ? 'regional' : 'global')
-        } else {
-          setCity('')
-          setCountryCode(getBrowserCountryCode() || '')
-          setScope('global')
-        }
-      } catch {}
+      
+      // Set initial title if provided
+      if (initialTitle) {
+        setTitle(initialTitle)
+      } else {
+        try {
+          const raw = localStorage.getItem('writeDraft')
+          if (raw) {
+            const draft = JSON.parse(raw)
+            setTitle(draft.title || '')
+            setDescription(draft.description || '')
+            setTags(Array.isArray(draft.tags) ? draft.tags : [])
+            setMaxWoicesAllowed(draft.maxWoicesAllowed || 10)
+            setCity(draft.city || '')
+            setCountryCode(draft.countryCode || getBrowserCountryCode() || '')
+            setScope(draft.scope === 'regional' ? 'regional' : 'global')
+          } else {
+            setCity('')
+            setCountryCode(getBrowserCountryCode() || '')
+            setScope('global')
+          }
+        } catch {}
+      }
     }
-  }, [open])
+  }, [open, initialTitle])
   useEffect(() => {
     if (step === 2 && (!city || !countryCode)) {
       detectLocation()

@@ -64,10 +64,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				woices: {
-					violet: '#7c3aed',
-					mint: '#10b981',
-					sky: '#0ea5e9',
-					bloom: '#ec4899',
+					violet: 'hsl(var(--woices-violet))',
+					bloom: 'hsl(var(--woices-bloom))',
+					sky: 'hsl(var(--woices-sky))',
+					mint: 'hsl(var(--woices-mint))',
 					brick: '#64748b'
 				}
 			},
