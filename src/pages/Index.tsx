@@ -18,7 +18,7 @@ const Index = () => {
         {/* <DynamicBackground /> */}
       </div>
       <Helmet>
-        <title>Woices</title>
+        <title>Voice based Feedback Network</title>
         <meta name="description" content="Woices — meaningful voice feedback, one voice at a time." />
         <meta property="og:title" content="Woices" />
         <meta name="twitter:title" content="Woices" />
