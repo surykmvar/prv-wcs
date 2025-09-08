@@ -114,7 +114,7 @@ export function MainActions() {
       {/* Helper text */}
       <div className="text-center">
         <p className="text-xs text-muted-foreground">
-          🎤 Click the mic to browse trending topics • ✍️ Click the input to ask a question
+          🎤 Click the mic to give voice reply on trending topics • ✍️ Click the text field to ask a interesting thought/question
         </p>
       </div>
 

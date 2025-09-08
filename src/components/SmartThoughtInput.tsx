@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, Mic } from "lucide-react"
+import { ChevronRight, Mic } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface SmartThoughtInputProps {
@@ -54,22 +54,30 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
   }
 
   return (
-    <div className={cn("relative w-full max-w-2xl mx-auto", className)}>
-      <div className="relative flex items-center">
-        {/* Chevron left icon */}
-        <div className="absolute left-4 z-10">
-          <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+    <div className={cn("relative w-full max-w-3xl mx-auto", className)}>
+      {/* Moving blur/glow background */}
+      <motion.div
+        className="absolute -inset-3 rounded-2xl pointer-events-none -z-10 blur-2xl"
+        style={{
+          background: 'radial-gradient(120px 120px at 30% 30%, hsl(var(--woices-violet) / 0.08), transparent 60%), radial-gradient(120px 120px at 70% 70%, hsl(var(--woices-mint) / 0.08), transparent 60%)'
+        }}
+        animate={{ x: [0, 6, 0, -6, 0], y: [0, -4, 0, 4, 0] }}
+        transition={{ duration: 12, ease: "easeInOut", repeat: Infinity }}
+        aria-hidden
+      />
+      
+      <div className="relative flex items-center h-16">
+        {/* Chevron right icon */}
+        <div className="absolute left-4 z-10 pointer-events-none">
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </div>
         
         {/* Main input button */}
         <button
           onClick={handleFocus}
-          className="group relative w-full h-14 pl-12 pr-16 bg-card/80 backdrop-blur-sm border border-border rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+          className="group relative w-full h-full pl-12 pr-16 bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300"
           aria-label="Ask a question or share a thought"
         >
-          {/* Background gradient on hover */}
-          <div className="absolute inset-0 bg-gradient-to-r from-woices-violet/5 to-woices-mint/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
           {/* Content container */}
           <div className="relative flex items-center h-full">
             <div className="flex-1 text-left">
@@ -100,7 +108,7 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
         {/* Mic button */}
         <button
           onClick={onMicClick}
-          className="absolute right-2 w-10 h-10 rounded-xl bg-card/80 backdrop-blur-sm border border-border shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center z-10"
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-card/80 border border-border shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center z-10"
           aria-label="Record voice response"
         >
           <Mic className="w-4 h-4 text-foreground/80" />
