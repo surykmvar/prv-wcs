@@ -96,39 +96,17 @@ export function MainActions() {
       <div className="relative">
         <SparkleField className="hidden sm:block absolute inset-0 -z-10 opacity-60" density={18} />
         
-        <div className="flex items-center justify-center gap-3 max-w-2xl mx-auto">
-          {/* Smart Thought Input */}
-          <div className="flex-1">
-            <GuidanceTooltip
-              id="thought-input"
-              title="Start a conversation"
-              description="Share your thoughts, ask questions, or spark discussions. Your post will be seen by the community."
-              position="top"
-            >
-              <SmartThoughtInput onFocus={handleThoughtInputFocus} />
-            </GuidanceTooltip>
-          </div>
-
-          {/* Voice Recording Button */}
+        <div className="flex justify-center">
           <GuidanceTooltip
-            id="voice-record"
-            title="Record your voice"
-            description="Browse trending topics and reply with 60-second voice recordings. Perfect for thoughtful responses."
+            id="thought-input"
+            title="Start a conversation or record voice"
+            description="Click the text area to ask a question or click the mic button to browse trending topics and record voice responses."
             position="top"
           >
-            <motion.button
-              onClick={() => navigate('/feed')}
-              className="group relative w-14 h-14 rounded-2xl bg-card/80 backdrop-blur-sm border border-border shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center shrink-0"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Mic className="w-5 h-5 text-foreground/80" />
-              
-              {/* Pulse rings */}
-              <span className="ring-pulse r1" />
-              <span className="ring-pulse r2" />
-              <span className="ring-pulse r3" />
-            </motion.button>
+            <SmartThoughtInput 
+              onFocus={handleThoughtInputFocus}
+              onMicClick={() => navigate('/feed')}
+            />
           </GuidanceTooltip>
         </div>
       </div>

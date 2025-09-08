@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { PenTool, Sparkles } from "lucide-react"
+import { ChevronLeft, Mic } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface SmartThoughtInputProps {
   onFocus: () => void
+  onMicClick: () => void
   className?: string
 }
 
@@ -26,7 +27,7 @@ const thoughtSuggestions = [
   "What's the most important quality in a leader?"
 ]
 
-export function SmartThoughtInput({ onFocus, className }: SmartThoughtInputProps) {
+export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoughtInputProps) {
   const [currentSuggestion, setCurrentSuggestion] = useState(0)
   const [isVisible, setIsVisible] = useState(true)
   const intervalRef = useRef<NodeJS.Timeout>()
@@ -53,48 +54,58 @@ export function SmartThoughtInput({ onFocus, className }: SmartThoughtInputProps
   }
 
   return (
-    <div className={cn("relative w-full", className)}>
-      <button
-        onClick={handleFocus}
-        className="group relative w-full h-14 px-4 pr-12 bg-card/80 backdrop-blur-sm border border-border rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
-        aria-label="Ask a question or share a thought"
-      >
-        {/* Background gradient on hover */}
-        <div className="absolute inset-0 bg-gradient-to-r from-woices-violet/5 to-woices-mint/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <div className={cn("relative w-full max-w-2xl mx-auto", className)}>
+      <div className="relative flex items-center">
+        {/* Chevron left icon */}
+        <div className="absolute left-4 z-10">
+          <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+        </div>
         
-        {/* Content container */}
-        <div className="relative flex items-center h-full">
-          <div className="flex-1 text-left">
-            <AnimatePresence mode="wait">
-              {isVisible && (
-                <motion.div
-                  key={currentSuggestion}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="text-muted-foreground text-sm sm:text-base leading-relaxed"
-                >
-                  {thoughtSuggestions[currentSuggestion]}
-                </motion.div>
-              )}
-            </AnimatePresence>
-            
-            {!isVisible && (
-              <div className="text-muted-foreground text-sm sm:text-base">
-                What's your thought or question?
-              </div>
-            )}
-          </div>
+        {/* Main input button */}
+        <button
+          onClick={handleFocus}
+          className="group relative w-full h-14 pl-12 pr-16 bg-card/80 backdrop-blur-sm border border-border rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+          aria-label="Ask a question or share a thought"
+        >
+          {/* Background gradient on hover */}
+          <div className="absolute inset-0 bg-gradient-to-r from-woices-violet/5 to-woices-mint/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
-          {/* Icon container */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-woices-violet/20 to-woices-mint/20 flex items-center justify-center">
-              <PenTool className="w-4 h-4 text-woices-violet" />
+          {/* Content container */}
+          <div className="relative flex items-center h-full">
+            <div className="flex-1 text-left">
+              <AnimatePresence mode="wait">
+                {isVisible && (
+                  <motion.div
+                    key={currentSuggestion}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="text-muted-foreground text-sm sm:text-base leading-relaxed"
+                  >
+                    {thoughtSuggestions[currentSuggestion]}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
+              {!isVisible && (
+                <div className="text-muted-foreground text-sm sm:text-base">
+                  What's your thought or question?
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </button>
+        </button>
+        
+        {/* Mic button */}
+        <button
+          onClick={onMicClick}
+          className="absolute right-2 w-10 h-10 rounded-xl bg-card/80 backdrop-blur-sm border border-border shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center z-10"
+          aria-label="Record voice response"
+        >
+          <Mic className="w-4 h-4 text-foreground/80" />
+        </button>
+      </div>
     </div>
   )
 }
