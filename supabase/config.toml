@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.materialize-trending]
 verify_jwt = true
+
+[functions.submit-sales-inquiry]
+verify_jwt = false

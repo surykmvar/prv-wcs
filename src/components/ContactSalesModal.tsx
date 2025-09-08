@@ -87,13 +87,21 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
         message: sanitizeText(formData.message)
       };
 
-      const { error } = await supabase
-        .from('sales_inquiries')
-        .insert([sanitizedData]);
+      // Use secure edge function instead of direct database insert
+      const { data: response, error } = await supabase.functions.invoke('submit-sales-inquiry', {
+        body: {
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          companyName: sanitizedData.company_name,
+          message: sanitizedData.message
+        }
+      });
 
-      if (error) {
-        // Handle specific error messages
-        if (error.message.includes('rate limit') || error.message.includes('check_sales_inquiry_rate_limit')) {
+      if (error || !response?.success) {
+        // Handle specific error messages from edge function
+        const errorMessage = response?.error || error?.message || 'Unknown error';
+        
+        if (errorMessage.includes('Too many submissions') || errorMessage.includes('rate limit')) {
           toast({
             title: 'Submission Limit Reached',
             description: 'You can only submit 3 inquiries per hour. Please try again later.',
@@ -102,16 +110,16 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
           return;
         }
         
-        if (error.message.includes('valid_email_format')) {
+        if (errorMessage.includes('Invalid submission data')) {
           toast({
-            title: 'Invalid Email',
-            description: 'Please provide a valid email address.',
+            title: 'Invalid Data',
+            description: 'Please check all fields and try again.',
             variant: 'destructive'
           });
           return;
         }
         
-        throw error;
+        throw new Error(errorMessage);
       }
 
       toast({

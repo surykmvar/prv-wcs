@@ -923,6 +923,15 @@ export type Database = {
         Args: { email: string }
         Returns: boolean
       }
+      validate_sales_inquiry_data: {
+        Args: {
+          p_company_name?: string
+          p_email: string
+          p_message: string
+          p_name: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user"
