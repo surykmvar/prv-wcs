@@ -53,6 +53,19 @@ export function sanitizeText(input: string): string {
 }
 
 /**
+ * Sanitizes text while preserving spaces during typing
+ */
+export function sanitizeTextPreserveSpaces(input: string): string {
+  if (!input) return '';
+  
+  return input
+    .replace(/[<>]/g, '') // Remove angle brackets
+    .replace(/&/g, '&amp;') // Encode ampersands
+    .replace(/"/g, '&quot;') // Encode quotes
+    .replace(/'/g, '&#x27;'); // Encode apostrophes but don't trim
+}
+
+/**
  * Validates email format with strict regex
  */
 export function validateEmail(email: string): boolean {

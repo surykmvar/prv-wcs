@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Mail, Building, MapPin, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { sanitizeText, sanitizeName, validateEmail } from '@/utils/sanitization';
+import { sanitizeText, sanitizeTextPreserveSpaces, sanitizeName, validateEmail } from '@/utils/sanitization';
 
 interface ContactSalesModalProps {
   open: boolean;
@@ -87,15 +87,27 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
         message: sanitizeText(formData.message)
       };
 
-      // Use secure edge function instead of direct database insert
-      const { data: response, error } = await supabase.functions.invoke('submit-sales-inquiry', {
-        body: {
-          name: sanitizedData.name,
-          email: sanitizedData.email,
-          companyName: sanitizedData.company_name,
-          message: sanitizedData.message
-        }
-      });
+      // Send email to info@woices.app and store in database
+      const [emailResponse, dbResponse] = await Promise.all([
+        supabase.functions.invoke('send-sales-inquiry', {
+          body: {
+            name: sanitizedData.name,
+            email: sanitizedData.email,
+            companyName: sanitizedData.company_name,
+            message: sanitizedData.message
+          }
+        }),
+        supabase.functions.invoke('submit-sales-inquiry', {
+          body: {
+            name: sanitizedData.name,
+            email: sanitizedData.email,
+            companyName: sanitizedData.company_name,
+            message: sanitizedData.message
+          }
+        })
+      ]);
+
+      const { data: response, error } = dbResponse;
 
       if (error || !response?.success) {
         // Handle specific error messages from edge function
@@ -150,15 +162,15 @@ export function ContactSalesModal({ open, onOpenChange }: ContactSalesModalProps
   };
 
   const handleChange = (field: string, value: string) => {
-    // Basic client-side sanitization for real-time feedback
+    // Basic client-side sanitization for real-time feedback - preserve spaces for typing
     let sanitizedValue = value;
     
     if (field === 'name' || field === 'company_name') {
-      sanitizedValue = sanitizeName(value);
+      sanitizedValue = value.replace(/[<>]/g, '').substring(0, 100);
     } else if (field === 'email') {
-      sanitizedValue = sanitizeText(value).toLowerCase();
+      sanitizedValue = sanitizeTextPreserveSpaces(value).toLowerCase();
     } else if (field === 'address' || field === 'message') {
-      sanitizedValue = sanitizeText(value);
+      sanitizedValue = sanitizeTextPreserveSpaces(value);
     }
     
     setFormData(prev => ({ ...prev, [field]: sanitizedValue }));

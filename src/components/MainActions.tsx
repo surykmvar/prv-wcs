@@ -112,10 +112,15 @@ export function MainActions() {
       </div>
 
       {/* Helper text */}
-      <div className="text-center">
-        <p className="text-xs text-muted-foreground">
-          🎤 Click the mic to give voice reply on trending topics • ✍️ Click the text field to ask a interesting thought/question
-        </p>
+      <div className="text-center text-sm text-muted-foreground mt-6 max-w-md mx-auto space-y-2">
+        <div className="flex items-center justify-center gap-2">
+          <span className="text-lg">🎤</span>
+          <span>Click the mic to give voice reply on trending topics</span>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <span className="text-lg">✍️</span>
+          <span>Click the text field to ask an interesting thought/question</span>
+        </div>
       </div>
 
       <WriteNoteDialog 

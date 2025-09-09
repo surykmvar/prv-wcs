@@ -8,6 +8,7 @@ import { ContactSalesModal } from "@/components/ContactSalesModal"
 import { SparkleField } from "@/components/SparkleField"
 import { Helmet } from "react-helmet-async"
 import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 const Landing = () => {
   const navigate = useNavigate()
@@ -68,19 +69,22 @@ const Landing = () => {
       phase: "Phase 1",
       title: "Review API",
       description: "iFrame widget for websites/Notion pages/Portfolios",
-      features: ["Voice recording → transcript + summary", "Embeddable review cards", "Simple integration"]
+      features: ["Voice recording → transcript + summary", "Embeddable review cards", "Simple integration"],
+      status: "current"
     },
     {
       phase: "Phase 2", 
       title: "Community Layer",
       description: "Businesses/creators manage voice reviews in a dashboard",
-      features: ["Brand channels on Woices", "Moderation tools", "Review showcase walls"]
+      features: ["Brand channels on Woices", "Moderation tools", "Review showcase walls"],
+      status: "upcoming"
     },
     {
       phase: "Phase 3",
       title: "Social Discovery",
       description: "The network effect emerges once enough reviews exist",
-      features: ["Social feed of authentic voices", "Search voice knowledge", "Voice-powered recommendations"]
+      features: ["Social feed of authentic voices", "Search voice knowledge", "Voice-powered recommendations"],
+      status: "future"
     }
   ]
 
@@ -195,7 +199,7 @@ const Landing = () => {
               <div className="text-center mb-12 sm:mb-16">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">Built for expression, not just opinions.</h2>
                 <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
-                  Perfect for freelancers, creators, SaaS startups, and businesses who want authentic feedback from their audience.
+                  Perfect for freelancers, creators, startups, and businesses who want authentic feedback from their Users/Customers.
                 </p>
               </div>
               
@@ -302,35 +306,58 @@ const Landing = () => {
               
               <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
                 {roadmapPhases.map((phase, index) => (
-                  <Card key={index} className={`relative border-2 ${index === 0 ? 'border-woices-violet/50 bg-woices-violet/5' : 'border-border/50'} transition-all duration-300 hover:shadow-lg`}>
-                    {index === 0 && (
-                      <div className="absolute -top-3 left-6 bg-woices-violet text-white px-3 py-1 rounded-full text-sm font-medium">
+                  <div key={index} className="relative group">
+                    {phase.status === 'current' && (
+                      <Badge className="absolute -top-3 -right-3 bg-woices-mint text-woices-dark text-xs px-2 py-1 block z-10">
                         Current
-                      </div>
+                      </Badge>
                     )}
-                    <CardHeader>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-8 h-8 rounded-full ${index === 0 ? 'bg-woices-violet' : 'bg-muted'} flex items-center justify-center text-sm font-bold ${index === 0 ? 'text-white' : 'text-muted-foreground'}`}>
-                          {index + 1}
+                    {phase.status === 'upcoming' && (
+                      <Badge className="absolute -top-3 -right-3 bg-woices-violet text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:block z-10">
+                        Coming Soon
+                      </Badge>
+                    )}
+                    {phase.status === 'upcoming' && (
+                      <Badge className="absolute -top-3 -right-3 bg-woices-violet text-white text-xs px-2 py-1 block sm:hidden z-10">
+                        Coming Soon
+                      </Badge>
+                    )}
+                    {phase.status === 'future' && (
+                      <Badge className="absolute -top-3 -right-3 bg-gradient-to-r from-woices-violet to-woices-mint text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:block z-10">
+                        #1 Milestone
+                      </Badge>
+                    )}
+                    {phase.status === 'future' && (
+                      <Badge className="absolute -top-3 -right-3 bg-gradient-to-r from-woices-violet to-woices-mint text-white text-xs px-2 py-1 block sm:hidden z-10">
+                        #1 Milestone
+                      </Badge>
+                    )}
+                    
+                    <Card className={`relative border-2 ${phase.status === 'current' ? 'border-woices-violet/50 bg-woices-violet/5' : 'border-border/50'} transition-all duration-300 group-hover:shadow-lg group-hover:shadow-woices-violet/10 h-full`}>
+                      <CardHeader>
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className={`w-8 h-8 rounded-full ${phase.status === 'current' ? 'bg-woices-violet' : 'bg-muted'} flex items-center justify-center text-sm font-bold ${phase.status === 'current' ? 'text-white' : 'text-muted-foreground'} group-hover:scale-110 transition-transform duration-300`}>
+                            {index + 1}
+                          </div>
+                          <div>
+                            <div className="text-sm text-woices-violet font-medium">{phase.phase}</div>
+                            <CardTitle className="text-xl">{phase.title}</CardTitle>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-sm text-woices-violet font-medium">{phase.phase}</div>
-                          <CardTitle className="text-xl">{phase.title}</CardTitle>
-                        </div>
-                      </div>
-                      <CardDescription className="text-base">{phase.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2">
-                        {phase.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Check className="w-4 h-4 text-woices-mint flex-shrink-0" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
+                        <CardDescription className="text-base">{phase.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="space-y-2">
+                          {phase.features.map((feature, featureIndex) => (
+                            <li key={featureIndex} className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Check className="w-4 h-4 text-woices-mint flex-shrink-0" />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
                 ))}
               </div>
             </div>
