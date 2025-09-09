@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { ContactSalesModal } from "@/components/ContactSalesModal"
 import { SparkleField } from "@/components/SparkleField"
+import { FoundersNoteToggle } from "@/components/FoundersNoteToggle"
 import { Helmet } from "react-helmet-async"
 import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -251,48 +252,6 @@ const Landing = () => {
             </div>
           </section>
 
-          {/* Founder Story */}
-          <section className="py-12 sm:py-16 md:py-20 px-4 bg-card/50">
-            <div className="max-w-4xl mx-auto">
-              <Card className="border-woices-violet/20 bg-gradient-to-br from-woices-violet/5 to-transparent">
-                <CardHeader className="text-center pb-6">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-woices-violet/10 flex items-center justify-center">
-                    <User className="w-8 h-8 text-woices-violet" />
-                  </div>
-                  <CardTitle className="text-2xl mb-2">Founder's note</CardTitle>
-                  <CardDescription className="text-lg">How this idea came to life</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6 text-muted-foreground leading-relaxed">
-                  <p>
-                    I created Woices because I was frustrated with how feedback works online. Most platforms force us into brainrot content, 
-                    endless likes, and long threads of text. And worse, the comments section has become toxic. But human expression doesn't 
-                    fit into numbers or paragraphs.
-                  </p>
-                  <p>
-                    When you hear someone's voice, you don't just get information—you feel tone, energy, hesitation, excitement. That's the 
-                    real feedback loop, and it's something written comments will never capture.
-                  </p>
-                  <p>
-                    Woices is my attempt to bring that missing dimension back into the digital world. Platforms like Clubhouse or Airchat 
-                    tried, but failed—mainly because of weak monetization, lack of structure, and no clear niche. Woices is different: 
-                    a place where feedback isn't typed, but spoken—raw, human, emotional.
-                  </p>
-                  <p>
-                    Today, Woices starts as a simple API for voice feedback, replacing the boring, impersonal review systems like Google Reviews. 
-                    But the bigger vision is a social layer of authentic voices—where feedback sounds real, not robotic, and where people 
-                    connect through their voices across topics and thoughts. And yes—we love all accents. In the age of AI, everything is transcribable.
-                  </p>
-                  <p className="text-foreground font-medium">
-                    If you've ever thought, "Text doesn't capture what I mean," Woices is for you. 😉
-                  </p>
-                  <p className="text-foreground font-medium text-right">
-                    Hope you discover the power of real voice feedback here.<br />
-                    — Surya, Founder & CEO
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
 
           {/* Roadmap */}
           <section className="py-12 sm:py-16 md:py-20 px-4">
@@ -391,6 +350,9 @@ const Landing = () => {
               </Accordion>
             </div>
           </section>
+
+          {/* Founder's Note Toggle */}
+          <FoundersNoteToggle />
 
           {/* Bottom CTA */}
           <section className="py-12 sm:py-16 md:py-20 px-4">
