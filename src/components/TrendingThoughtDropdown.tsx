@@ -77,7 +77,7 @@ export function TrendingThoughtDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/50"
+            className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden bg-background/95 backdrop-blur-sm border-b border-border/50"
           >
             <div className="w-full px-4 py-3">
               <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/10 via-background to-accent/10 border border-border/50">
@@ -87,15 +87,10 @@ export function TrendingThoughtDropdown({
                 {/* Content container */}
                 <div className="relative">
                   {/* Compact Header bar - always visible */}
-                  <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-muted/30 to-transparent">
+                  <div className="flex items-center justify-between px-3 py-2 bg-background/90">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                      <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Live Trending</h3>
-                      {!isCollapsed && currentTopic && (
-                        <span className="text-xs text-foreground font-medium truncate ml-1">
-                          {currentTopic.title}
-                        </span>
-                      )}
+                      <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Trending Topics</h3>
                     </div>
                     <div className="flex items-center gap-1">
                       <Button
@@ -155,7 +150,7 @@ export function TrendingThoughtDropdown({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-4xl mx-auto mt-3 px-2 sm:px-4 lg:px-6 z-20"
+          className="w-full max-w-full sm:max-w-4xl mx-auto mt-3 px-2 sm:px-4 lg:px-6 z-40 overflow-x-hidden"
         >
           <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/5 via-background to-accent/5 border border-border/50 backdrop-blur-sm">
             {/* Background pattern */}
@@ -164,15 +159,10 @@ export function TrendingThoughtDropdown({
             {/* Content container */}
             <div className="relative">
               {/* Compact Header bar - always visible */}
-              <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gradient-to-r from-muted/30 to-transparent">
+              <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-background/90">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Live Trending</h3>
-                  {!isCollapsed && currentTopic && (
-                    <span className="text-xs text-foreground font-medium truncate ml-2">
-                      {currentTopic.title}
-                    </span>
-                  )}
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Trending Topics</h3>
                 </div>
                 <Button
                   variant="ghost"
@@ -379,7 +369,7 @@ export function TrendingThoughtDropdown({
             </div>
 
             {/* Description */}
-            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+            <p className="text-xs text-muted-foreground leading-relaxed break-words line-clamp-2">
               {currentTopic.description}
             </p>
 
@@ -468,7 +458,7 @@ export function TrendingThoughtDropdown({
             </div>
 
             {/* Description */}
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed break-words">
               {currentTopic.description}
             </p>
 

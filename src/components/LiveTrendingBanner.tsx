@@ -33,9 +33,6 @@ export function LiveTrendingBanner({ onOpenAuth, onStartRecording }: LiveTrendin
               <div className="text-xs font-medium text-woices-violet">
                 🔥 Trending Topics
               </div>
-              <div className="text-xs text-foreground font-medium line-clamp-1 truncate">
-                {currentTopic.title}
-              </div>
             </div>
           </div>
           
