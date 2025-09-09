@@ -129,7 +129,7 @@ const Landing = () => {
         
         <main>
           {/* Hero Section */}
-          <section className="py-16 sm:py-24 md:py-32 px-4">
+          <section className="py-8 sm:py-12 md:py-16 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <div className="inline-flex items-center gap-2 bg-woices-violet/10 text-woices-violet px-4 py-2 rounded-full text-sm font-medium mb-6">
