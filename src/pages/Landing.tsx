@@ -256,7 +256,7 @@ const Landing = () => {
                     <User className="w-8 h-8 text-woices-violet" />
                   </div>
                   <CardTitle className="text-2xl mb-2">Founder's note</CardTitle>
-                  <CardDescription className="text-lg">A personal note from Surya, Founder & CEO</CardDescription>
+                  <CardDescription className="text-lg">How this idea came to life</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 text-muted-foreground leading-relaxed">
                   <p>
@@ -282,7 +282,7 @@ const Landing = () => {
                     If you've ever thought, "Text doesn't capture what I mean," Woices is for you. 😉
                   </p>
                   <p className="text-foreground font-medium text-right">
-                    I hope you find your voice here.<br />
+                    Hope you discover the power of real voice feedback here.<br />
                     — Surya, Founder & CEO
                   </p>
                 </CardContent>
