@@ -120,10 +120,16 @@ export function TrendingThoughtDropdown({
                   <AnimatePresence>
                     {!isCollapsed && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                        initial={{ height: 0, opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                        animate={{ height: "auto", opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+                        exit={{ height: 0, opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                        transition={{ 
+                          duration: 0.5, 
+                          ease: [0.25, 0.46, 0.45, 0.94],
+                          height: { duration: 0.4 },
+                          opacity: { duration: 0.3, delay: 0.1 },
+                          clipPath: { duration: 0.4 }
+                        }}
                         className="overflow-hidden"
                       >
                         <div className="px-3 pb-3 border-t border-border/30">
@@ -146,10 +152,14 @@ export function TrendingThoughtDropdown({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0, y: -10, scaleY: 0.95 }}
+          animate={{ opacity: 1, y: 0, scaleY: 1 }}
+          exit={{ opacity: 0, y: -10, scaleY: 0.95 }}
+          transition={{ 
+            duration: 0.4, 
+            ease: [0.25, 0.46, 0.45, 0.94],
+            staggerChildren: 0.1
+          }}
           className="w-full max-w-full sm:max-w-4xl mx-auto mt-3 px-2 sm:px-4 lg:px-6 z-40 overflow-x-hidden"
         >
           <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/5 via-background to-accent/5 border border-border/50 backdrop-blur-sm">
@@ -182,10 +192,16 @@ export function TrendingThoughtDropdown({
               <AnimatePresence>
                 {!isCollapsed && (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    initial={{ height: 0, opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                    animate={{ height: "auto", opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+                    exit={{ height: 0, opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                    transition={{ 
+                      duration: 0.5, 
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                      height: { duration: 0.4 },
+                      opacity: { duration: 0.3, delay: 0.1 },
+                      clipPath: { duration: 0.4 }
+                    }}
                     className="overflow-hidden"
                   >
                     <div className="px-3 sm:px-4 pb-3 border-t border-border/30">
