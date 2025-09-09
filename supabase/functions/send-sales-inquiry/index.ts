@@ -26,10 +26,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Processing sales inquiry from:', email);
 
-    // Send email to info@woices.app
+    // Send email to info@woices.app using verified domain
     const emailResponse = await resend.emails.send({
-      from: "Sales Inquiry <noreply@woices.app>",
+      from: "Sales Inquiry <onboarding@resend.dev>",
       to: ["info@woices.app"],
+      reply_to: ["info@woices.app"],
       subject: `New Sales Inquiry from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
