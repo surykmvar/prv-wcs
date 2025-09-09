@@ -23,7 +23,7 @@ const Landing = () => {
     },
     {
       icon: <Building className="w-8 h-8 text-woices-sky" />,
-      title: "SaaS Startup",
+      title: "Startups",
       description: "\"Listen to what our users are saying.\"",
       detail: "Build trust with real user voices instead of fake text reviews."
     },
