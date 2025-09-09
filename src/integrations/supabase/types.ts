@@ -770,8 +770,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      can_access_sales_inquiries: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       check_sales_inquiry_rate_limit: {
-        Args: { p_email: string; p_max_per_hour?: number; p_user_id: string }
+        Args:
+          | Record<PropertyKey, never>
+          | { p_email: string; p_max_per_hour?: number; p_user_id: string }
         Returns: boolean
       }
       cleanup_old_sales_inquiries: {
