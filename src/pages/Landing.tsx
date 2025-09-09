@@ -129,15 +129,15 @@ const Landing = () => {
         
         <main>
           {/* Hero Section */}
-          <section className="py-8 sm:py-12 md:py-16 px-4">
+          <section className="py-6 sm:py-8 md:py-12 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <div className="inline-flex items-center gap-2 bg-woices-violet/10 text-woices-violet px-4 py-2 rounded-full text-sm font-medium mb-6">
-                  <Zap className="w-4 h-4" />
+              <div className="text-center mb-12 sm:mb-16">
+                <div className="inline-flex items-center gap-2 bg-woices-violet/10 text-woices-violet px-3 py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+                  <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
                   Now in Beta — API Access Available
                 </div>
                 
-                <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-foreground mb-8 leading-tight">
+                <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 sm:mb-8 leading-tight px-2">
                   The Voice-Powered
                   <span className="block bg-gradient-to-r from-woices-violet via-woices-sky to-woices-mint bg-clip-text text-transparent">
                     Review Layer
@@ -145,18 +145,18 @@ const Landing = () => {
                   <span className="block text-foreground">for the Internet</span>
                 </h1>
                 
-                <p className="text-xl sm:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
+                <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-4">
                   Replace fake text reviews with authentic human voices. 
-                  <span className="block mt-2 font-medium text-foreground">Google Reviews, but in real human voices.</span>
+                  <span className="block mt-1 sm:mt-2 font-medium text-foreground">Google Reviews, but in real human voices.</span>
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-12 sm:mb-16 px-4">
                   <Button 
                     size="lg" 
                     onClick={() => setContactModalOpen(true)}
-                    className="bg-woices-violet hover:bg-woices-violet/90 text-white px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-woices-violet hover:bg-woices-violet/90 text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
                   >
-                    <Code className="w-5 h-5 mr-2" />
+                    <Code className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Get API Access
                   </Button>
                   
@@ -164,22 +164,22 @@ const Landing = () => {
                     variant="outline" 
                     size="lg"
                     onClick={() => navigate('/start')}
-                    className="px-8 py-6 text-lg font-medium"
+                    className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                   >
-                    <Heart className="w-5 h-5 mr-2" />
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Try the Demo
                   </Button>
                 </div>
 
                 {/* Code Preview */}
-                <div className="max-w-2xl mx-auto bg-card border rounded-xl p-6 text-left">
+                <div className="max-w-2xl mx-auto bg-card border rounded-xl p-4 sm:p-6 text-left">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-sm text-muted-foreground ml-2">Integration Example</span>
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
+                    <span className="text-xs sm:text-sm text-muted-foreground ml-2">Integration Example</span>
                   </div>
-                  <pre className="text-sm text-muted-foreground overflow-x-auto">
+                  <pre className="text-xs sm:text-sm text-muted-foreground overflow-x-auto">
                     <code>{`<iframe src="https://api.woices.app/widget?id=your-id"
         width="100%" height="400px">
 </iframe>`}</code>
@@ -190,16 +190,16 @@ const Landing = () => {
           </section>
 
           {/* Use Cases */}
-          <section className="py-20 px-4 bg-card/50">
+          <section className="py-12 sm:py-16 md:py-20 px-4 bg-card/50">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Built for expression, not just opinions.</h2>
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">Built for expression, not just opinions.</h2>
+                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
                   Perfect for freelancers, creators, SaaS startups, and businesses who want authentic feedback from their audience.
                 </p>
               </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {useCases.map((useCase, index) => (
                   <Card key={index} className="border-border/50 hover:border-woices-violet/30 transition-all duration-300 hover:shadow-lg group">
                     <CardHeader className="pb-4">
@@ -223,17 +223,17 @@ const Landing = () => {
           </section>
 
           {/* Core Benefits */}
-          <section className="py-20 px-4">
+          <section className="py-12 sm:py-16 md:py-20 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Why Voice Reviews Work Better</h2>
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">Why Voice Reviews Work Better</h2>
+                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
                   When you hear someone's voice, you don't just get information—you feel tone, energy, hesitation, excitement. 
                   That's the real feedback loop that written comments will never capture.
                 </p>
               </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="text-center">
                     <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center">
@@ -248,7 +248,7 @@ const Landing = () => {
           </section>
 
           {/* Founder Story */}
-          <section className="py-20 px-4 bg-card/50">
+          <section className="py-12 sm:py-16 md:py-20 px-4 bg-card/50">
             <div className="max-w-4xl mx-auto">
               <Card className="border-woices-violet/20 bg-gradient-to-br from-woices-violet/5 to-transparent">
                 <CardHeader className="text-center pb-6">
@@ -291,16 +291,16 @@ const Landing = () => {
           </section>
 
           {/* Roadmap */}
-          <section className="py-20 px-4">
+          <section className="py-12 sm:py-16 md:py-20 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">The Roadmap</h2>
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">The Roadmap</h2>
+                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
                   Starting as a voice review API, evolving into the social platform for authentic human voices.
                 </p>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
                 {roadmapPhases.map((phase, index) => (
                   <Card key={index} className={`relative border-2 ${index === 0 ? 'border-woices-violet/50 bg-woices-violet/5' : 'border-border/50'} transition-all duration-300 hover:shadow-lg`}>
                     {index === 0 && (
@@ -337,11 +337,11 @@ const Landing = () => {
           </section>
 
           {/* FAQ */}
-          <section className="py-20 px-4 bg-card/50">
+          <section className="py-12 sm:py-16 md:py-20 px-4 bg-card/50">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Frequently Asked Questions</h2>
-                <p className="text-xl text-muted-foreground">
+              <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">Frequently Asked Questions</h2>
+                <p className="text-base sm:text-xl text-muted-foreground px-4">
                   Everything you need to know about Woices API and voice reviews.
                 </p>
               </div>
@@ -366,24 +366,24 @@ const Landing = () => {
           </section>
 
           {/* Bottom CTA */}
-          <section className="py-20 px-4">
+          <section className="py-12 sm:py-16 md:py-20 px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <div className="bg-gradient-to-br from-woices-violet/10 via-woices-sky/5 to-woices-mint/10 rounded-3xl p-12 border border-woices-violet/20">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              <div className="bg-gradient-to-br from-woices-violet/10 via-woices-sky/5 to-woices-mint/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-woices-violet/20">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">
                   Ready to Add Voice to Your Platform?
                 </h2>
-                <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+                <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-4">
                   Join the businesses already using Woices API to collect authentic voice feedback from their customers.
-                  <span className="block mt-2 font-medium text-foreground">Start with our beta program today.</span>
+                  <span className="block mt-1 sm:mt-2 font-medium text-foreground">Start with our beta program today.</span>
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
                   <Button 
                     size="lg" 
                     onClick={() => setContactModalOpen(true)}
-                    className="bg-woices-violet hover:bg-woices-violet/90 text-white px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-woices-violet hover:bg-woices-violet/90 text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
                   >
-                    <Code className="w-5 h-5 mr-2" />
+                    <Code className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Get API Access
                   </Button>
                   
@@ -391,9 +391,9 @@ const Landing = () => {
                     variant="outline" 
                     size="lg"
                     onClick={() => navigate('/start')}
-                    className="px-8 py-6 text-lg font-medium border-woices-violet/30 hover:border-woices-violet/50"
+                    className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium border-woices-violet/30 hover:border-woices-violet/50 w-full sm:w-auto"
                   >
-                    <Heart className="w-5 h-5 mr-2" />
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Try the Demo
                   </Button>
                 </div>
