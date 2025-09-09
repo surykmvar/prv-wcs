@@ -255,7 +255,7 @@ const Landing = () => {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-woices-violet/10 flex items-center justify-center">
                     <User className="w-8 h-8 text-woices-violet" />
                   </div>
-                  <CardTitle className="text-2xl mb-2">From the Founder</CardTitle>
+                  <CardTitle className="text-2xl mb-2">Founder's note</CardTitle>
                   <CardDescription className="text-lg">A personal note from Surya, Founder & CEO</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 text-muted-foreground leading-relaxed">
