@@ -749,24 +749,7 @@ export type Database = {
       }
     }
     Views: {
-      profiles_public_view: {
-        Row: {
-          created_at: string | null
-          display_name: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          display_name?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          display_name?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       allocate_activity_credits: {
