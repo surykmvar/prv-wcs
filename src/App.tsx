@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthGuard } from '@/components/AuthGuard'
 import { AdminGuard } from '@/components/AdminGuard'
 import { HelmetProvider } from 'react-helmet-async'
+import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Auth from './pages/Auth'
 import Profile from './pages/Profile'
@@ -48,9 +49,10 @@ const App = () => {
           <BrowserRouter>
             <Suspense fallback={<div>Loading...</div>}>
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<Landing />} />
+                <Route path="/start" element={<Index />} />
                 <Route 
-                  path="/auth" 
+                  path="/auth"
                   element={
                     <AuthGuard requireAuth={false}>
                       <Auth />
