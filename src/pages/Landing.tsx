@@ -4,90 +4,123 @@ import { Header } from "@/components/Header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { ContactSalesModal } from "@/components/ContactSalesModal"
+import { SparkleField } from "@/components/SparkleField"
 import { Helmet } from "react-helmet-async"
-import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart } from "lucide-react"
+import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User } from "lucide-react"
 
 const Landing = () => {
   const navigate = useNavigate()
+  const [contactModalOpen, setContactModalOpen] = useState(false)
 
-  const features = [
+  const useCases = [
     {
-      icon: <Mic className="w-8 h-8 text-woices-violet" />,
-      title: "Real Voice Interactions",
-      description: "Share authentic 60-second voice replies that capture emotion and nuance better than text."
+      icon: <Users className="w-8 h-8 text-woices-violet" />,
+      title: "Freelancer Portfolio",
+      description: "\"Leave me voice feedback on my design draft.\"",
+      detail: "Get authentic client testimonials that showcase your work's impact."
     },
     {
-      icon: <TrendingUp className="w-8 h-8 text-woices-sky" />,
-      title: "Trending Topics",
-      description: "Discover and contribute to conversations on topics that matter to the community."
+      icon: <Building className="w-8 h-8 text-woices-sky" />,
+      title: "SaaS Startup",
+      description: "\"Listen to what our users are saying.\"",
+      detail: "Build trust with real user voices instead of fake text reviews."
     },
     {
-      icon: <Users className="w-8 h-8 text-woices-mint" />,
-      title: "Community-Driven",
-      description: "Vote on the best responses and help quality content rise to the top."
+      icon: <Star className="w-8 h-8 text-woices-mint" />,
+      title: "Creator Link-in-Bio",
+      description: "\"Send me a voice review or idea.\"",
+      detail: "Connect with your audience through authentic voice interactions."
     },
     {
-      icon: <Shield className="w-8 h-8 text-woices-bloom" />,
-      title: "Safe & Moderated",
-      description: "Enjoy meaningful conversations in a respectful environment with community moderation."
+      icon: <Globe className="w-8 h-8 text-woices-bloom" />,
+      title: "E-commerce Store",
+      description: "\"Hear what customers really think.\"",
+      detail: "Voice reviews that customers actually trust and believe."
     }
   ]
 
-  const steps = [
+  const benefits = [
     {
-      icon: <Mic className="w-6 h-6" />,
-      title: "Record",
-      description: "Share a 60-second voice reply on any topic"
+      icon: <Shield className="w-6 h-6 text-woices-violet" />,
+      title: "Authenticity",
+      description: "Fake text reviews plague the internet; real voices are hard to fake."
     },
     {
-      icon: <MessageSquare className="w-6 h-6" />,
-      title: "Ask",
-      description: "Post your own thoughts and questions"
+      icon: <Code className="w-6 h-6 text-woices-sky" />,
+      title: "Portability",
+      description: "iFrame/API widget works anywhere (websites, Notion, Shopify, Webflow, etc.)."
     },
     {
-      icon: <TrendingUp className="w-6 h-6" />,
-      title: "Vote",
-      description: "Help the best content trend and be discovered"
+      icon: <Users className="w-6 h-6 text-woices-mint" />,
+      title: "Trust",
+      description: "Reviews are hosted where the creator/business wants, no need to join a new network."
+    },
+    {
+      icon: <Zap className="w-6 h-6 text-woices-bloom" />,
+      title: "Simplicity",
+      description: "One-click voice recording, automatic transcript + AI summary."
+    }
+  ]
+
+  const roadmapPhases = [
+    {
+      phase: "Phase 1",
+      title: "Review API",
+      description: "iFrame widget for websites/Notion pages/Portfolios",
+      features: ["Voice recording → transcript + summary", "Embeddable review cards", "Simple integration"]
+    },
+    {
+      phase: "Phase 2", 
+      title: "Community Layer",
+      description: "Businesses/creators manage voice reviews in a dashboard",
+      features: ["Brand channels on Woices", "Moderation tools", "Review showcase walls"]
+    },
+    {
+      phase: "Phase 3",
+      title: "Social Discovery",
+      description: "The network effect emerges once enough reviews exist",
+      features: ["Social feed of authentic voices", "Search voice knowledge", "Voice-powered recommendations"]
     }
   ]
 
   const faqs = [
     {
-      question: "What is Woices?",
-      answer: "Woices is a voice-based social feedback network where people share authentic thoughts and replies using their voice instead of text. It's designed for meaningful conversations, one voice at a time."
+      question: "What is Woices API?",
+      answer: "Woices API is a voice-powered review layer that integrates into existing websites, portfolios, and products via iFrame or API. Think of it as a 'comment box 2.0' — but voice-first, authentic, and human."
     },
     {
-      question: "How do I start using Woices?",
-      answer: "Simply click 'Open the App' to get started. You can browse trending topics and voice replies without signing up. To post your own content or vote, you'll need to create a free account."
+      question: "How does the API integration work?",
+      answer: "Simply embed our iFrame widget anywhere on your website, Notion page, or portfolio. Visitors can leave voice feedback with one click, and you get authentic testimonials that build trust."
     },
     {
-      question: "Is Woices free to use?",
-      answer: "Yes! Woices is free to start. You can listen to voice replies, browse trending topics, and participate in the community at no cost."
+      question: "Why voice instead of text reviews?",
+      answer: "Text reviews are easily faked and lack emotion. Voice captures tone, energy, hesitation, and excitement — the real feedback that written comments can never convey. Voice reviews are authentic and hard to fake."
     },
     {
-      question: "How are voice replies moderated?",
-      answer: "We use a combination of community voting and moderation tools to ensure quality content. The community helps promote valuable voices while maintaining a respectful environment."
+      question: "Can I control which reviews are shown?",
+      answer: "Absolutely! You have full control over moderation and can showcase the best reviews while filtering out inappropriate content. Your brand, your rules."
     },
     {
-      question: "Can I use Woices on mobile?",
-      answer: "Absolutely! Woices is designed to work seamlessly on both desktop and mobile devices, making it easy to record and listen to voice replies wherever you are."
+      question: "What's the pricing for API access?",
+      answer: "We offer flexible pricing based on usage. Contact our sales team for a custom quote that fits your business needs."
     }
   ]
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background font-inter">
+    <div className="relative min-h-screen bg-background font-inter">
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="hidden sm:block absolute inset-0 starry-surface" aria-hidden />
-        <div className="hidden sm:block size-full bg-gradient-to-br from-woices-violet/5 via-transparent to-woices-mint/5" />
+        <SparkleField className="absolute inset-0" density={24} />
+        <div className="absolute inset-0 bg-gradient-to-br from-woices-violet/5 via-transparent to-woices-mint/5" />
       </div>
       
       <Helmet>
-        <title>Woices — Voice-based Feedback Network</title>
-        <meta name="description" content="Meaningful voice feedback, one voice at a time. Ask questions or give 60-second voice replies on trending topics." />
-        <meta property="og:title" content="Woices — Voice-based Feedback Network" />
-        <meta property="og:description" content="Meaningful voice feedback, one voice at a time. Ask questions or give 60-second voice replies on trending topics." />
-        <meta name="twitter:title" content="Woices — Voice-based Feedback Network" />
-        <meta name="twitter:description" content="Meaningful voice feedback, one voice at a time. Ask questions or give 60-second voice replies on trending topics." />
+        <title>Woices API — Voice-Powered Review Layer for the Internet</title>
+        <meta name="description" content="Authentic voice reviews and feedback API. Replace fake text reviews with real human voices. Easy integration for websites, portfolios, and apps." />
+        <meta property="og:title" content="Woices API — Voice-Powered Review Layer for the Internet" />
+        <meta property="og:description" content="Authentic voice reviews and feedback API. Replace fake text reviews with real human voices. Easy integration for websites, portfolios, and apps." />
+        <meta name="twitter:title" content="Woices API — Voice-Powered Review Layer for the Internet" />
+        <meta name="twitter:description" content="Authentic voice reviews and feedback API. Replace fake text reviews with real human voices. Easy integration for websites, portfolios, and apps." />
         <link rel="canonical" href="https://woices.app/" />
       </Helmet>
 
@@ -96,80 +129,206 @@ const Landing = () => {
         
         <main>
           {/* Hero Section */}
-          <section className="py-12 sm:py-20 md:py-24 px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-                Voice-based
-                <span className="block bg-gradient-to-r from-woices-violet to-woices-sky bg-clip-text text-transparent">
-                  Feedback Network
-                </span>
-              </h1>
-              
-              <p className="text-xl sm:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-                Meaningful voice feedback, one voice at a time.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate('/feed')}
-                  className="bg-woices-violet hover:bg-woices-violet/90 text-white px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <Heart className="w-5 h-5 mr-2" />
-                  Open the App
-                </Button>
+          <section className="py-16 sm:py-24 md:py-32 px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-16">
+                <div className="inline-flex items-center gap-2 bg-woices-violet/10 text-woices-violet px-4 py-2 rounded-full text-sm font-medium mb-6">
+                  <Zap className="w-4 h-4" />
+                  Now in Beta — API Access Available
+                </div>
                 
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  onClick={() => navigate('/auth')}
-                  className="px-8 py-6 text-lg font-medium"
-                >
-                  Sign In
-                </Button>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-foreground mb-8 leading-tight">
+                  The Voice-Powered
+                  <span className="block bg-gradient-to-r from-woices-violet via-woices-sky to-woices-mint bg-clip-text text-transparent">
+                    Review Layer
+                  </span>
+                  <span className="block text-foreground">for the Internet</span>
+                </h1>
+                
+                <p className="text-xl sm:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
+                  Replace fake text reviews with authentic human voices. 
+                  <span className="block mt-2 font-medium text-foreground">Google Reviews, but in real human voices.</span>
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+                  <Button 
+                    size="lg" 
+                    onClick={() => setContactModalOpen(true)}
+                    className="bg-woices-violet hover:bg-woices-violet/90 text-white px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <Code className="w-5 h-5 mr-2" />
+                    Get API Access
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    onClick={() => navigate('/start')}
+                    className="px-8 py-6 text-lg font-medium"
+                  >
+                    <Heart className="w-5 h-5 mr-2" />
+                    Try the Demo
+                  </Button>
+                </div>
+
+                {/* Code Preview */}
+                <div className="max-w-2xl mx-auto bg-card border rounded-xl p-6 text-left">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="text-sm text-muted-foreground ml-2">Integration Example</span>
+                  </div>
+                  <pre className="text-sm text-muted-foreground overflow-x-auto">
+                    <code>{`<iframe src="https://api.woices.app/widget?id=your-id"
+        width="100%" height="400px">
+</iframe>`}</code>
+                  </pre>
+                </div>
               </div>
             </div>
           </section>
 
-          {/* How It Works */}
-          <section className="py-16 px-4 bg-card/50">
+          {/* Use Cases */}
+          <section className="py-20 px-4 bg-card/50">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">How It Works</h2>
+              <div className="text-center mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Built for expression, not just opinions.</h2>
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                  Perfect for freelancers, creators, SaaS startups, and businesses who want authentic feedback from their audience.
+                </p>
+              </div>
               
-              <div className="grid md:grid-cols-3 gap-8">
-                {steps.map((step, index) => (
-                  <div key={index} className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-woices-violet/10 flex items-center justify-center">
-                      <div className="text-woices-violet">
-                        {step.icon}
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {useCases.map((useCase, index) => (
+                  <Card key={index} className="border-border/50 hover:border-woices-violet/30 transition-all duration-300 hover:shadow-lg group">
+                    <CardHeader className="pb-4">
+                      <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
+                        {useCase.icon}
                       </div>
+                      <CardTitle className="text-lg mb-2">{useCase.title}</CardTitle>
+                      <CardDescription className="text-woices-violet font-medium italic">
+                        {useCase.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {useCase.detail}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Core Benefits */}
+          <section className="py-20 px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Why Voice Reviews Work Better</h2>
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                  When you hear someone's voice, you don't just get information—you feel tone, energy, hesitation, excitement. 
+                  That's the real feedback loop that written comments will never capture.
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center">
+                      {benefit.icon}
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                    <p className="text-muted-foreground">{step.description}</p>
+                    <h3 className="text-xl font-semibold mb-4">{benefit.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{benefit.description}</p>
                   </div>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* Features */}
-          <section className="py-16 px-4">
+          {/* Founder Story */}
+          <section className="py-20 px-4 bg-card/50">
+            <div className="max-w-4xl mx-auto">
+              <Card className="border-woices-violet/20 bg-gradient-to-br from-woices-violet/5 to-transparent">
+                <CardHeader className="text-center pb-6">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-woices-violet/10 flex items-center justify-center">
+                    <User className="w-8 h-8 text-woices-violet" />
+                  </div>
+                  <CardTitle className="text-2xl mb-2">From the Founder</CardTitle>
+                  <CardDescription className="text-lg">A personal note from Surya, Founder & CEO</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6 text-muted-foreground leading-relaxed">
+                  <p>
+                    I created Woices because I was frustrated with how feedback works online. Most platforms force us into brainrot content, 
+                    endless likes, and long threads of text. And worse, the comments section has become toxic. But human expression doesn't 
+                    fit into numbers or paragraphs.
+                  </p>
+                  <p>
+                    When you hear someone's voice, you don't just get information—you feel tone, energy, hesitation, excitement. That's the 
+                    real feedback loop, and it's something written comments will never capture.
+                  </p>
+                  <p>
+                    Woices is my attempt to bring that missing dimension back into the digital world. Platforms like Clubhouse or Airchat 
+                    tried, but failed—mainly because of weak monetization, lack of structure, and no clear niche. Woices is different: 
+                    a place where feedback isn't typed, but spoken—raw, human, emotional.
+                  </p>
+                  <p>
+                    Today, Woices starts as a simple API for voice feedback, replacing the boring, impersonal review systems like Google Reviews. 
+                    But the bigger vision is a social layer of authentic voices—where feedback sounds real, not robotic, and where people 
+                    connect through their voices across topics and thoughts. And yes—we love all accents. In the age of AI, everything is transcribable.
+                  </p>
+                  <p className="text-foreground font-medium">
+                    If you've ever thought, "Text doesn't capture what I mean," Woices is for you. 😉
+                  </p>
+                  <p className="text-foreground font-medium text-right">
+                    I hope you find your voice here.<br />
+                    — Surya, Founder & CEO
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
+
+          {/* Roadmap */}
+          <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">Why Choose Woices?</h2>
+              <div className="text-center mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">The Roadmap</h2>
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                  Starting as a voice review API, evolving into the social platform for authentic human voices.
+                </p>
+              </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {features.map((feature, index) => (
-                  <Card key={index} className="border-border/50 hover:border-border transition-colors duration-200">
-                    <CardHeader className="pb-4">
-                      <div className="mb-2">
-                        {feature.icon}
+              <div className="grid md:grid-cols-3 gap-8">
+                {roadmapPhases.map((phase, index) => (
+                  <Card key={index} className={`relative border-2 ${index === 0 ? 'border-woices-violet/50 bg-woices-violet/5' : 'border-border/50'} transition-all duration-300 hover:shadow-lg`}>
+                    {index === 0 && (
+                      <div className="absolute -top-3 left-6 bg-woices-violet text-white px-3 py-1 rounded-full text-sm font-medium">
+                        Current
                       </div>
-                      <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    )}
+                    <CardHeader>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className={`w-8 h-8 rounded-full ${index === 0 ? 'bg-woices-violet' : 'bg-muted'} flex items-center justify-center text-sm font-bold ${index === 0 ? 'text-white' : 'text-muted-foreground'}`}>
+                          {index + 1}
+                        </div>
+                        <div>
+                          <div className="text-sm text-woices-violet font-medium">{phase.phase}</div>
+                          <CardTitle className="text-xl">{phase.title}</CardTitle>
+                        </div>
+                      </div>
+                      <CardDescription className="text-base">{phase.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <CardDescription className="text-sm leading-relaxed">
-                        {feature.description}
-                      </CardDescription>
+                      <ul className="space-y-2">
+                        {phase.features.map((feature, featureIndex) => (
+                          <li key={featureIndex} className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Check className="w-4 h-4 text-woices-mint flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
                     </CardContent>
                   </Card>
                 ))}
@@ -178,21 +337,26 @@ const Landing = () => {
           </section>
 
           {/* FAQ */}
-          <section className="py-16 px-4 bg-card/50">
+          <section className="py-20 px-4 bg-card/50">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+              <div className="text-center mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Frequently Asked Questions</h2>
+                <p className="text-xl text-muted-foreground">
+                  Everything you need to know about Woices API and voice reviews.
+                </p>
+              </div>
               
               <Accordion type="single" collapsible className="space-y-4">
                 {faqs.map((faq, index) => (
                   <AccordionItem 
                     key={index} 
                     value={`item-${index}`}
-                    className="border border-border/50 rounded-lg px-6 bg-card"
+                    className="border border-border/50 rounded-xl px-6 bg-card hover:border-woices-violet/30 transition-colors duration-300"
                   >
-                    <AccordionTrigger className="text-left font-medium hover:no-underline py-6">
+                    <AccordionTrigger className="text-left font-medium hover:no-underline py-6 text-lg">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground pb-6 leading-relaxed">
+                    <AccordionContent className="text-muted-foreground pb-6 leading-relaxed text-base">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -202,27 +366,58 @@ const Landing = () => {
           </section>
 
           {/* Bottom CTA */}
-          <section className="py-16 px-4">
+          <section className="py-20 px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                Ready to Share Your Voice?
-              </h2>
-              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Join the community and start meaningful conversations today — it's free to start.
-              </p>
-              
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/feed')}
-                className="bg-woices-violet hover:bg-woices-violet/90 text-white px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                <Mic className="w-5 h-5 mr-2" />
-                Try Woices Now
-              </Button>
+              <div className="bg-gradient-to-br from-woices-violet/10 via-woices-sky/5 to-woices-mint/10 rounded-3xl p-12 border border-woices-violet/20">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+                  Ready to Add Voice to Your Platform?
+                </h2>
+                <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+                  Join the businesses already using Woices API to collect authentic voice feedback from their customers.
+                  <span className="block mt-2 font-medium text-foreground">Start with our beta program today.</span>
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <Button 
+                    size="lg" 
+                    onClick={() => setContactModalOpen(true)}
+                    className="bg-woices-violet hover:bg-woices-violet/90 text-white px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <Code className="w-5 h-5 mr-2" />
+                    Get API Access
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    onClick={() => navigate('/start')}
+                    className="px-8 py-6 text-lg font-medium border-woices-violet/30 hover:border-woices-violet/50"
+                  >
+                    <Heart className="w-5 h-5 mr-2" />
+                    Try the Demo
+                  </Button>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-border/50">
+                  <Button 
+                    variant="ghost"
+                    onClick={() => navigate('/auth?mode=signup&redirect=/start')}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    or sign up for the social platform
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </section>
         </main>
       </div>
+
+      <ContactSalesModal 
+        open={contactModalOpen} 
+        onOpenChange={setContactModalOpen} 
+      />
     </div>
   )
 }
