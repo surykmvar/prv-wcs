@@ -8,24 +8,30 @@ export const FoundersNoteToggle = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <section className="py-12 sm:py-16 px-4">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-16 sm:py-20 px-4 relative">
+      {/* Background glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-woices-violet/5 via-woices-mint/5 to-woices-violet/5 blur-3xl"></div>
+      
+      <div className="max-w-6xl mx-auto relative">
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <div className="text-center">
             <CollapsibleTrigger asChild>
               <Button 
                 variant="outline" 
                 size="lg"
-                className="group border-woices-violet/30 hover:border-woices-violet hover:bg-woices-violet/5 transition-all duration-300"
+                className="group relative border-2 border-woices-violet/40 hover:border-woices-violet bg-background/80 backdrop-blur-sm hover:bg-woices-violet/10 transition-all duration-500 shadow-lg hover:shadow-2xl hover:shadow-woices-violet/20 px-8 py-6 text-lg font-medium animate-pulse-glow"
               >
-                <Mail className="w-5 h-5 mr-2 text-woices-violet group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-foreground font-medium">Read the Founder's Note</span>
-                <ChevronDown className={`w-4 h-4 ml-2 text-woices-violet transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                {/* Inner glow */}
+                <div className="absolute inset-0 rounded-md bg-gradient-to-r from-woices-violet/10 to-woices-mint/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <Mail className="w-6 h-6 mr-3 text-woices-violet group-hover:scale-125 group-hover:rotate-12 transition-all duration-500" />
+                <span className="text-foreground font-semibold relative z-10">Read the Founder's Personal Note</span>
+                <ChevronDown className={`w-5 h-5 ml-3 text-woices-violet transition-all duration-500 group-hover:scale-110 ${isOpen ? 'rotate-180' : ''}`} />
               </Button>
             </CollapsibleTrigger>
           </div>
           
-          <CollapsibleContent className="pt-8">
+          <CollapsibleContent className="pt-12">
             <FoundersNoteLetter />
           </CollapsibleContent>
         </Collapsible>

@@ -145,7 +145,7 @@ const Landing = () => {
                 <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 sm:mb-8 leading-tight px-2">
                   The Voice-Powered
                   <span className="block bg-gradient-to-r from-woices-violet via-woices-sky to-woices-mint bg-clip-text text-transparent">
-                    Review Layer
+                    Social Feedback Tool
                   </span>
                   <span className="block text-foreground">for the Internet</span>
                 </h1>
