@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { Mic } from "lucide-react"
+import { Mic, MessageSquare } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { SmartThoughtInput } from "@/components/SmartThoughtInput"
@@ -112,14 +112,35 @@ export function MainActions() {
       </div>
 
       {/* Helper text */}
-      <div className="text-center text-sm text-muted-foreground mt-6 max-w-md mx-auto space-y-2">
-        <div className="flex items-center justify-center gap-2">
-          <span className="text-lg">🎤</span>
-          <span>Click the mic to give voice reply on trending topics</span>
-        </div>
-        <div className="flex items-center justify-center gap-2">
-          <span className="text-lg">✍️</span>
-          <span>Click the text field to ask an interesting thought/question</span>
+      <div className="mt-8 max-w-lg mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Voice Reply Card */}
+          <div className="group relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-sm border border-border/40 p-4 hover:bg-card/60 hover:border-border/60 transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors duration-300">
+                <Mic className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-foreground text-sm mb-1">Voice Replies</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">Click the mic to give voice replies on trending topics</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Text Input Card */}
+          <div className="group relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-sm border border-border/40 p-4 hover:bg-card/60 hover:border-border/60 transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/15 transition-colors duration-300">
+                <MessageSquare className="w-4 h-4 text-accent" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-foreground text-sm mb-1">Ask Questions</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">Click the text field to ask interesting thoughts or questions</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
