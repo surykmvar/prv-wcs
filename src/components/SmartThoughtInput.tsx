@@ -56,32 +56,55 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
 
   return (
     <TooltipProvider>
-      <div className={cn("relative w-full max-w-3xl mx-auto", className)}>
-        {/* Moving blur/glow background */}
+      <div className={cn("relative w-full max-w-4xl mx-auto", className)}>
+        {/* Enhanced ambient glow background */}
         <motion.div
-          className="absolute -inset-3 rounded-2xl pointer-events-none -z-10 blur-2xl"
+          className="absolute -inset-6 rounded-3xl pointer-events-none -z-10"
           style={{
-            background: 'radial-gradient(120px 120px at 30% 30%, hsl(var(--woices-violet) / 0.08), transparent 60%), radial-gradient(120px 120px at 70% 70%, hsl(var(--woices-mint) / 0.08), transparent 60%)'
+            background: 'radial-gradient(200px 200px at 25% 25%, hsl(var(--primary) / 0.12), transparent 70%), radial-gradient(200px 200px at 75% 75%, hsl(var(--accent) / 0.1), transparent 70%)',
+            filter: 'blur(40px)'
           }}
-          animate={{ x: [0, 6, 0, -6, 0], y: [0, -4, 0, 4, 0] }}
-          transition={{ duration: 12, ease: "easeInOut", repeat: Infinity }}
+          animate={{ 
+            x: [0, 10, 0, -10, 0], 
+            y: [0, -8, 0, 8, 0],
+            rotate: [0, 1, 0, -1, 0]
+          }}
+          transition={{ duration: 15, ease: "easeInOut", repeat: Infinity }}
           aria-hidden
         />
         
-        <div className="relative flex items-center h-16">
-          {/* Chevron right icon */}
-          <div className="absolute left-4 z-10 pointer-events-none">
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </div>
-          
-          {/* Main input button */}
+        {/* Subtle ring glow */}
+        <motion.div
+          className="absolute -inset-1 rounded-3xl pointer-events-none -z-10 opacity-60"
+          style={{
+            background: 'linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.15))',
+            filter: 'blur(8px)'
+          }}
+          animate={{ opacity: [0.4, 0.7, 0.4] }}
+          transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
+          aria-hidden
+        />
+        
+        <div className="relative flex items-center h-20 gap-3">
+          {/* Main input button - enhanced */}
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={handleFocus}
-                className="group relative w-full h-full pl-12 pr-16 bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                className="group relative flex-1 h-full pl-14 pr-6 bg-card/90 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-lg hover:shadow-2xl hover:shadow-primary/5 hover:scale-[1.01] active:scale-[0.99] transition-all duration-500 ease-out overflow-hidden"
                 aria-label="Ask a question or share a thought"
               >
+                {/* Subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.02] via-transparent to-accent/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Chevron icon - enhanced */}
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10">
+                  <div className="relative">
+                    <ChevronRight className="w-5 h-5 text-muted-foreground/70 group-hover:text-primary/80 transition-all duration-300 group-hover:translate-x-0.5" />
+                    <div className="absolute inset-0 w-5 h-5 bg-primary/20 rounded-full opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300" />
+                  </div>
+                </div>
+                
                 {/* Content container */}
                 <div className="relative flex items-center h-full">
                   <div className="flex-1 text-left">
@@ -89,11 +112,11 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
                       {isVisible && (
                         <motion.div
                           key={currentSuggestion}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.5, ease: "easeOut" }}
-                          className="text-muted-foreground text-sm sm:text-base leading-relaxed"
+                          initial={{ opacity: 0, y: 25, filter: "blur(4px)" }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, y: -25, filter: "blur(4px)" }}
+                          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                          className="text-muted-foreground/90 text-base sm:text-lg font-medium leading-relaxed tracking-wide"
                         >
                           {thoughtSuggestions[currentSuggestion]}
                         </motion.div>
@@ -101,32 +124,54 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
                     </AnimatePresence>
                     
                     {!isVisible && (
-                      <div className="text-muted-foreground text-sm sm:text-base">
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-muted-foreground/90 text-base sm:text-lg font-medium"
+                      >
                         What's your thought or question?
-                      </div>
+                      </motion.div>
                     )}
                   </div>
                 </div>
               </button>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Share your thoughts or ask an interesting question</p>
+            <TooltipContent side="bottom" className="bg-card/95 backdrop-blur-sm border border-border/50">
+              <p className="font-medium">Share your thoughts or ask an interesting question</p>
             </TooltipContent>
           </Tooltip>
           
-          {/* Mic button */}
+          {/* Mic button - enhanced */}
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={onMicClick}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-card/80 border border-border shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center z-10 group"
+                className="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/90 to-primary shadow-lg hover:shadow-2xl hover:shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center z-10 group overflow-hidden"
                 aria-label="Record voice response"
               >
-                <Mic className="w-4 h-4 text-foreground/80 group-hover:scale-110 transition-transform duration-200" />
+                {/* Animated background pulse */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-br from-primary-foreground/10 to-transparent"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.6, 0.3]
+                  }}
+                  transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
+                />
+                
+                {/* Mic icon */}
+                <Mic className="w-6 h-6 text-primary-foreground drop-shadow-sm group-hover:scale-110 group-active:scale-90 transition-transform duration-200" />
+                
+                {/* Subtle shine effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                />
               </button>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Record voice reply to trending topics</p>
+            <TooltipContent side="bottom" className="bg-card/95 backdrop-blur-sm border border-border/50">
+              <p className="font-medium">Record voice reply to trending topics</p>
             </TooltipContent>
           </Tooltip>
         </div>
