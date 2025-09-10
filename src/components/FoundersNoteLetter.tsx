@@ -48,7 +48,7 @@ export const FoundersNoteLetter = () => {
             </p>
             
             <p className="text-foreground font-medium italic">
-              If you've ever thought, "Text doesn't capture what I mean," Woices is for you. 🎙️💌
+              If you've ever thought, "Text doesn't capture what I mean," Woices is for you. 😉
             </p>
             
             <div className="pt-8 border-t border-woices-violet/10">
