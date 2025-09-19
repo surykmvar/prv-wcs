@@ -39,7 +39,8 @@ export function MainActions() {
 
   const handleStartRecording = async (trendingTopicId: string) => {
     if (!user) {
-      handleOpenAuth()
+      // Allow guests to navigate to feed without forcing auth
+      navigate('/feed')
       return
     }
 
@@ -69,7 +70,8 @@ export function MainActions() {
 
   const handleThoughtInputFocus = () => {
     if (!user) {
-      navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?open=write')}`)
+      // Allow guests to navigate to feed to see content
+      navigate('/feed')
     } else {
       setShowWriteNote(true)
     }
