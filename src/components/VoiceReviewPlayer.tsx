@@ -94,7 +94,7 @@ export const VoiceReviewPlayer = ({
       </p>
       
       {/* Voice player */}
-      <div className="bg-muted/20 rounded-lg p-3 flex items-center gap-3">
+      <div className="bg-muted/20 rounded-lg p-3 flex items-center gap-2">
         <Button
           size="sm"
           variant="ghost"
@@ -108,7 +108,7 @@ export const VoiceReviewPlayer = ({
           )}
         </Button>
         
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 mx-1">
           <DynamicWaveform 
             isPlaying={isPlaying} 
             progress={progress}

@@ -47,6 +47,11 @@
     --waveform-color: 220 13% 82%; /* light grey for unplayed */
     --waveform-progress-color: 199 89% 48%; /* woices-sky for played */
     --waveform-active-color: 262 83% 58%; /* woices-violet for active */
+    
+    /* Echo Levels - Traffic Light Colors */
+    --echo-red: 0 84% 60%;        /* Clean red for bad ratings */
+    --echo-orange: 30 100% 60%;   /* Clean orange for neutral */
+    --echo-green: 120 60% 50%;    /* Clean green for good ratings */
 
     --radius: 0.5rem;
 
@@ -108,6 +113,11 @@
     --waveform-color: 217.2 32.6% 25%; /* darker grey for unplayed */
     --waveform-progress-color: 199 89% 48%; /* woices-sky for played */
     --waveform-active-color: 199 89% 48%; /* woices-sky for active */
+    
+    /* Echo Levels - Traffic Light Colors (Dark Mode) */
+    --echo-red: 0 84% 65%;        /* Slightly brighter red for dark mode */
+    --echo-orange: 30 100% 65%;   /* Slightly brighter orange for dark mode */
+    --echo-green: 120 60% 55%;    /* Slightly brighter green for dark mode */
   }
 }
 @layer base {
