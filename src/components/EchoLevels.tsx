@@ -26,15 +26,15 @@ export const EchoLevels = ({
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
   
   const sizeClasses = {
-    sm: "w-6 h-6",
-    md: "w-8 h-8", 
-    lg: "w-12 h-12"
+    sm: "w-8 h-8",
+    md: "w-12 h-12", 
+    lg: "w-16 h-16"
   }
   
   const rippleSizes = {
-    sm: [8, 12, 16, 20, 24],
-    md: [12, 18, 24, 30, 36],
-    lg: [20, 30, 40, 50, 60]
+    sm: [12, 16, 20, 24, 28],
+    md: [16, 22, 28, 34, 40],
+    lg: [24, 32, 40, 48, 56]
   }
 
   const handleClick = (level: number) => {
@@ -56,6 +56,21 @@ export const EchoLevels = ({
   const currentRating = hoveredRating || rating
   const currentLabel = ratingLabels[currentRating as keyof typeof ratingLabels]
 
+  // Color progression: muted -> sky -> violet
+  const getRippleColor = (level: number, isActive: boolean) => {
+    if (!isActive) return "border-muted-foreground/20"
+    
+    if (level <= 2) return "border-muted-foreground/50"
+    if (level <= 3) return "border-woices-sky/70"
+    return "border-woices-violet/80"
+  }
+
+  const getCenterColor = () => {
+    if (currentRating <= 2) return "bg-muted-foreground/50"
+    if (currentRating <= 3) return "bg-woices-sky"
+    return "bg-woices-violet"
+  }
+
   return (
     <div className={`flex flex-col items-center gap-2 ${className}`}>
       <div className={`relative ${sizeClasses[size]} flex items-center justify-center`}>
@@ -67,22 +82,17 @@ export const EchoLevels = ({
           return (
             <div
               key={level}
-              className={`absolute rounded-full border-2 transition-all duration-300 cursor-pointer
-                ${isActive 
-                  ? level <= 2 
-                    ? "border-muted-foreground/40" 
-                    : level <= 3 
-                    ? "border-woices-sky/60" 
-                    : "border-woices-violet"
-                  : "border-muted-foreground/20"
-                }
-                ${interactive ? "hover:scale-110" : ""}
+              className={`
+                absolute rounded-full border transition-all duration-300
+                ${getRippleColor(level, isActive)}
+                ${interactive ? "cursor-pointer hover:scale-105" : ""}
                 ${isActive && interactive ? "animate-pulse" : ""}
               `}
               style={{
                 width: `${rippleSize}px`,
                 height: `${rippleSize}px`,
-                animationDuration: `${2 + level * 0.3}s`
+                borderWidth: '1.5px',
+                animationDuration: `${2 + level * 0.2}s`
               }}
               onClick={() => handleClick(level)}
               onMouseEnter={() => handleMouseEnter(level)}
@@ -94,12 +104,7 @@ export const EchoLevels = ({
         {/* Center dot */}
         <div className={`
           w-2 h-2 rounded-full transition-all duration-300
-          ${currentRating <= 2 
-            ? "bg-muted-foreground/60" 
-            : currentRating <= 3 
-            ? "bg-woices-sky" 
-            : "bg-woices-violet"
-          }
+          ${getCenterColor()}
           ${interactive && currentRating > 0 ? "animate-pulse" : ""}
         `} />
       </div>

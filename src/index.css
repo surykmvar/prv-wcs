@@ -43,6 +43,11 @@
     --woices-sky: 199 89% 48%;
     --woices-mint: 162 63% 41%;
 
+    /* Waveform Colors - Light Mode */
+    --waveform-color: 220 13% 82%; /* light grey for unplayed */
+    --waveform-progress-color: 199 89% 48%; /* woices-sky for played */
+    --waveform-active-color: 262 83% 58%; /* woices-violet for active */
+
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
@@ -98,6 +103,11 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Waveform Colors - Dark Mode */
+    --waveform-color: 217.2 32.6% 25%; /* darker grey for unplayed */
+    --waveform-progress-color: 199 89% 48%; /* woices-sky for played */
+    --waveform-active-color: 199 89% 48%; /* woices-sky for active */
   }
 }
 @layer base {
