@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Star, User, MapPin } from "lucide-react"
+import { User } from "lucide-react"
 import { useState } from "react"
+import { VoiceReviewPlayer } from "./VoiceReviewPlayer"
+import { EchoLevels } from "./EchoLevels"
 
 interface VoiceReview {
   id: string
@@ -55,24 +56,6 @@ export const VoiceWidgetDemo = () => {
     setCurrentPlaying(currentPlaying === reviewId ? null : reviewId)
   }
 
-  const WaveformAnimation = ({ isPlaying }: { isPlaying: boolean }) => (
-    <div className="flex items-center gap-0.5 h-8">
-      {[...Array(20)].map((_, i) => (
-        <div
-          key={i}
-          className={`w-0.5 bg-gradient-to-t from-woices-violet to-woices-sky rounded-full transition-all duration-150 ${
-            isPlaying ? 'animate-pulse' : ''
-          }`}
-          style={{
-            height: `${Math.random() * 16 + 8}px`,
-            animationDelay: `${i * 50}ms`,
-            opacity: isPlaying ? 1 : 0.6
-          }}
-        />
-      ))}
-    </div>
-  )
-
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
@@ -87,54 +70,17 @@ export const VoiceWidgetDemo = () => {
         </div>
         <div className="grid gap-3">
           {sampleReviews.map((review) => (
-            <Card key={review.id} className="border-border/30 hover:border-woices-violet/30 transition-all duration-300">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-woices-violet to-woices-sky flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{review.reviewerName}</p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <MapPin className="w-3 h-3" />
-                        {review.location} • {review.date}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="w-3 h-3 fill-woices-mint text-woices-mint" />
-                    ))}
-                  </div>
-                </div>
-                
-                <p className="text-sm text-muted-foreground mb-3">
-                  Voice review for: <span className="font-medium text-foreground">{review.productName}</span>
-                </p>
-                
-                <div className="flex items-center gap-3 bg-muted/30 rounded-lg p-3">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handlePlayPause(review.id)}
-                    className="w-8 h-8 p-0 rounded-full bg-woices-violet hover:bg-woices-violet/90 text-white"
-                  >
-                    {currentPlaying === review.id ? (
-                      <Pause className="w-3 h-3" />
-                    ) : (
-                      <Play className="w-3 h-3 ml-0.5" />
-                    )}
-                  </Button>
-                  
-                  <div className="flex-1">
-                    <WaveformAnimation isPlaying={currentPlaying === review.id} />
-                  </div>
-                  
-                  <span className="text-xs text-muted-foreground">{review.duration}s</span>
-                </div>
-              </CardContent>
-            </Card>
+            <VoiceReviewPlayer
+              key={review.id}
+              reviewerName={review.reviewerName}
+              productName={review.productName}
+              duration={review.duration}
+              rating={review.rating}
+              location={review.location}
+              date={review.date}
+              isPlaying={currentPlaying === review.id}
+              onPlayPause={() => handlePlayPause(review.id)}
+            />
           ))}
         </div>
       </div>
@@ -158,29 +104,19 @@ export const VoiceWidgetDemo = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="bg-muted/30 rounded-lg p-3 mb-3">
-                <div className="flex items-center gap-3">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="w-8 h-8 p-0 rounded-full bg-woices-violet hover:bg-woices-violet/90 text-white"
-                  >
-                    <Play className="w-3 h-3 ml-0.5" />
-                  </Button>
-                  <div className="flex-1">
-                    <WaveformAnimation isPlaying={false} />
-                  </div>
-                  <span className="text-xs text-muted-foreground">28s</span>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
+              <VoiceReviewPlayer
+                reviewerName="Sarah Chen"
+                productName="Product Design Service"
+                duration={28}
+                rating={5}
+                location="New York, NY"
+                date="2 days ago"
+                isPlaying={false}
+                className="border-0 bg-transparent p-0"
+              />
+              <p className="text-xs text-muted-foreground mt-2">
                 "Amazing experience with their design service..."
               </p>
-              <div className="flex items-center gap-1 mt-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-woices-mint text-woices-mint" />
-                ))}
-              </div>
             </CardContent>
           </Card>
         </div>
