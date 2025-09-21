@@ -8,8 +8,9 @@ import { ContactSalesModal } from "@/components/ContactSalesModal"
 import { SparkleField } from "@/components/SparkleField"
 import { FoundersNoteToggle } from "@/components/FoundersNoteToggle"
 import { Helmet } from "react-helmet-async"
-import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User } from "lucide-react"
+import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, MousePointer } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { VoiceWidgetDemo } from "@/components/VoiceWidgetDemo"
 
 const Landing = () => {
   const navigate = useNavigate()
@@ -45,23 +46,46 @@ const Landing = () => {
   const benefits = [
     {
       icon: <Shield className="w-6 h-6 text-woices-violet" />,
-      title: "Authenticity",
-      description: "Fake text reviews plague the internet; real voices are hard to fake."
+      title: "Trust & Authenticity",
+      description: "Voice reviews are a revolutionary new form of authentic feedback—instantly recognizable as real human emotion that's nearly impossible to fake."
     },
     {
       icon: <Code className="w-6 h-6 text-woices-sky" />,
-      title: "Portability",
-      description: "iFrame/API widget works anywhere (websites, Notion, Shopify, Webflow, etc.)."
+      title: "Universal Integration",
+      description: "Our API widget works seamlessly anywhere—websites, Notion, Shopify, Webflow, social media, and mobile apps."
     },
     {
       icon: <Users className="w-6 h-6 text-woices-mint" />,
-      title: "Trust",
-      description: "Reviews are hosted where the creator/business wants, no need to join a new network."
+      title: "Complete Control",
+      description: "Reviews live on your platform under your brand. No dependency on external review networks or third-party credibility."
     },
     {
       icon: <Zap className="w-6 h-6 text-woices-bloom" />,
-      title: "Simplicity",
-      description: "One-click voice recording, automatic transcript + AI summary."
+      title: "Effortless Experience",
+      description: "One-click voice recording with automatic transcription, AI analysis, and beautiful presentation—no technical setup required."
+    }
+  ]
+
+  const howItWorksSteps = [
+    {
+      icon: <MousePointer className="w-6 h-6 text-woices-violet" />,
+      title: "Create Your Topic",
+      description: "Start a voice review topic about your product, service, or experience in seconds."
+    },
+    {
+      icon: <Share2 className="w-6 h-6 text-woices-sky" />,
+      title: "Share the Link",
+      description: "Send the simple link to your customers via email, SMS, social media, or embed it on your website."
+    },
+    {
+      icon: <Mic className="w-6 h-6 text-woices-mint" />,
+      title: "Collect Voice Feedback",
+      description: "Customers leave authentic voice reviews with one click—no app downloads or account creation required."
+    },
+    {
+      icon: <Star className="w-6 h-6 text-woices-bloom" />,
+      title: "Showcase Reviews",
+      description: "Display beautiful voice review widgets on your website, social media, or anywhere you want to build trust."
     }
   ]
 
@@ -105,6 +129,10 @@ const Landing = () => {
     {
       question: "Can I control which reviews are shown?",
       answer: "Absolutely! You have full control over moderation and can showcase the best reviews while filtering out inappropriate content. Your brand, your rules."
+    },
+    {
+      question: "Does this have AI features, or what premium features do I get when I pay?",
+      answer: "Yes! Our premium features include: AI-powered automatic transcription, sentiment analysis and review categorization, advanced moderation tools, custom branding options, detailed analytics dashboard, priority customer support, and API access for seamless integrations. Free users can still create voice topics and collect basic feedback."
     },
     {
       question: "What's the pricing for API access?",
@@ -171,8 +199,8 @@ const Landing = () => {
                     onClick={() => navigate('/start')}
                     className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                   >
-                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Try the Demo
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                    Begin
                   </Button>
                 </div>
 
@@ -227,6 +255,35 @@ const Landing = () => {
             </div>
           </section>
 
+          {/* How It Works */}
+          <section className="py-12 sm:py-16 md:py-20 px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">How It Works</h2>
+                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
+                  Get started in minutes—no technical expertise required. Perfect for businesses, creators, and entrepreneurs of all sizes.
+                </p>
+              </div>
+              
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                {howItWorksSteps.map((step, index) => (
+                  <div key={index} className="text-center group">
+                    <div className="relative mb-6">
+                      <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        {step.icon}
+                      </div>
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-woices-violet text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        {index + 1}
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* Core Benefits */}
           <section className="py-12 sm:py-16 md:py-20 px-4">
             <div className="max-w-6xl mx-auto">
@@ -252,6 +309,22 @@ const Landing = () => {
             </div>
           </section>
 
+          {/* Widget Demo */}
+          <section className="py-12 sm:py-16 md:py-20 px-4 bg-card/50">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">See Voice Reviews in Action</h2>
+                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
+                  Experience how voice reviews look when embedded on websites, social media, and mobile apps. 
+                  This is what your customers will see and interact with.
+                </p>
+              </div>
+              
+              <div className="max-w-4xl mx-auto">
+                <VoiceWidgetDemo />
+              </div>
+            </div>
+          </section>
 
           {/* Roadmap */}
           <section className="py-12 sm:py-16 md:py-20 px-4">
@@ -382,8 +455,8 @@ const Landing = () => {
                     onClick={() => navigate('/start')}
                     className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium border-woices-violet/30 hover:border-woices-violet/50 w-full sm:w-auto"
                   >
-                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Try the Demo
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                    Begin
                   </Button>
                 </div>
 
