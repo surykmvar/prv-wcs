@@ -368,7 +368,7 @@ const Landing = () => {
                       <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         {step.icon}
                       </div>
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-woices-violet text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-woices-violet text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
                         {index + 1}
                       </div>
                     </div>
