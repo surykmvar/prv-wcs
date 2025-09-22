@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Play, Pause, RotateCcw } from 'lucide-react'
+import { Play, Pause, RotateCcw, Zap } from 'lucide-react'
 import { DynamicWaveform } from './DynamicWaveform'
 import { VotingButtons } from './VotingButtons'
+import { EchoLevels } from './EchoLevels'
+import { computeVoiceOutcome } from '@/utils/voteUtils'
 import { useAudioUrl } from '@/hooks/useAudioUrl'
 
 interface ModernVoicePlayerProps {
@@ -212,80 +214,107 @@ export function ModernVoicePlayer({
   }
 
 
+  // Calculate rating based on votes for ripple display
+  const outcome = computeVoiceOutcome({ 
+    fact: factVotes, 
+    myth: mythVotes, 
+    unclear: unclearVotes 
+  })
+  
+  // Convert outcome to rating (1-5 scale)
+  const getRatingFromOutcome = () => {
+    if (outcome.total === 0) return 0
+    if (outcome.code === 'bloom') return 5
+    if (outcome.code === 'unclear') return 3
+    if (outcome.code === 'dust') return 1
+    return 0
+  }
+
   return (
-    <Card className={`rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${className}`}>
-      <CardContent className="p-3 sm:p-4">
+    <Card className="w-full mb-3 sm:mb-4 bg-gradient-to-br from-card to-card/80 border-border/50">
+      <CardContent className="p-2 sm:p-4">
         {!controlled && <audio ref={audioRef} src={signedUrl} preload="metadata" />}
         
-        {/* Main Player */}
-        <div className="space-y-3 sm:space-y-4">
-          {/* Play Controls & Waveform */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={togglePlayPause}
-              className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-full p-0"
-            >
-              {isPlaying ? (
-                <Pause className="h-3 w-3 sm:h-4 sm:w-4" />
-              ) : (
-                <Play className="h-3 w-3 sm:h-4 sm:w-4" />
-              )}
-            </Button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Play/Pause Button */}
+          <Button
+            onClick={togglePlayPause}
+            size="sm"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white flex-shrink-0"
+          >
+            {isPlaying ? (
+              <Pause className="w-3 h-3 sm:w-4 sm:h-4" />
+            ) : (
+              <Play className="w-3 h-3 sm:w-4 sm:h-4 ml-0.5" />
+            )}
+          </Button>
 
-            {/* Clickable Waveform Visualization */}
-            <div 
-              className="flex-1 relative min-w-0 cursor-pointer group"
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                const x = e.clientX - rect.left
-                const progress = x / rect.width
-                handleWaveformClick(Math.max(0, Math.min(1, progress)))
-              }}
-            >
-              <DynamicWaveform 
-                isPlaying={isPlaying}
-                progress={audioDuration > 0 ? currentTime / audioDuration : 0}
-                className="hover:opacity-80 transition-opacity"
-              />
-            </div>
-
-            {/* Duration & Controls */}
-            <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-              <span className="text-xs text-muted-foreground font-mono text-right min-w-[2.5rem] sm:min-w-[3rem]">
-                <span className="hidden sm:inline">{formatTime(currentTime)}/{formatTime(audioDuration)}</span>
-                <span className="sm:hidden">{formatTime(audioDuration)}</span>
-              </span>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={togglePlaybackSpeed}
-                className="flex-shrink-0 w-8 sm:w-10 text-xs font-medium h-6 sm:h-8 px-0"
-              >
-                {playbackRate}x
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={restart}
-                className="flex-shrink-0 h-6 w-6 sm:h-8 sm:w-8 p-0"
-              >
-                <RotateCcw className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-              </Button>
-            </div>
+          {/* Waveform Container */}
+          <div 
+            className="flex-1 min-w-0 cursor-pointer" 
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect()
+              const x = e.clientX - rect.left
+              const progress = x / rect.width
+              handleWaveformClick(Math.max(0, Math.min(1, progress)))
+            }}
+          >
+            <DynamicWaveform
+              isPlaying={isPlaying}
+              progress={audioDuration > 0 ? currentTime / audioDuration : 0}
+              className="h-6 sm:h-8"
+            />
           </div>
 
-          {/* Voting Section */}
-          <div className="border-t pt-3 sm:pt-4">
+          {/* Time Display */}
+          <div className="text-xs sm:text-sm text-muted-foreground tabular-nums min-w-[45px] sm:min-w-[60px] text-right flex-shrink-0">
+            {isPlaying 
+              ? `${formatTime(audioDuration - currentTime)} left`
+              : formatTime(audioDuration)
+            }
+          </div>
+
+          {/* Playback Speed */}
+          <Button
+            onClick={togglePlaybackSpeed}
+            variant="ghost"
+            size="sm"
+            className="text-xs font-medium px-1 sm:px-2 h-6 sm:h-8 min-w-[32px] sm:min-w-[40px] hover:bg-muted/50 flex-shrink-0"
+          >
+            <Zap className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
+            {playbackRate}x
+          </Button>
+
+          {/* Restart Button */}
+          <Button
+            onClick={restart}
+            variant="ghost"
+            size="sm"
+            className="w-6 h-6 sm:w-8 sm:h-8 p-0 hover:bg-muted/50 flex-shrink-0"
+          >
+            <RotateCcw className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+          </Button>
+        </div>
+
+        {/* Voting and Rating Section */}
+        <div className="mt-3 sm:mt-4 flex items-center justify-between gap-2 sm:gap-4">
+          {/* Voting Buttons - Left side */}
+          <div className="flex-1">
             <VotingButtons
               voiceResponseId={voiceResponseId}
               mythVotes={mythVotes}
               factVotes={factVotes}
               unclearVotes={unclearVotes}
-              className="flex justify-center"
+              className="flex justify-start"
+            />
+          </div>
+
+          {/* Ripple Rating - Right side */}
+          <div className="flex-shrink-0">
+            <EchoLevels 
+              rating={getRatingFromOutcome()} 
+              size="sm" 
+              className="justify-end"
             />
           </div>
         </div>

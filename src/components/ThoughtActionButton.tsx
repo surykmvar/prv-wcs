@@ -87,10 +87,13 @@ export function ThoughtActionButton({ thoughtId, onStartRecording }: ThoughtActi
           }`}
         >
           <Mic className="w-4 h-4 mr-2" />
-          <span className="sm:hidden">
+          <span className="md:hidden">
             {isAlreadyUploaded ? "Already uploaded Woice" : "Can't record"}
           </span>
-          <span className="hidden sm:inline">
+          <span className="hidden md:inline lg:hidden">
+            {isAlreadyUploaded ? "Already uploaded Woice" : submitMessage}
+          </span>
+          <span className="hidden lg:inline">
             {isAlreadyUploaded ? "You have already uploaded your Woice reply" : submitMessage}
           </span>
         </Button>
