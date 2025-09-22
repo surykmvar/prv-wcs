@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 import { Slider } from '@/components/ui/slider'
-import { VotingButtons } from './VotingButtons'
+import { EchoLevels } from './EchoLevels'
+import { DynamicWaveform } from './DynamicWaveform'
 import { useAudioUrl } from '@/hooks/useAudioUrl'
 
 interface ModernVoicePlayerProps {
@@ -210,27 +211,22 @@ export function ModernVoicePlayer({
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  // Create waveform visualization
-  const generateWaveform = () => {
-    const bars = window.innerWidth < 640 ? 25 : 40 // Fewer bars on mobile
-    const heights = Array.from({ length: bars }, () => Math.random() * 30 + 8) // Shorter bars
-    const progress = currentTime / audioDuration
+  // Convert votes to rating (1-5 scale)
+  const convertVotesToRating = (factVotes: number, mythVotes: number, unclearVotes: number) => {
+    const total = factVotes + mythVotes + unclearVotes
+    if (total === 0) return 0
     
-    return heights.map((height, index) => {
-      const isActive = index < progress * bars
-      return (
-        <div
-          key={index}
-          className={`w-0.5 sm:w-1 rounded-full transition-colors duration-150 ${
-            isActive 
-              ? 'bg-gradient-to-t from-woices-violet to-woices-bloom' 
-              : 'bg-muted'
-          }`}
-          style={{ height: `${height}%` }}
-        />
-      )
-    })
+    const factRatio = factVotes / total
+    const mythRatio = mythVotes / total
+    
+    if (factRatio > 0.7) return 5 // Amazing
+    if (factRatio > 0.5) return 4 // Good  
+    if (mythRatio > 0.7) return 1 // Bad
+    if (mythRatio > 0.5) return 2 // Poor
+    return 3 // Okay/Unclear
   }
+  
+  const currentRating = convertVotesToRating(factVotes, mythVotes, unclearVotes)
 
   return (
     <Card className={`rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${className}`}>
@@ -256,9 +252,11 @@ export function ModernVoicePlayer({
 
             {/* Waveform Visualization */}
             <div className="flex-1 relative min-w-0">
-              <div className="flex items-end justify-between h-6 sm:h-10 gap-px px-1">
-                {generateWaveform()}
-              </div>
+              <DynamicWaveform 
+                isPlaying={isPlaying}
+                progress={audioDuration > 0 ? currentTime / audioDuration : 0}
+                className="mb-1"
+              />
               
               {/* Timeline Scrubber */}
               <div className="mt-1">
@@ -299,14 +297,21 @@ export function ModernVoicePlayer({
             </div>
           </div>
 
-          {/* Voting Section */}
-          <VotingButtons
-            voiceResponseId={voiceResponseId}
-            mythVotes={mythVotes}
-            factVotes={factVotes}
-            unclearVotes={unclearVotes}
-            className="border-t pt-2 sm:pt-3"
-          />
+          {/* Rating Section with Echo Levels */}
+          <div className="border-t pt-3 sm:pt-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-muted-foreground">Community Rating:</span>
+              <EchoLevels 
+                rating={currentRating}
+                size="sm"
+                interactive={false}
+                className="transform scale-90"
+              />
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {factVotes + mythVotes + unclearVotes} votes
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
