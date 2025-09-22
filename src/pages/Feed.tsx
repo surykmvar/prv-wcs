@@ -71,7 +71,7 @@ const Feed = () => {
                   isOpen={true}
                   onStartRecording={handleStartRecording}
                   onClose={() => setShowTrendingDropdown(false)}
-                  onOpenAuth={() => navigate('/auth')}
+                  onOpenAuth={() => navigate('/auth?mode=signup&redirect=' + encodeURIComponent('/feed'))}
                 />
               </div>
             )}

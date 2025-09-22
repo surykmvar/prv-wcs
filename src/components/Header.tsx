@@ -64,13 +64,7 @@ export function Header() {
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => {
-              if (!user) {
-                navigate('/auth?mode=signup&redirect=' + encodeURIComponent('/feed'))
-              } else {
-                navigate('/feed')
-              }
-            }} 
+            onClick={() => navigate('/feed')}
             className="hidden sm:inline-flex"
           >
             Feed
@@ -78,13 +72,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
-              if (!user) {
-                navigate('/auth?mode=signup&redirect=' + encodeURIComponent('/feed'))
-              } else {
-                navigate('/feed')
-              }
-            }}
+            onClick={() => navigate('/feed')}
             className="sm:hidden"
             aria-label="Feed"
             title="Feed"
