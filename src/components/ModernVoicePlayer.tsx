@@ -28,8 +28,6 @@ interface ModernVoicePlayerProps {
   onSeek?: (seconds: number) => void
   onRestart?: () => void
   onToggleSpeed?: () => void
-  // Refresh callback
-  onRefresh?: () => void
 }
 
 export function ModernVoicePlayer({ 
@@ -49,8 +47,7 @@ export function ModernVoicePlayer({
   onTogglePlayPause,
   onSeek,
   onRestart,
-  onToggleSpeed,
-  onRefresh
+  onToggleSpeed
 }: ModernVoicePlayerProps) {
   const [internalIsPlaying, setInternalIsPlaying] = useState(false)
   const [internalCurrentTime, setInternalCurrentTime] = useState(0)
@@ -58,8 +55,7 @@ export function ModernVoicePlayer({
   const [internalPlaybackRate, setInternalPlaybackRate] = useState(1)
   const audioRef = useRef<HTMLAudioElement>(null)
   
-  // Local state for real-time vote updates and refresh functionality
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  // Local state for real-time vote updates
   const [localMythVotes, setLocalMythVotes] = useState(mythVotes)
   const [localFactVotes, setLocalFactVotes] = useState(factVotes)
   const [localUnclearVotes, setLocalUnclearVotes] = useState(unclearVotes)
@@ -198,22 +194,11 @@ export function ModernVoicePlayer({
   const restart = (e: React.MouseEvent) => {
     e.stopPropagation()
     
-    // If onRefresh is provided, treat this as a data refresh button
-    if (onRefresh) {
-      setIsRefreshing(true)
-      onRefresh()
-      // Reset refreshing state after a delay for visual feedback
-      setTimeout(() => setIsRefreshing(false), 1000)
-      return
-    }
-    
-    // Otherwise, restart audio playback (controlled mode)
     if (controlled && onRestart) {
       onRestart()
       return
     }
     
-    // Restart audio playback (uncontrolled mode)
     const audio = audioRef.current
     if (!audio) return
 
@@ -340,16 +325,6 @@ export function ModernVoicePlayer({
             {playbackRate}x
           </Button>
 
-          {/* Restart/Refresh Button */}
-          <Button
-            onClick={restart}
-            variant="ghost"
-            size="sm"
-            className="w-6 h-6 sm:w-8 sm:h-8 p-0 hover:bg-muted/50 flex-shrink-0"
-            disabled={isRefreshing}
-          >
-            <RotateCcw className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
-          </Button>
         </div>
 
         {/* Voting and Rating Section */}
