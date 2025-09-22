@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useAdminRole } from '@/hooks/useAdminRole'
 import { useCredits } from '@/hooks/useCredits'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User, Mic, Shield, GitBranch, CreditCard, Coins } from 'lucide-react'
+import { LogOut, User, Mic, Shield, GitBranch, CreditCard, Coins, Home, Play } from 'lucide-react'
 import { MembershipModal } from '@/components/MembershipModal'
 import { useState } from 'react'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -61,6 +61,28 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
+          
+          {/* Get Started Button */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/start')}
+            className="hidden sm:inline-flex"
+          >
+            Get Started
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/start')}
+            className="sm:hidden"
+            aria-label="Get Started"
+            title="Get Started"
+          >
+            <Play className="h-5 w-5" />
+          </Button>
+          
+          {/* Feed Button */}
           <Button 
             variant="ghost" 
             size="sm" 
