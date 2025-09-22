@@ -135,6 +135,98 @@ const Landing = () => {
       answer: "Yes! Our premium features include: AI-powered automatic transcription, sentiment analysis and review categorization, advanced moderation tools, custom branding options, detailed analytics dashboard, priority customer support, and API access for seamless integrations. Free users can still create voice topics and collect basic feedback."
     },
     {
+      question: "What subscription plans do you offer?",
+      answer: `<div class="space-y-6">
+        <div class="bg-gradient-to-r from-woices-violet/5 to-woices-sky/5 p-4 rounded-lg">
+          <h4 class="font-semibold text-lg mb-3 flex items-center gap-2">
+            💡 Subscription Plans
+          </h4>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="border-l-4 border-woices-violet pl-4">
+            <h5 class="font-semibold text-woices-violet mb-2">1. Pro Plan (for freelancers & solopreneurs)</h5>
+            <ul class="space-y-1 text-sm text-muted-foreground">
+              <li>• Embeddable voice review widget (iframe/JS snippet)</li>
+              <li>• Basic customization (colors, fonts, logo)</li>
+              <li>• Audio transcription → text format</li>
+              <li>• "Wall of Trust" page (auto-compiled review wall to share with clients)</li>
+              <li>• Light analytics (number of reviews, listens, and shares)</li>
+            </ul>
+          </div>
+          
+          <div class="border-l-4 border-woices-sky pl-4">
+            <h5 class="font-semibold text-woices-sky mb-2">2. Creator Plan (for influencers, artists, UGC creators)</h5>
+            <div class="text-sm text-muted-foreground mb-2">Everything in Pro, plus:</div>
+            <ul class="space-y-1 text-sm text-muted-foreground">
+              <li>• Advanced branding & widget styling (carousel, grid, single review card)</li>
+              <li>• AI-generated summaries of top feedback ("Top 3 things fans say")</li>
+              <li>• Shareable snippets for social media (Spotify-style cards/waveforms)</li>
+              <li>• Highlight & pin "best reviews" on profiles</li>
+              <li>• Engagement analytics (shares, replays, top supporters)</li>
+              <li>• UGC Monetization: tipping system (fans can tip creators when leaving reviews)</li>
+            </ul>
+          </div>
+          
+          <div class="border-l-4 border-woices-mint pl-4">
+            <h5 class="font-semibold text-woices-mint mb-2">3. Business Plan (for startups, SMEs, agencies, e-commerce)</h5>
+            <div class="text-sm text-muted-foreground mb-2">Everything in Creator, plus:</div>
+            <ul class="space-y-1 text-sm text-muted-foreground">
+              <li>• Team dashboard with moderation controls (approve/reject/feature reviews)</li>
+              <li>• Advanced analytics (review trends, audience insights, top-requested features)</li>
+              <li>• Voice emotion cues (highlights excitement, hesitation, frustration)</li>
+              <li>• AI categorization (auto-group reviews by product, topic, or theme)</li>
+              <li>• Review export (CSV, API access for integration into CRMs)</li>
+              <li>• "Enterprise Wall of Trust" → showcase page with embedded reviews across multiple products</li>
+              <li>• Priority support + API scaling</li>
+              <li>• Scales with business usage and customer range</li>
+            </ul>
+          </div>
+        </div>
+      </div>`
+    },
+    {
+      question: "What future features are you planning for users?",
+      answer: `<div class="space-y-6">
+        <div class="bg-gradient-to-r from-woices-mint/5 to-woices-bloom/5 p-4 rounded-lg">
+          <h4 class="font-semibold text-lg mb-3 flex items-center gap-2">
+            🎁 Future User-Side Incentives
+          </h4>
+          <p class="text-sm text-muted-foreground">
+            Keeping it clean, aspirational, and flexible — businesses see serious value, creators see monetization potential, and users feel motivated to contribute.
+          </p>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="border-l-4 border-woices-bloom pl-4">
+            <h5 class="font-semibold text-woices-bloom mb-2">Engagement Features</h5>
+            <ul class="space-y-1 text-sm text-muted-foreground">
+              <li>• <strong>Tipping:</strong> Fans/customers can tip creators or businesses for products/services they love</li>
+              <li>• <strong>Gamified Trust Score:</strong> Reviewers earn recognition when their reviews are upvoted, shared, or featured</li>
+              <li>• <strong>Reward/Coins System:</strong> Businesses can reward reviewers with perks, discounts, or exclusive access</li>
+              <li>• <strong>Top Trusted Voices:</strong> Highlighted reviewers gain visibility across the Woices network</li>
+            </ul>
+          </div>
+          
+          <div class="border-l-4 border-woices-violet pl-4">
+            <h5 class="font-semibold text-woices-violet mb-2">Community Benefits</h5>
+            <ul class="space-y-1 text-sm text-muted-foreground">
+              <li>• Recognition when reviews are upvoted, shared, or featured</li>
+              <li>• Visibility across the Woices network for top contributors</li>
+              <li>• Exclusive access and discounts from partnered businesses</li>
+              <li>• Creator and business reward programs for loyal reviewers</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="mt-4 p-3 bg-card rounded-lg border border-border/50">
+          <p class="text-xs text-muted-foreground italic">
+            👉 This keeps users engaged and motivated while providing businesses and creators with powerful tools to build authentic community around their brand.
+          </p>
+        </div>
+      </div>`
+    },
+    {
       question: "What's the pricing for API access?",
       answer: "We offer flexible pricing based on usage. Contact our sales team for a custom quote that fits your business needs."
     }
