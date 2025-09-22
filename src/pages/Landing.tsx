@@ -200,7 +200,7 @@ const Landing = () => {
                     className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium w-full sm:w-auto"
                   >
                     <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Begin
+                    Get Started
                   </Button>
                 </div>
 
