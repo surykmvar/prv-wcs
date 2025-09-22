@@ -481,6 +481,7 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                                   onSeek={isCurrentlyPlaying ? seek : undefined}
                                   onRestart={isCurrentlyPlaying ? () => seek(0) : undefined}
                                   onToggleSpeed={isCurrentlyPlaying ? cycleRate : undefined}
+                                  onRefresh={!isListening ? handleRefresh : undefined}
                                 />
                                 <div className="text-xs text-muted-foreground pl-1 flex items-center gap-2">
                                   <span>{formatTimeAgo(response.created_at)}</span>
