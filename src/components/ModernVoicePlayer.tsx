@@ -7,6 +7,7 @@ import { VotingButtons } from './VotingButtons'
 import { EchoLevels } from './EchoLevels'
 import { computeVoiceOutcome } from '@/utils/voteUtils'
 import { useAudioUrl } from '@/hooks/useAudioUrl'
+import { supabase } from '@/lib/supabase'
 
 interface ModernVoicePlayerProps {
   voiceResponseId: string
@@ -54,6 +55,11 @@ export function ModernVoicePlayer({
   const [internalPlaybackRate, setInternalPlaybackRate] = useState(1)
   const audioRef = useRef<HTMLAudioElement>(null)
   
+  // Local state for real-time vote updates
+  const [localMythVotes, setLocalMythVotes] = useState(mythVotes)
+  const [localFactVotes, setLocalFactVotes] = useState(factVotes)
+  const [localUnclearVotes, setLocalUnclearVotes] = useState(unclearVotes)
+  
   // Use controlled or internal state
   const isPlaying = controlled ? controlledIsPlaying : internalIsPlaying
   const currentTime = controlled ? controlledCurrentTime : internalCurrentTime
@@ -62,6 +68,40 @@ export function ModernVoicePlayer({
   
   // Get signed URL for audio playback (only if not controlled)
   const { signedUrl, loading: urlLoading, error: urlError } = useAudioUrl(controlled && !isActive ? null : audioUrl)
+
+  // Real-time subscription for vote updates
+  useEffect(() => {
+    // Update local vote counts when props change
+    setLocalMythVotes(mythVotes)
+    setLocalFactVotes(factVotes)
+    setLocalUnclearVotes(unclearVotes)
+
+    // Subscribe to real-time vote count updates for this specific voice response
+    const channel = supabase
+      .channel(`voice-response-${voiceResponseId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'voice_responses',
+          filter: `id=eq.${voiceResponseId}`
+        },
+        (payload) => {
+          const updatedResponse = payload.new as any
+          if (updatedResponse) {
+            setLocalMythVotes(updatedResponse.myth_votes || 0)
+            setLocalFactVotes(updatedResponse.fact_votes || 0)
+            setLocalUnclearVotes(updatedResponse.unclear_votes || 0)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [voiceResponseId, mythVotes, factVotes, unclearVotes])
 
   // Audio event handlers setup - only for uncontrolled mode
   useEffect(() => {
@@ -214,11 +254,11 @@ export function ModernVoicePlayer({
   }
 
 
-  // Calculate rating based on votes for ripple display
+  // Calculate rating based on real-time local votes for ripple display
   const outcome = computeVoiceOutcome({ 
-    fact: factVotes, 
-    myth: mythVotes, 
-    unclear: unclearVotes 
+    fact: localFactVotes, 
+    myth: localMythVotes, 
+    unclear: localUnclearVotes 
   })
   
   // Convert outcome to rating (1-5 scale)
@@ -302,9 +342,9 @@ export function ModernVoicePlayer({
           <div className="flex-1">
             <VotingButtons
               voiceResponseId={voiceResponseId}
-              mythVotes={mythVotes}
-              factVotes={factVotes}
-              unclearVotes={unclearVotes}
+              mythVotes={localMythVotes}
+              factVotes={localFactVotes}
+              unclearVotes={localUnclearVotes}
               className="flex justify-start"
             />
           </div>
