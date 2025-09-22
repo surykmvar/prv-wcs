@@ -230,8 +230,8 @@ export function VotingButtons({
     <TooltipProvider>
       <div className={`space-y-2 ${className}`}>        
         {/* Emoji Reactions Only */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -239,11 +239,11 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('fact')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-primary/10 hover:scale-110 ${
+                  className={`h-8 w-8 sm:h-10 sm:w-10 p-0 rounded-full transition-all duration-300 hover:bg-primary/10 hover:scale-110 ${
                     userVote === 'fact' ? 'ring-2 ring-green-500 bg-green-500/10' : ''
                   } ${animatingButton === 'fact' ? 'animate-pulse' : ''}`}
                 >
-                  🎯
+                  <span className="text-sm sm:text-base">🎯</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -251,7 +251,7 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-              className={`text-sm font-medium transition-all duration-300 ${
+              className={`text-xs sm:text-sm font-medium transition-all duration-300 min-w-[1rem] text-center ${
                 userVote === 'fact' 
                   ? 'text-green-600 font-bold' 
                   : 'text-muted-foreground'
@@ -261,7 +261,7 @@ export function VotingButtons({
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -269,11 +269,11 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('myth')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-[#06AFE2]/10 hover:scale-110 ${
+                  className={`h-8 w-8 sm:h-10 sm:w-10 p-0 rounded-full transition-all duration-300 hover:bg-[#06AFE2]/10 hover:scale-110 ${
                     userVote === 'myth' ? 'ring-2 ring-[#06AFE2] bg-[#06AFE2]/10' : ''
                   } ${animatingButton === 'myth' ? 'animate-pulse' : ''}`}
                 >
-                  ⛓️‍💥
+                  <span className="text-sm sm:text-base">⛓️‍💥</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -281,7 +281,7 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-               className={`text-sm font-medium transition-all duration-300 ${
+               className={`text-xs sm:text-sm font-medium transition-all duration-300 min-w-[1rem] text-center ${
                 userVote === 'myth' 
                   ? 'text-[#06AFE2] font-bold' 
                   : 'text-muted-foreground'
@@ -291,7 +291,7 @@ export function VotingButtons({
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -299,11 +299,11 @@ export function VotingButtons({
                   size="sm"
                   onClick={() => handleVote('unclear')}
                   disabled={loading}
-                  className={`h-8 w-8 p-0 rounded-full transition-all duration-300 hover:bg-destructive/10 hover:scale-110 ${
+                  className={`h-8 w-8 sm:h-10 sm:w-10 p-0 rounded-full transition-all duration-300 hover:bg-destructive/10 hover:scale-110 ${
                     userVote === 'unclear' ? 'ring-2 ring-red-500 bg-red-500/10' : ''
                   } ${animatingButton === 'unclear' ? 'animate-pulse' : ''}`}
                 >
-                  ❓
+                  <span className="text-sm sm:text-base">❓</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -311,7 +311,7 @@ export function VotingButtons({
               </TooltipContent>
             </Tooltip>
             <span 
-               className={`text-sm font-medium transition-all duration-300 ${
+               className={`text-xs sm:text-sm font-medium transition-all duration-300 min-w-[1rem] text-center ${
                 userVote === 'unclear' 
                   ? 'text-red-600 font-bold' 
                   : 'text-muted-foreground'

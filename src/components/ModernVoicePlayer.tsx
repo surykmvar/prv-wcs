@@ -2,9 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Play, Pause, RotateCcw } from 'lucide-react'
-import { Slider } from '@/components/ui/slider'
-import { EchoLevels } from './EchoLevels'
 import { DynamicWaveform } from './DynamicWaveform'
+import { VotingButtons } from './VotingButtons'
 import { useAudioUrl } from '@/hooks/useAudioUrl'
 
 interface ModernVoicePlayerProps {
@@ -168,18 +167,19 @@ export function ModernVoicePlayer({
     }
   }
 
-  const handleSliderChange = (value: number[]) => {
+  const handleWaveformClick = (progress: number) => {
+    const seekTime = progress * audioDuration
+    
     if (controlled && onSeek) {
-      onSeek(value[0])
+      onSeek(seekTime)
       return
     }
     
     const audio = audioRef.current
     if (!audio) return
 
-    const newTime = value[0]
-    audio.currentTime = newTime
-    setInternalCurrentTime(newTime)
+    audio.currentTime = seekTime
+    setInternalCurrentTime(seekTime)
   }
 
   const togglePlaybackSpeed = (e: React.MouseEvent) => {
@@ -211,22 +211,6 @@ export function ModernVoicePlayer({
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  // Convert votes to rating (1-5 scale)
-  const convertVotesToRating = (factVotes: number, mythVotes: number, unclearVotes: number) => {
-    const total = factVotes + mythVotes + unclearVotes
-    if (total === 0) return 0
-    
-    const factRatio = factVotes / total
-    const mythRatio = mythVotes / total
-    
-    if (factRatio > 0.7) return 5 // Amazing
-    if (factRatio > 0.5) return 4 // Good  
-    if (mythRatio > 0.7) return 1 // Bad
-    if (mythRatio > 0.5) return 2 // Poor
-    return 3 // Okay/Unclear
-  }
-  
-  const currentRating = convertVotesToRating(factVotes, mythVotes, unclearVotes)
 
   return (
     <Card className={`rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${className}`}>
@@ -250,31 +234,28 @@ export function ModernVoicePlayer({
               )}
             </Button>
 
-            {/* Waveform Visualization */}
-            <div className="flex-1 relative min-w-0">
+            {/* Clickable Waveform Visualization */}
+            <div 
+              className="flex-1 relative min-w-0 cursor-pointer group"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect()
+                const x = e.clientX - rect.left
+                const progress = x / rect.width
+                handleWaveformClick(Math.max(0, Math.min(1, progress)))
+              }}
+            >
               <DynamicWaveform 
                 isPlaying={isPlaying}
                 progress={audioDuration > 0 ? currentTime / audioDuration : 0}
-                className="mb-1"
+                className="hover:opacity-80 transition-opacity"
               />
-              
-              {/* Timeline Scrubber */}
-              <div className="mt-1">
-                <Slider
-                  value={[currentTime]}
-                  max={audioDuration || 100}
-                  step={0.1}
-                  onValueChange={handleSliderChange}
-                  className="w-full"
-                />
-              </div>
             </div>
 
             {/* Duration & Controls */}
             <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-              <span className="text-xs text-muted-foreground font-mono text-right min-w-[2rem] sm:min-w-[2.5rem]">
+              <span className="text-xs text-muted-foreground font-mono text-right min-w-[2.5rem] sm:min-w-[3rem]">
                 <span className="hidden sm:inline">{formatTime(currentTime)}/{formatTime(audioDuration)}</span>
-                <span className="sm:hidden">{formatTime(currentTime)}</span>
+                <span className="sm:hidden">{formatTime(audioDuration)}</span>
               </span>
               
               <Button
@@ -297,20 +278,15 @@ export function ModernVoicePlayer({
             </div>
           </div>
 
-          {/* Rating Section with Echo Levels */}
-          <div className="border-t pt-3 sm:pt-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-muted-foreground">Community Rating:</span>
-              <EchoLevels 
-                rating={currentRating}
-                size="sm"
-                interactive={false}
-                className="transform scale-90"
-              />
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {factVotes + mythVotes + unclearVotes} votes
-            </div>
+          {/* Voting Section */}
+          <div className="border-t pt-3 sm:pt-4">
+            <VotingButtons
+              voiceResponseId={voiceResponseId}
+              mythVotes={mythVotes}
+              factVotes={factVotes}
+              unclearVotes={unclearVotes}
+              className="flex justify-center"
+            />
           </div>
         </div>
       </CardContent>

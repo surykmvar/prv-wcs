@@ -22,18 +22,18 @@ export const DynamicWaveform = ({ isPlaying, progress, className = "" }: Dynamic
   const progressPoint = progress * waveformData.length
 
   return (
-    <div className={`flex items-center justify-center gap-[1px] h-8 w-full px-1 ${className}`}>
+    <div className={`flex items-center justify-center gap-[1px] h-6 sm:h-8 w-full px-1 ${className}`}>
       {waveformData.map((amplitude, index) => {
         const isPlayed = index < progressPoint
         const isActive = isPlaying && Math.abs(index - progressPoint) < 2
         
-        const height = Math.max(4, amplitude * 28) // min 4px, max 28px
+        const height = Math.max(3, amplitude * 20) // min 3px, max 20px for mobile
         
         return (
           <div
             key={index}
             className={`
-              w-[3px] rounded-full transition-all duration-150 flex-shrink-0
+              w-[2px] sm:w-[3px] rounded-full transition-all duration-150 flex-shrink-0
               ${isActive ? "scale-y-110" : ""}
             `}
             style={{ 

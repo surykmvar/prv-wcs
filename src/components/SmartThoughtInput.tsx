@@ -85,21 +85,21 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
           aria-hidden
         />
         
-        <div className="relative flex items-center h-20 gap-3">
+        <div className="relative flex items-center h-14 sm:h-16 md:h-20 gap-2 sm:gap-3">
           {/* Main input button - enhanced */}
           <button
             onClick={handleFocus}
-            className="group relative flex-1 h-full pl-14 pr-6 bg-card/90 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-lg hover:shadow-2xl hover:shadow-primary/5 hover:scale-[1.01] active:scale-[0.99] transition-all duration-500 ease-out overflow-hidden"
+            className="group relative flex-1 h-full pl-8 sm:pl-12 md:pl-14 pr-3 sm:pr-4 md:pr-6 bg-card/90 backdrop-blur-2xl border border-border/50 rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl hover:shadow-primary/5 hover:scale-[1.01] active:scale-[0.99] transition-all duration-500 ease-out overflow-hidden"
             aria-label="Ask a question or share a thought"
           >
             {/* Subtle gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.02] via-transparent to-accent/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             {/* Chevron icon - enhanced */}
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10">
+            <div className="absolute left-3 sm:left-4 md:left-5 top-1/2 -translate-y-1/2 z-10">
               <div className="relative">
-                <ChevronRight className="w-5 h-5 text-muted-foreground/70 group-hover:text-primary/80 transition-all duration-300 group-hover:translate-x-0.5" />
-                <div className="absolute inset-0 w-5 h-5 bg-primary/20 rounded-full opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300" />
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground/70 group-hover:text-primary/80 transition-all duration-300 group-hover:translate-x-0.5" />
+                <div className="absolute inset-0 w-4 h-4 sm:w-5 sm:h-5 bg-primary/20 rounded-full opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300" />
               </div>
             </div>
             
@@ -114,7 +114,7 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       exit={{ opacity: 0, y: -25, filter: "blur(4px)" }}
                       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                      className="text-muted-foreground/90 text-base sm:text-lg font-medium leading-relaxed tracking-wide"
+                      className="text-muted-foreground/90 text-sm sm:text-base md:text-lg font-medium leading-relaxed tracking-wide"
                     >
                       {thoughtSuggestions[currentSuggestion]}
                     </motion.div>
@@ -125,7 +125,7 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-muted-foreground/90 text-base sm:text-lg font-medium"
+                    className="text-muted-foreground/90 text-sm sm:text-base md:text-lg font-medium"
                   >
                     What's your thought or question?
                   </motion.div>
@@ -137,7 +137,7 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
           {/* Mic button - enhanced */}
           <button
             onClick={onMicClick}
-            className="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/90 to-primary shadow-lg hover:shadow-2xl hover:shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center z-10 group overflow-hidden"
+            className="relative w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary/90 to-primary shadow-lg hover:shadow-2xl hover:shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center z-10 group overflow-hidden"
             aria-label="Record voice response"
           >
             {/* Animated background pulse */}
@@ -151,7 +151,7 @@ export function SmartThoughtInput({ onFocus, onMicClick, className }: SmartThoug
             />
             
             {/* Mic icon */}
-            <Mic className="w-6 h-6 text-primary-foreground drop-shadow-sm group-hover:scale-110 group-active:scale-90 transition-transform duration-200" />
+            <Mic className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground drop-shadow-sm group-hover:scale-110 group-active:scale-90 transition-transform duration-200" />
             
             {/* Subtle shine effect */}
             <motion.div

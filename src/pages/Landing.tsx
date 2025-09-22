@@ -285,7 +285,7 @@ const Landing = () => {
           </section>
 
           {/* Core Benefits */}
-          <section className="py-12 sm:py-16 md:py-20 px-4">
+          <section className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-br from-woices-violet/5 via-background to-woices-mint/5">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-12 sm:mb-16">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">Why Voice Reviews Work Better</h2>
@@ -295,15 +295,23 @@ const Landing = () => {
                 </p>
               </div>
               
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              <div className="grid sm:grid-cols-2 gap-8 sm:gap-12">
                 {benefits.map((benefit, index) => (
-                  <div key={index} className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center">
-                      {benefit.icon}
-                    </div>
-                    <h3 className="text-xl font-semibold mb-4">{benefit.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{benefit.description}</p>
-                  </div>
+                  <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-woices-violet/30">
+                    <CardContent className="p-6 sm:p-8">
+                      <div className="flex items-start gap-6">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            {benefit.icon}
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg sm:text-xl font-semibold mb-3 text-foreground">{benefit.title}</h3>
+                          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{benefit.description}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
