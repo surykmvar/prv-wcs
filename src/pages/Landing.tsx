@@ -8,7 +8,7 @@ import { ContactSalesModal } from "@/components/ContactSalesModal"
 import { SparkleField } from "@/components/SparkleField"
 import { FoundersNoteToggle } from "@/components/FoundersNoteToggle"
 import { Helmet } from "react-helmet-async"
-import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, MousePointer } from "lucide-react"
+import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, MousePointer, ArrowRight, ArrowDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { VoiceWidgetDemo } from "@/components/VoiceWidgetDemo"
 
@@ -361,21 +361,108 @@ const Landing = () => {
                 </p>
               </div>
               
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                {howItWorksSteps.map((step, index) => (
-                  <div key={index} className="text-center group">
-                    <div className="relative mb-6">
-                      <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div className="relative">
+                {/* Desktop Flow - Horizontal with Arrows */}
+                <div className="hidden lg:grid lg:grid-cols-4 gap-8">
+                  {howItWorksSteps.map((step, index) => (
+                    <div key={index} className="relative text-center group">
+                      {/* Step Label */}
+                      <div className="mb-4">
+                        <span className="inline-block px-3 py-1 text-sm font-semibold text-woices-violet bg-woices-violet/10 rounded-full">
+                          Step {index + 1}
+                        </span>
+                      </div>
+                      
+                      {/* Icon Container */}
+                      <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-6">
                         {step.icon}
                       </div>
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-woices-violet text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
-                        {index + 1}
-                      </div>
+                      
+                      {/* Content */}
+                      <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                      
+                      {/* Connecting Arrow */}
+                      {index < howItWorksSteps.length - 1 && (
+                        <div className="absolute top-16 -right-4 w-8 h-8 flex items-center justify-center">
+                          <ArrowRight className="w-5 h-5 text-woices-violet/60" />
+                        </div>
+                      )}
                     </div>
-                    <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{step.description}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                {/* Tablet Layout - 2x2 Grid */}
+                <div className="hidden sm:grid lg:hidden sm:grid-cols-2 gap-8">
+                  {howItWorksSteps.map((step, index) => (
+                    <div key={index} className="relative text-center group">
+                      {/* Step Label */}
+                      <div className="mb-4">
+                        <span className="inline-block px-3 py-1 text-sm font-semibold text-woices-violet bg-woices-violet/10 rounded-full">
+                          Step {index + 1}
+                        </span>
+                      </div>
+                      
+                      {/* Icon Container */}
+                      <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-6">
+                        {step.icon}
+                      </div>
+                      
+                      {/* Content */}
+                      <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                      
+                      {/* Connecting Arrows for Reading Order */}
+                      {index === 0 && (
+                        <div className="absolute top-16 -right-4 w-8 h-8 flex items-center justify-center">
+                          <ArrowRight className="w-5 h-5 text-woices-violet/60" />
+                        </div>
+                      )}
+                      {index === 1 && (
+                        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 flex items-center justify-center">
+                          <ArrowDown className="w-5 h-5 text-woices-violet/60" />
+                        </div>
+                      )}
+                      {index === 2 && (
+                        <div className="absolute top-16 -right-4 w-8 h-8 flex items-center justify-center">
+                          <ArrowRight className="w-5 h-5 text-woices-violet/60" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Mobile Layout - Vertical Stack */}
+                <div className="grid sm:hidden grid-cols-1 gap-8">
+                  {howItWorksSteps.map((step, index) => (
+                    <div key={index} className="relative text-center group">
+                      {/* Step Label */}
+                      <div className="mb-4">
+                        <span className="inline-block px-3 py-1 text-sm font-semibold text-woices-violet bg-woices-violet/10 rounded-full">
+                          Step {index + 1}
+                        </span>
+                      </div>
+                      
+                      {/* Icon Container */}
+                      <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-woices-violet/10 to-woices-sky/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-6">
+                        {step.icon}
+                      </div>
+                      
+                      {/* Content */}
+                      <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                      
+                      {/* Downward Arrow */}
+                      {index < howItWorksSteps.length - 1 && (
+                        <div className="flex justify-center mt-8">
+                          <div className="w-8 h-8 flex items-center justify-center">
+                            <ArrowDown className="w-5 h-5 text-woices-violet/60" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
