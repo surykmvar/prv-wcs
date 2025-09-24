@@ -5,7 +5,6 @@ import { Mic, MessageSquare } from "lucide-react"
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { SmartThoughtInput } from "@/components/SmartThoughtInput"
-import { GuidanceTooltip } from "@/components/GuidanceTooltip"
 import { LiveTrendingBanner } from "@/components/LiveTrendingBanner"
 import { useAuth } from "@/hooks/useAuth"
 import { useTrendingThoughts } from "@/hooks/useTrendingThoughts"
@@ -99,17 +98,10 @@ export function MainActions() {
         <SparkleField className="hidden sm:block absolute inset-0 -z-10 opacity-60" density={18} />
         
         <div className="flex justify-center">
-          <GuidanceTooltip
-            id="thought-input"
-            title="Start a conversation or record voice"
-            description="Click the text area to ask a question or click the mic button to browse trending topics and record voice responses."
-            position="top"
-          >
-            <SmartThoughtInput 
-              onFocus={handleThoughtInputFocus}
-              onMicClick={() => navigate('/feed')}
-            />
-          </GuidanceTooltip>
+          <SmartThoughtInput 
+            onFocus={handleThoughtInputFocus}
+            onMicClick={() => navigate('/feed')}
+          />
         </div>
       </div>
 
@@ -125,7 +117,7 @@ export function MainActions() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-foreground text-sm mb-1">Ask Questions</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">Click the text field to ask interesting thoughts or questions</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">Click the text field to ask interesting questions regarding a product, business, or a trending topic.</p>
               </div>
             </div>
           </div>
@@ -139,7 +131,7 @@ export function MainActions() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-foreground text-sm mb-1">Voice Replies</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">Click the mic to give voice replies on trending topics</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">Click the mic to give voice feedback as a User or viewer on topics, Services, Products, etc 😉</p>
               </div>
             </div>
           </div>
