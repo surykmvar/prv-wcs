@@ -338,7 +338,7 @@ export default function Auth() {
       <Button 
         type="button" 
         variant="outline" 
-        className="w-full bg-white hover:bg-gray-50 border-gray-300"
+        className="w-full bg-card hover:bg-card/80 border-border text-foreground"
         onClick={() => {
           // TODO: Implement Google OAuth
           toast({
