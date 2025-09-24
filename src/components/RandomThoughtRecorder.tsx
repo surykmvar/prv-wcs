@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Bookmark, BookmarkCheck, Play, Pause, Share } from "lucide-react"
+import { Clock, ArrowLeft, RefreshCw, ChevronDown, ChevronUp, Bookmark, BookmarkCheck, Play, Pause, Download } from "lucide-react"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useAuth } from "@/hooks/useAuth"
 import { supabase } from "@/integrations/supabase/client"
@@ -168,9 +168,22 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   }
 
   const handleListen = (thoughtId: string, voiceResponses: VoiceResponse[]) => {
+    if (!user) {
+      // Show auth modal for unauthenticated users
+      const authUrl = `/auth?mode=signin&redirect=${encodeURIComponent(window.location.pathname)}`
+      window.location.href = authUrl
+      return
+    }
+    
     const validResponses = voiceResponses.filter(response => response.duration > 0 && response.audio_url)
     
     if (validResponses.length === 0) return
+    
+    // If already listening, stop and collapse
+    if (listeningThoughts.has(thoughtId)) {
+      handleStopListening(thoughtId)
+      return
+    }
     
     // Stop any currently playing thought first
     if (listeningThoughts.size > 0) {
@@ -206,45 +219,31 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
     setExpandedThoughts(newExpanded)
   }
 
-  const handleShareThought = async (thought: Thought, voiceResponses?: VoiceResponse[]) => {
-    // If we have voice responses and we're listening, share the current or first audio
-    if (voiceResponses && voiceResponses.length > 0) {
-      const { shareAudioFile } = await import('@/utils/shareAudio')
-      const targetResponse = currentResponse || voiceResponses[0]
-      
-      if (targetResponse) {
-        try {
-          await shareAudioFile(targetResponse.audio_url, `Voice Reply - ${thought.title}`)
-          return
-        } catch (error) {
-          console.error('Failed to share audio:', error)
-          // Fall through to text sharing
-        }
-      }
-    }
-    
-    // Fallback to sharing thought as text
-    const shareData = {
-      title: thought.title,
-      text: `Check out this thought: ${thought.title}${thought.description ? '\n\n' + thought.description : ''}`,
-      url: window.location.href
+  const handleDownloadResponses = async (thought: Thought, voiceResponses: VoiceResponse[]) => {
+    if (voiceResponses.length === 0) {
+      console.log('No voice responses to download')
+      return
     }
 
-    if (navigator.share && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData)
-      } catch (err) {
-        console.log('Share cancelled')
-      }
-    } else {
-      // Fallback to copying to clipboard
-      const textToCopy = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`
-      try {
-        await navigator.clipboard.writeText(textToCopy)
-        console.log('Copied to clipboard')
-      } catch (err) {
-        console.error('Failed to copy to clipboard:', err)
-      }
+    try {
+      // For now, just download the first audio file
+      // TODO: Implement ZIP file creation with multiple files
+      const firstResponse = voiceResponses[0]
+      const response = await fetch(firstResponse.audio_url)
+      const blob = await response.blob()
+      
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${thought.title.replace(/[^a-z0-9]/gi, '_')}_voices.mp3`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      
+      console.log('Voice responses downloaded')
+    } catch (error) {
+      console.error('Error downloading voice responses:', error)
     }
   }
 
@@ -427,16 +426,16 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                                 ) : (
                                   <Play className="w-3 h-3" />
                                 )}
-                                Listen
+                                {isListening ? 'Pause' : 'Listen'}
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => handleShareThought(thought, thought.voice_responses)}
+                                onClick={() => handleDownloadResponses(thought, thought.voice_responses || [])}
                                 className="h-6 px-2 text-xs gap-1"
                               >
-                                <Share className="w-3 h-3" />
-                                Share
+                                <Download className="w-3 h-3" />
+                                Download
                               </Button>
                             </div>
                           )}

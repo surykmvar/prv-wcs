@@ -21,10 +21,13 @@ export function LiveTrendingBanner({ onOpenAuth, onStartRecording }: LiveTrendin
     <div className="relative mb-4 max-w-3xl mx-auto px-4">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="group w-full h-11 px-3 py-2 bg-card/70 border border-woices-violet/20 rounded-xl hover:bg-card/80 transition-all duration-300 ease-out"
+        className="group w-full h-11 px-3 py-2 bg-card/70 border border-woices-violet/20 rounded-xl hover:bg-card/80 transition-all duration-300 ease-out cursor-pointer"
       >
-        <div className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
+        <div 
+          className="flex items-center justify-between h-full w-full cursor-pointer"
+          onClick={() => setShowDropdown(!showDropdown)}
+        >
+          <div className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer">
             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-woices-violet to-woices-mint flex items-center justify-center flex-shrink-0">
               <TrendingUp className="w-2.5 h-2.5 text-white" />
             </div>
@@ -37,7 +40,7 @@ export function LiveTrendingBanner({ onOpenAuth, onStartRecording }: LiveTrendin
           </div>
           
           <motion.div 
-            className="text-muted-foreground group-hover:text-foreground flex-shrink-0 ml-2"
+            className="text-muted-foreground group-hover:text-foreground flex-shrink-0 ml-2 cursor-pointer"
             animate={{ rotate: showDropdown ? 180 : 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >

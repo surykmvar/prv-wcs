@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Mic, Clock, MessageCircle } from "lucide-react"
+import { Mic, Clock, MessageCircle, Share2, Check } from "lucide-react"
 import { formatTimeAgo } from "@/utils/timeUtils"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useUserSession } from "@/hooks/useUserSession"
@@ -38,6 +38,7 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
   const { userSession } = useUserSession()
   const [canSubmit, setCanSubmit] = useState(true)
   const [submitMessage, setSubmitMessage] = useState("")
+  const [linkCopied, setLinkCopied] = useState(false)
 
   useEffect(() => {
     if (userSession && !isMaxReached) {
@@ -47,6 +48,17 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
       })
     }
   }, [thought.id, userSession, responseCount, isMaxReached, canUserSubmitVoice])
+
+  const handleShareLink = async () => {
+    const shareUrl = `${window.location.origin}/thought/${thought.id}`
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy link:', error)
+    }
+  }
 
   return (
     <Card className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
@@ -82,14 +94,44 @@ export function ThoughtCard({ thought, onRecordResponse }: ThoughtCardProps) {
       </CardHeader>
       
       <CardContent className="p-0">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MessageCircle className="w-4 h-4" />
             {responseCount}/{maxWoices} voice{responseCount === 1 ? '' : 's'}
           </div>
           
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Button
+                onClick={handleShareLink}
+                variant="outline"
+                size="sm"
+                className="h-8 px-3 relative"
+              >
+                {linkCopied ? (
+                  <>
+                    <Check className="w-3 h-3 mr-1" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="w-3 h-3 mr-1" />
+                    Share Link
+                  </>
+                )}
+              </Button>
+              {linkCopied && (
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                  Link copied!
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between">
           {isMaxReached ? (
-            <div className="text-center text-sm text-green-600 font-medium bg-green-50 px-4 py-2 rounded-xl">
+            <div className="text-center text-sm text-green-600 font-medium bg-green-50 px-4 py-2 rounded-xl w-full">
               🎉 This Thought has received all its reviews!
             </div>
           ) : !canSubmit ? (

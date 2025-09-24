@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import Feed from './pages/Feed'
 import SystemFlow from './pages/SystemFlow'
 import PaymentSuccess from './pages/PaymentSuccess'
+import ThoughtDetail from './pages/ThoughtDetail'
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ const App = () => {
                   </AdminGuard>
                 } />
                 <Route path="/feed" element={<Feed />} />
+                <Route path="/thought/:id" element={<ThoughtDetail />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
