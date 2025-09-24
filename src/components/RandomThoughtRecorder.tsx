@@ -199,6 +199,11 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
   const handleStopListening = (thoughtId: string) => {
     setListeningThoughts(new Set())
     stopAudio()
+    
+    // Also collapse the expanded thought when stopping playback
+    const newExpanded = new Set(expandedThoughts)
+    newExpanded.delete(thoughtId)
+    setExpandedThoughts(newExpanded)
   }
 
   const handleShareThought = async (thought: Thought, voiceResponses?: VoiceResponse[]) => {
