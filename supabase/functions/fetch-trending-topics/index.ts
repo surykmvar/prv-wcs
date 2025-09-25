@@ -1,6 +1,5 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://ijtpdrsoddgjwyeiqalg.supabase.co',
@@ -202,10 +201,10 @@ Make questions balanced, avoiding extreme political stances. Focus on topics peo
       const descEmojis = description.match(emojiRegex) || [];
       
       if (titleEmojis.length > maxEmojis) {
-        title = title.replace(emojiRegex, (match, index) => titleEmojis.slice(0, maxEmojis).includes(match) ? match : '').trim();
+        title = title.replace(emojiRegex, (match: string) => titleEmojis.slice(0, maxEmojis).includes(match) ? match : '').trim();
       }
       if (descEmojis.length > maxEmojis) {
-        description = description.replace(emojiRegex, (match, index) => descEmojis.slice(0, maxEmojis).includes(match) ? match : '').trim();
+        description = description.replace(emojiRegex, (match: string) => descEmojis.slice(0, maxEmojis).includes(match) ? match : '').trim();
       }
       
       // Safety filter for blocked content
@@ -272,7 +271,7 @@ function generateHeuristicQuestion(keyword: string, maxEmojis: number = 2, style
     let emojis = '';
     if (relevantEmojis.length > 0 && maxEmojis > 0) {
       const numEmojis = Math.min(maxEmojis, Math.floor(Math.random() * 2) + 1);
-      const selectedEmojis = [];
+      const selectedEmojis: string[] = [];
       for (let i = 0; i < numEmojis; i++) {
         const emoji = relevantEmojis[Math.floor(Math.random() * relevantEmojis.length)];
         if (!selectedEmojis.includes(emoji)) {
