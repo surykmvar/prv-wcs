@@ -241,6 +241,7 @@ export type Database = {
           show_email: boolean | null
           updated_at: string
           user_id: string
+          woices_home: string | null
         }
         Insert: {
           auth_method?: string | null
@@ -255,6 +256,7 @@ export type Database = {
           show_email?: boolean | null
           updated_at?: string
           user_id: string
+          woices_home?: string | null
         }
         Update: {
           auth_method?: string | null
@@ -269,6 +271,7 @@ export type Database = {
           show_email?: boolean | null
           updated_at?: string
           user_id?: string
+          woices_home?: string | null
         }
         Relationships: []
       }
@@ -780,6 +783,10 @@ export type Database = {
           | { p_email: string; p_max_per_hour?: number; p_user_id: string }
         Returns: boolean
       }
+      check_woices_home_uniqueness: {
+        Args: { home_name: string; user_uuid: string }
+        Returns: boolean
+      }
       cleanup_old_sales_inquiries: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -943,6 +950,10 @@ export type Database = {
           p_message: string
           p_name: string
         }
+        Returns: boolean
+      }
+      validate_woices_home: {
+        Args: { home_name: string }
         Returns: boolean
       }
     }

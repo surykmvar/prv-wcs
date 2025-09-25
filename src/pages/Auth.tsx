@@ -405,17 +405,17 @@ export default function Auth() {
 
       {mode === 'signup' && (
         <div className="space-y-2">
-          <Label htmlFor="user-id">User ID</Label>
+          <Label htmlFor="user-id">Woices Home</Label>
           <Input 
             id="user-id" 
             type="text" 
-            placeholder="your_unique_tapestry_name" 
+            placeholder="your-home-name" 
             value={userId} 
-            onChange={(e) => setUserId(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} 
+            onChange={(e) => setUserId(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} 
             required 
           />
           <p className="text-xs text-muted-foreground">
-            This User ID will hold all your Tapestry of voice feedbacks. Imagine it as creating a name for your Library house of voice feedback recordings.
+            Pick a public "Woices Home" (3–30 chars). Letters, numbers, hyphens allowed.
           </p>
         </div>
       )}
@@ -452,17 +452,17 @@ export default function Auth() {
       {mode === 'signup' && !otpSent && (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="phone-user-id">User ID</Label>
+            <Label htmlFor="phone-user-id">Woices Home</Label>
             <Input
               id="phone-user-id"
               type="text"
-              placeholder="your_unique_tapestry_name"
+              placeholder="your-home-name"
               value={userId}
-              onChange={(e) => setUserId(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+              onChange={(e) => setUserId(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
               required
             />
             <p className="text-xs text-muted-foreground">
-              This User ID will hold all your Tapestry of voice feedbacks. Imagine it as creating a name for your Library house of voice feedback recordings.
+              Pick a public "Woices Home" (3–30 chars). Letters, numbers, hyphens allowed.
             </p>
           </div>
         </div>
