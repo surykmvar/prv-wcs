@@ -12,6 +12,7 @@ import { ThoughtActionButton } from "@/components/ThoughtActionButton"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { formatTimeAgo } from "@/utils/timeUtils"
 import { useSequentialAudioPlayer } from "@/hooks/useSequentialAudioPlayer"
+import { ShareLinkButton } from "@/components/ShareLinkButton"
 
 type VoiceResponse = {
   id: string
@@ -366,20 +367,25 @@ export function RandomThoughtRecorder({ onBack, onSuccess }: RandomThoughtRecord
                       <h3 className="text-sm sm:text-lg font-semibold leading-tight flex-1">
                         {thought.title}
                       </h3>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleSaved(thought.id)}
-                          className="h-7 w-7 sm:h-8 sm:w-8 p-0"
-                          aria-label={isSaved ? "Unsave" : "Save"}
-                        >
-                          {isSaved ? (
-                            <BookmarkCheck className="w-3 h-3 sm:w-4 sm:h-4 text-woices-violet" />
-                          ) : (
-                            <Bookmark className="w-3 h-3 sm:w-4 sm:h-4" />
-                          )}
-                        </Button>
+                       <div className="flex items-center gap-2 flex-shrink-0">
+                         <ShareLinkButton 
+                           thoughtId={thought.id}
+                           variant="ghost"
+                           size="sm"
+                         />
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => toggleSaved(thought.id)}
+                           className="h-7 w-7 sm:h-8 sm:w-8 p-0"
+                           aria-label={isSaved ? "Unsave" : "Save"}
+                         >
+                           {isSaved ? (
+                             <BookmarkCheck className="w-3 h-3 sm:w-4 sm:h-4 text-woices-violet" />
+                           ) : (
+                             <Bookmark className="w-3 h-3 sm:w-4 sm:h-4" />
+                           )}
+                         </Button>
                         <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
                           <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                           <span className="hidden sm:inline">{hoursLeft}h left</span>

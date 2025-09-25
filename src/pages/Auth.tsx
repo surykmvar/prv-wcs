@@ -339,12 +339,32 @@ export default function Auth() {
         type="button" 
         variant="outline" 
         className="w-full bg-card hover:bg-card/80 border-border text-foreground"
-        onClick={() => {
-          // TODO: Implement Google OAuth
-          toast({
-            title: "Coming Soon",
-            description: "Google sign-in will be available soon!"
-          })
+        onClick={async () => {
+          try {
+            setLoading(true)
+            const { error } = await supabase.auth.signInWithOAuth({
+              provider: 'google',
+              options: {
+                redirectTo: `${window.location.origin}/`
+              }
+            })
+            if (error) {
+              toast({
+                title: "Sign-in failed",
+                description: error.message,
+                variant: "destructive"
+              })
+            }
+          } catch (error) {
+            console.error('Google OAuth error:', error)
+            toast({
+              title: "Sign-in failed", 
+              description: "Unable to connect to Google. Please try again.",
+              variant: "destructive"
+            })
+          } finally {
+            setLoading(false)
+          }
         }}
       >
         <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
