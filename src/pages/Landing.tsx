@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Header } from "@/components/Header"
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,23 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 const Landing = () => {
   const navigate = useNavigate()
   const [contactModalOpen, setContactModalOpen] = useState(false)
+  const [currentStep, setCurrentStep] = useState(0)
+  const [carouselApi, setCarouselApi] = useState<any>(null)
+
+  useEffect(() => {
+    if (!carouselApi) return
+
+    const onSelect = () => {
+      setCurrentStep(carouselApi.selectedScrollSnap())
+    }
+
+    carouselApi.on("select", onSelect)
+    onSelect()
+
+    return () => {
+      carouselApi.off("select", onSelect)
+    }
+  }, [carouselApi])
 
   const useCases = [
     {
@@ -363,53 +380,108 @@ const Landing = () => {
               </div>
               
               {/* Carousel Layout */}
-              <div className="max-w-2xl mx-auto px-12 sm:px-16">
+              <div className="max-w-3xl mx-auto px-12 sm:px-20">
                 <Carousel
                   opts={{
                     align: "center",
                     loop: true,
                   }}
+                  setApi={setCarouselApi}
                   className="w-full"
                 >
                   <CarouselContent>
                     {howItWorksSteps.map((step, index) => (
                       <CarouselItem key={index}>
                         <div className="p-4 sm:p-8">
-                          <div className="text-center">
-                            {/* Step Label */}
-                            <div className="mb-6 sm:mb-8">
-                              <span className="inline-block px-4 py-2 text-sm font-bold text-woices-violet bg-woices-violet/15 rounded-full border border-woices-violet/20">
-                                Step {index + 1}
-                              </span>
-                            </div>
+                          {/* Premium Card with Gradient Border */}
+                          <div className="relative group">
+                            {/* Animated Gradient Border */}
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-woices-violet via-woices-sky to-woices-mint rounded-3xl opacity-30 group-hover:opacity-50 blur-sm transition-all duration-500" />
                             
-                            {/* Icon Container */}
-                            <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-3xl bg-gradient-to-br from-woices-violet/15 to-woices-sky/15 flex items-center justify-center hover:scale-105 transition-all duration-300 mb-6 sm:mb-8 border border-woices-violet/20">
-                              <div className="text-woices-violet [&>svg]:w-8 [&>svg]:h-8 sm:[&>svg]:w-10 sm:[&>svg]:h-10">
-                                {step.icon}
+                            {/* Card Content */}
+                            <div className="relative bg-card rounded-3xl p-8 sm:p-12 border border-border/50 shadow-xl">
+                              <div className="text-center">
+                                {/* Animated Icon Container with Float Effect */}
+                                <div className="relative mb-8 sm:mb-10">
+                                  {/* Glow effect behind icon */}
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-woices-violet/20 via-woices-sky/20 to-woices-mint/20 rounded-full blur-2xl animate-pulse" />
+                                  </div>
+                                  
+                                  {/* Icon with floating animation */}
+                                  <div className="relative w-28 h-28 sm:w-36 sm:h-36 mx-auto rounded-3xl bg-gradient-to-br from-woices-violet/15 via-woices-sky/10 to-woices-mint/15 flex items-center justify-center border-2 border-woices-violet/30 shadow-lg animate-[float_3s_ease-in-out_infinite] hover:scale-110 transition-transform duration-300">
+                                    <div className="text-woices-violet [&>svg]:w-12 [&>svg]:h-12 sm:[&>svg]:w-14 sm:[&>svg]:h-14">
+                                      {step.icon}
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* Content */}
+                                <h3 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-foreground bg-gradient-to-r from-woices-violet via-woices-sky to-woices-mint bg-clip-text text-transparent">
+                                  {step.title}
+                                </h3>
+                                <p className="text-muted-foreground leading-relaxed text-base sm:text-lg px-2 sm:px-6">
+                                  {step.description}
+                                </p>
                               </div>
                             </div>
-                            
-                            {/* Content */}
-                            <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-foreground">{step.title}</h3>
-                            <p className="text-muted-foreground leading-relaxed text-base sm:text-lg px-4">{step.description}</p>
                           </div>
                         </div>
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselPrevious className="bg-woices-violet/10 border-woices-violet/20 hover:bg-woices-violet/20 text-woices-violet -left-12 sm:-left-16" />
-                  <CarouselNext className="bg-woices-violet/10 border-woices-violet/20 hover:bg-woices-violet/20 text-woices-violet -right-12 sm:-right-16" />
+                  
+                  {/* Modern Navigation Arrows */}
+                  <CarouselPrevious className="bg-gradient-to-br from-woices-violet/20 to-woices-sky/20 border-woices-violet/30 hover:from-woices-violet/30 hover:to-woices-sky/30 text-woices-violet -left-12 sm:-left-20 w-12 h-12 sm:w-14 sm:h-14 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm" />
+                  <CarouselNext className="bg-gradient-to-br from-woices-violet/20 to-woices-sky/20 border-woices-violet/30 hover:from-woices-violet/30 hover:to-woices-sky/30 text-woices-violet -right-12 sm:-right-20 w-12 h-12 sm:w-14 sm:h-14 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm" />
                 </Carousel>
                 
-                {/* Carousel Indicators */}
-                <div className="flex justify-center gap-2 mt-8">
+                {/* Animated Step Progress Indicator */}
+                <div className="flex justify-center items-center gap-3 sm:gap-4 mt-10 sm:mt-12">
                   {howItWorksSteps.map((_, index) => (
-                    <div
+                    <button
                       key={index}
-                      className="w-2 h-2 rounded-full bg-woices-violet/30 transition-all duration-300"
-                    />
+                      onClick={() => carouselApi?.scrollTo(index)}
+                      className="group relative"
+                      aria-label={`Go to step ${index + 1}`}
+                    >
+                      {/* Outer ring for active step */}
+                      <div className={`absolute inset-0 rounded-full transition-all duration-300 ${
+                        currentStep === index 
+                          ? 'bg-gradient-to-r from-woices-violet via-woices-sky to-woices-mint p-0.5 animate-pulse' 
+                          : 'bg-transparent'
+                      }`}>
+                        <div className="w-full h-full rounded-full bg-background" />
+                      </div>
+                      
+                      {/* Step number circle */}
+                      <div className={`relative flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
+                        currentStep === index
+                          ? 'bg-gradient-to-br from-woices-violet to-woices-sky text-white shadow-lg scale-110'
+                          : 'bg-muted/50 text-muted-foreground hover:bg-muted group-hover:scale-105'
+                      }`}>
+                        {index + 1}
+                      </div>
+                      
+                      {/* Progress line to next step */}
+                      {index < howItWorksSteps.length - 1 && (
+                        <div className="absolute left-full top-1/2 -translate-y-1/2 w-8 sm:w-12 h-0.5">
+                          <div className={`h-full transition-all duration-500 ${
+                            currentStep > index
+                              ? 'bg-gradient-to-r from-woices-violet to-woices-sky'
+                              : 'bg-muted/30'
+                          }`} />
+                        </div>
+                      )}
+                    </button>
                   ))}
+                </div>
+                
+                {/* Step Label with Animation */}
+                <div className="text-center mt-6 sm:mt-8">
+                  <span className="inline-block px-5 py-2.5 text-sm font-bold text-woices-violet bg-gradient-to-r from-woices-violet/15 via-woices-sky/15 to-woices-mint/15 rounded-full border border-woices-violet/30 shadow-sm animate-fade-in">
+                    Step {currentStep + 1} of {howItWorksSteps.length}
+                  </span>
                 </div>
               </div>
             </div>
