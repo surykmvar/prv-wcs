@@ -7,10 +7,10 @@ interface DynamicWaveformProps {
 }
 
 export const DynamicWaveform = ({ isPlaying, progress, className = "" }: DynamicWaveformProps) => {
-  // Generate realistic waveform data once
+  // Generate realistic waveform data once - reduced for better DOM performance
   const waveformData = useMemo(() => {
     const data = []
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 30; i++) {
       // Create varied heights that simulate voice patterns
       const base = Math.sin(i * 0.15) * 0.4 + 0.6
       const variation = Math.random() * 0.5 + 0.2
