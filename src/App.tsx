@@ -23,22 +23,6 @@ import ThoughtDetail from './pages/ThoughtDetail'
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Redirect from lovable.app to custom domain
-  useEffect(() => {
-    if (window.location.hostname.includes('lovable.app')) {
-      window.location.replace(`https://woices.app${window.location.pathname}${window.location.search}${window.location.hash}`);
-    }
-  }, []);
-
-  // Add noindex for lovable.app domains
-  useEffect(() => {
-    if (window.location.hostname.includes('lovable.app')) {
-      const noindexMeta = document.createElement('meta');
-      noindexMeta.name = 'robots';
-      noindexMeta.content = 'noindex, nofollow';
-      document.head.appendChild(noindexMeta);
-    }
-  }, []);
 
   return (
   <QueryClientProvider client={queryClient}>
