@@ -11,6 +11,7 @@ import { Helmet } from "react-helmet-async"
 import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, MousePointer, ArrowRight, ArrowDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { VoiceWidgetDemo } from "@/components/VoiceWidgetDemo"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 const Landing = () => {
   const navigate = useNavigate()
@@ -361,77 +362,53 @@ const Landing = () => {
                 </p>
               </div>
               
-              {/* Desktop Layout - Simple Horizontal Flow */}
-              <div className="hidden lg:block">
-                <div className="flex items-center justify-center">
-                  {howItWorksSteps.map((step, index) => (
-                    <div key={index} className="flex items-center">
-                      {/* Step Container */}
-                      <div className="text-center w-72">
-                        {/* Step Label */}
-                        <div className="mb-6">
-                          <span className="inline-block px-4 py-2 text-sm font-bold text-woices-violet bg-woices-violet/15 rounded-full border border-woices-violet/20">
-                            Step {index + 1}
-                          </span>
-                        </div>
-                        
-                        {/* Icon Container */}
-                        <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-woices-violet/15 to-woices-sky/15 flex items-center justify-center hover:scale-105 transition-all duration-300 mb-6 border border-woices-violet/20">
-                          <div className="text-woices-violet">
-                            {step.icon}
+              {/* Carousel Layout */}
+              <div className="max-w-2xl mx-auto px-12 sm:px-16">
+                <Carousel
+                  opts={{
+                    align: "center",
+                    loop: true,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent>
+                    {howItWorksSteps.map((step, index) => (
+                      <CarouselItem key={index}>
+                        <div className="p-4 sm:p-8">
+                          <div className="text-center">
+                            {/* Step Label */}
+                            <div className="mb-6 sm:mb-8">
+                              <span className="inline-block px-4 py-2 text-sm font-bold text-woices-violet bg-woices-violet/15 rounded-full border border-woices-violet/20">
+                                Step {index + 1}
+                              </span>
+                            </div>
+                            
+                            {/* Icon Container */}
+                            <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-3xl bg-gradient-to-br from-woices-violet/15 to-woices-sky/15 flex items-center justify-center hover:scale-105 transition-all duration-300 mb-6 sm:mb-8 border border-woices-violet/20">
+                              <div className="text-woices-violet [&>svg]:w-8 [&>svg]:h-8 sm:[&>svg]:w-10 sm:[&>svg]:h-10">
+                                {step.icon}
+                              </div>
+                            </div>
+                            
+                            {/* Content */}
+                            <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-foreground">{step.title}</h3>
+                            <p className="text-muted-foreground leading-relaxed text-base sm:text-lg px-4">{step.description}</p>
                           </div>
                         </div>
-                        
-                        {/* Content */}
-                        <h3 className="text-xl font-bold mb-4 text-foreground">{step.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed text-sm px-2">{step.description}</p>
-                      </div>
-                      
-                      {/* Arrow Between Steps */}
-                      {index < howItWorksSteps.length - 1 && (
-                        <div className="flex-shrink-0 mx-6 mt-8">
-                          <div className="w-12 h-12 rounded-full bg-woices-violet/10 flex items-center justify-center">
-                            <ArrowRight className="w-6 h-6 text-woices-violet" />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Tablet & Mobile Layout - Clean Vertical Flow */}
-              <div className="lg:hidden">
-                <div className="max-w-md mx-auto">
-                  {howItWorksSteps.map((step, index) => (
-                    <div key={index} className="text-center">
-                      {/* Step Label */}
-                      <div className="mb-6">
-                        <span className="inline-block px-4 py-2 text-sm font-bold text-woices-violet bg-woices-violet/15 rounded-full border border-woices-violet/20">
-                          Step {index + 1}
-                        </span>
-                      </div>
-                      
-                      {/* Icon Container */}
-                      <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-woices-violet/15 to-woices-sky/15 flex items-center justify-center hover:scale-105 transition-all duration-300 mb-6 border border-woices-violet/20">
-                        <div className="text-woices-violet">
-                          {step.icon}
-                        </div>
-                      </div>
-                      
-                      {/* Content */}
-                      <h3 className="text-xl font-bold mb-4 text-foreground">{step.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed mb-8">{step.description}</p>
-                      
-                      {/* Arrow Between Steps */}
-                      {index < howItWorksSteps.length - 1 && (
-                        <div className="flex justify-center mb-8">
-                          <div className="w-12 h-12 rounded-full bg-woices-violet/10 flex items-center justify-center">
-                            <ArrowDown className="w-6 h-6 text-woices-violet" />
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="bg-woices-violet/10 border-woices-violet/20 hover:bg-woices-violet/20 text-woices-violet -left-12 sm:-left-16" />
+                  <CarouselNext className="bg-woices-violet/10 border-woices-violet/20 hover:bg-woices-violet/20 text-woices-violet -right-12 sm:-right-16" />
+                </Carousel>
+                
+                {/* Carousel Indicators */}
+                <div className="flex justify-center gap-2 mt-8">
+                  {howItWorksSteps.map((_, index) => (
+                    <div
+                      key={index}
+                      className="w-2 h-2 rounded-full bg-woices-violet/30 transition-all duration-300"
+                    />
                   ))}
                 </div>
               </div>
