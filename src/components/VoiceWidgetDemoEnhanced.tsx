@@ -180,14 +180,6 @@ const VoiceWidgetDemoEnhanced = () => {
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-background via-muted/20 to-background">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-woices-violet via-woices-sky to-woices-mint bg-clip-text text-transparent mb-4">
-            Modern Voice Rating System
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            The future of authentic reviews - beyond 5-star ratings. A new rating component for the new age of reviews.
-          </p>
-        </div>
 
         {/* Website Integration */}
         <div className="mb-16">
