@@ -30,11 +30,9 @@ const Landing = () => {
       // Reset animation first
       setAnimateIcon(false)
       
-      // Trigger animation after carousel settles (300ms delay)
+      // Trigger breathing animation after carousel settles
       setTimeout(() => {
         setAnimateIcon(true)
-        // Remove animation class after it completes
-        setTimeout(() => setAnimateIcon(false), 600)
       }, 300)
     }
 
@@ -419,9 +417,9 @@ const Landing = () => {
                                     <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 bg-gradient-to-br from-woices-violet/20 via-woices-sky/20 to-woices-mint/20 rounded-full blur-2xl animate-pulse" />
                                   </div>
                                   
-                                  {/* Icon with bounce animation on step change */}
+                                  {/* Icon with breathing animation on step change */}
                                   <div className={`relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-woices-violet/15 via-woices-sky/10 to-woices-mint/15 flex items-center justify-center border-2 border-woices-violet/30 shadow-lg hover:scale-110 transition-transform duration-300 ${
-                                    animateIcon ? 'animate-[bounce_0.6s_ease-in-out]' : ''
+                                    animateIcon ? 'animate-[breathe_2s_ease-in-out_infinite]' : ''
                                   }`}>
                                     <div className="text-woices-violet [&>svg]:w-8 [&>svg]:h-8 sm:[&>svg]:w-10 sm:[&>svg]:h-10 md:[&>svg]:w-12 md:[&>svg]:h-12 lg:[&>svg]:w-14 lg:[&>svg]:h-14">
                                       {step.icon}
