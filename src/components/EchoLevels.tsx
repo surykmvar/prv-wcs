@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Mic } from "lucide-react"
 
 interface EchoLevelsProps {
   rating: number
@@ -10,11 +11,9 @@ interface EchoLevelsProps {
 }
 
 const ratingLabels = {
-  1: "Bad",
-  2: "Poor", 
-  3: "Okay",
-  4: "Good",
-  5: "Amazing!"
+  1: "Poor",
+  2: "Okay",
+  3: "Great"
 }
 
 export const EchoLevels = ({ 
@@ -25,6 +24,7 @@ export const EchoLevels = ({
   className = "" 
 }: EchoLevelsProps) => {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
+  const [showTooltip, setShowTooltip] = useState(false)
   
   const sizeClasses = {
     sm: "w-8 h-8",
@@ -33,14 +33,29 @@ export const EchoLevels = ({
   }
   
   const rippleSizes = {
-    sm: [12, 16, 20, 24, 28],
-    md: [16, 22, 28, 34, 40],
-    lg: [24, 32, 40, 48, 56]
+    sm: [16, 24, 32],
+    md: [20, 30, 40],
+    lg: [28, 42, 56]
+  }
+
+  const iconSizes = {
+    sm: "w-3 h-3",
+    md: "w-4 h-4",
+    lg: "w-5 h-5"
+  }
+
+  // Convert 5-star rating to 3-ripple system
+  const convertRatingToRipples = (starRating: number) => {
+    if (starRating <= 2) return 1 // Poor - 1 red ripple
+    if (starRating === 3) return 2 // Okay - 2 ripples (red + blue)
+    return 3 // Great - 3 ripples (red + blue + green)
   }
 
   const handleClick = (level: number) => {
     if (interactive && onRatingChange) {
-      onRatingChange(level)
+      // Convert ripple level back to star rating
+      const starRating = level === 1 ? 2 : level === 2 ? 3 : 5
+      onRatingChange(starRating)
     }
   }
 
@@ -52,35 +67,46 @@ export const EchoLevels = ({
 
   const handleMouseLeave = () => {
     setHoveredRating(null)
+    setShowTooltip(false)
   }
 
-  const currentRating = hoveredRating || rating
-  const currentLabel = ratingLabels[currentRating as keyof typeof ratingLabels]
+  const handleTouch = (level: number) => {
+    if (interactive) {
+      setHoveredRating(level)
+      setShowTooltip(true)
+      // Hide tooltip after 2 seconds
+      setTimeout(() => setShowTooltip(false), 2000)
+    }
+  }
 
-  // Traffic light color system
+  const currentRipples = convertRatingToRipples(hoveredRating ? (hoveredRating === 1 ? 2 : hoveredRating === 2 ? 3 : 5) : rating)
+  const displayRating = hoveredRating || (currentRipples === 1 ? 1 : currentRipples === 2 ? 2 : 3)
+  const currentLabel = ratingLabels[displayRating as keyof typeof ratingLabels]
+
+  // 3-ripple color system
   const getRippleColor = (level: number, isActive: boolean) => {
     if (!isActive) return "border-muted-foreground/10"
     
-    if (level <= 2) return "border-[hsl(var(--echo-red))]"
-    if (level === 3) return "border-[hsl(var(--echo-orange))]"
+    if (level === 1) return "border-[hsl(var(--echo-red))]"
+    if (level === 2) return "border-[hsl(var(--woices-sky))]"
     return "border-[hsl(var(--echo-green))]"
   }
 
   const getCenterColor = () => {
-    if (currentRating <= 2) return "bg-[hsl(var(--echo-red))]"
-    if (currentRating === 3) return "bg-[hsl(var(--echo-orange))]"
-    return "bg-[hsl(var(--echo-green))]"
+    if (currentRipples === 1) return "hsl(var(--echo-red))"
+    if (currentRipples === 2) return "hsl(var(--woices-sky))"
+    return "hsl(var(--echo-green))"
   }
 
   return (
     <TooltipProvider>
-      <Tooltip delayDuration={0}>
+      <Tooltip open={showTooltip || (interactive && hoveredRating !== null)} delayDuration={0}>
         <TooltipTrigger asChild>
           <div className={`flex flex-col items-center ${className}`}>
             <div className={`relative ${sizeClasses[size]} flex items-center justify-center group`}>
-              {/* Ripple waves */}
-              {[1, 2, 3, 4, 5].map((level) => {
-                const isActive = level <= currentRating
+              {/* 3 Ripple waves */}
+              {[1, 2, 3].map((level) => {
+                const isActive = level <= currentRipples
                 const rippleSize = rippleSizes[size][level - 1]
                 
                 return (
@@ -98,20 +124,23 @@ export const EchoLevels = ({
                     onClick={() => handleClick(level)}
                     onMouseEnter={() => handleMouseEnter(level)}
                     onMouseLeave={handleMouseLeave}
+                    onTouchStart={() => handleTouch(level)}
                   />
                 )
               })}
               
-              {/* Center dot */}
-              <div className={`
-                w-2 h-2 rounded-full transition-all duration-300
-                ${getCenterColor()}
-              `} />
+              {/* Center voice icon */}
+              <div 
+                className="relative z-10 rounded-full p-1 flex items-center justify-center transition-all duration-300"
+                style={{ backgroundColor: getCenterColor() }}
+              >
+                <Mic className={`${iconSizes[size]} text-white`} />
+              </div>
             </div>
           </div>
         </TooltipTrigger>
         
-        {(interactive && hoveredRating) || (!interactive && rating > 0) ? (
+        {((interactive && hoveredRating) || (!interactive && rating > 0) || showTooltip) ? (
           <TooltipContent side="top" className="bg-popover border border-border">
             <p className="text-xs font-medium">{currentLabel}</p>
           </TooltipContent>

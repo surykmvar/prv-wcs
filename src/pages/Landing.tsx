@@ -10,7 +10,7 @@ import { FoundersNoteToggle } from "@/components/FoundersNoteToggle"
 import { Helmet } from "react-helmet-async"
 import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, Type, ArrowRight, ArrowDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { VoiceWidgetDemo } from "@/components/VoiceWidgetDemo"
+import VoiceWidgetDemoEnhanced from "@/components/VoiceWidgetDemoEnhanced"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 const Landing = () => {
@@ -532,7 +532,7 @@ const Landing = () => {
               </div>
               
               <div className="max-w-4xl mx-auto">
-                <VoiceWidgetDemo />
+                <VoiceWidgetDemoEnhanced />
               </div>
             </div>
           </section>
