@@ -8,7 +8,7 @@ import { ContactSalesModal } from "@/components/ContactSalesModal"
 import { SparkleField } from "@/components/SparkleField"
 import { FoundersNoteToggle } from "@/components/FoundersNoteToggle"
 import { Helmet } from "react-helmet-async"
-import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, MousePointer, ArrowRight, ArrowDown } from "lucide-react"
+import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, Type, ArrowRight, ArrowDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { VoiceWidgetDemo } from "@/components/VoiceWidgetDemo"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
@@ -95,7 +95,7 @@ const Landing = () => {
 
   const howItWorksSteps = [
     {
-      icon: <MousePointer className="w-6 h-6 text-woices-violet" />,
+      icon: <Type className="w-6 h-6 text-woices-violet" />,
       title: "Create Your Topic",
       description: "Start a voice review topic about your product, service, or experience in seconds."
     },
@@ -418,9 +418,9 @@ const Landing = () => {
                                   </div>
                                   
                                   {/* Icon with breathing animation on step change */}
-                                  <div className={`relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-woices-violet/15 via-woices-sky/10 to-woices-mint/15 flex items-center justify-center border-2 border-woices-violet/30 shadow-lg hover:scale-110 transition-transform duration-300 ${
-                                    animateIcon ? 'animate-[breathe_4s_ease-in-out_infinite]' : ''
-                                  }`}>
+                                   <div className={`relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-woices-violet/15 via-woices-sky/10 to-woices-mint/15 flex items-center justify-center border-2 border-woices-violet/30 shadow-lg hover:scale-110 transition-transform duration-300 ${
+                                     animateIcon ? 'animate-[breathe_8s_ease-in-out_infinite]' : ''
+                                   }`}>
                                     <div className="text-woices-violet [&>svg]:w-8 [&>svg]:h-8 sm:[&>svg]:w-10 sm:[&>svg]:h-10 md:[&>svg]:w-12 md:[&>svg]:h-12 lg:[&>svg]:w-14 lg:[&>svg]:h-14">
                                       {step.icon}
                                     </div>
