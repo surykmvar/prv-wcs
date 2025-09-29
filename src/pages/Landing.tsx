@@ -27,13 +27,18 @@ const Landing = () => {
       const newStep = carouselApi.selectedScrollSnap()
       setCurrentStep(newStep)
       
-      // Trigger animation when step changes
-      setAnimateIcon(true)
-      setTimeout(() => setAnimateIcon(false), 600)
+      // Reset animation first
+      setAnimateIcon(false)
+      
+      // Trigger animation after carousel settles (300ms delay)
+      setTimeout(() => {
+        setAnimateIcon(true)
+        // Remove animation class after it completes
+        setTimeout(() => setAnimateIcon(false), 600)
+      }, 300)
     }
 
     carouselApi.on("select", onSelect)
-    onSelect()
 
     return () => {
       carouselApi.off("select", onSelect)
