@@ -419,7 +419,7 @@ const Landing = () => {
                                   
                                   {/* Icon with breathing animation on step change */}
                                   <div className={`relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-woices-violet/15 via-woices-sky/10 to-woices-mint/15 flex items-center justify-center border-2 border-woices-violet/30 shadow-lg hover:scale-110 transition-transform duration-300 ${
-                                    animateIcon ? 'animate-[breathe_2s_ease-in-out_infinite]' : ''
+                                    animateIcon ? 'animate-[breathe_4s_ease-in-out_infinite]' : ''
                                   }`}>
                                     <div className="text-woices-violet [&>svg]:w-8 [&>svg]:h-8 sm:[&>svg]:w-10 sm:[&>svg]:h-10 md:[&>svg]:w-12 md:[&>svg]:h-12 lg:[&>svg]:w-14 lg:[&>svg]:h-14">
                                       {step.icon}
