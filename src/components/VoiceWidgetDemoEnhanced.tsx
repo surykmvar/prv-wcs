@@ -1,70 +1,162 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Play, Pause, Instagram, Facebook, Twitter, Linkedin } from "lucide-react"
-import { EchoLevels } from "./EchoLevels"
-import { DynamicWaveform } from "./DynamicWaveform"
+import { Instagram, Facebook, Linkedin } from "lucide-react"
+import { ModernVoicePlayer } from "./ModernVoicePlayer"
+import { VotingButtons } from "./VotingButtons"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { useAudioUrl } from "@/hooks/useAudioUrl"
+import { supabase } from "@/integrations/supabase/client"
+import demoVoiceFemale from "@/assets/demo-voice-female-15s.wav"
+import demoVoiceMale32 from "@/assets/demo-voice-male-32s.wav"
+import demoVoiceMale45 from "@/assets/demo-voice-male-45s.wav"
 
-interface VoiceReview {
+// X/Twitter icon component (updated from Twitter)
+const XIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+)
+
+interface VoiceWidget {
   id: string
-  reviewerName: string
-  productName: string
+  reviewer_name: string
+  product_name: string
+  location: string
   duration: number
   rating: number
-  isPlaying: boolean
-  location: string
-  date: string
-  audioUrl?: string
+  audio_url?: string
   gender: 'male' | 'female'
+  avatar_url?: string
+  myth_votes: number
+  fact_votes: number
+  unclear_votes: number
+  widget_type: 'website' | 'social'
+  display_order: number
 }
 
 const VoiceWidgetDemoEnhanced = () => {
-  const [playingReview, setPlayingReview] = useState<string | null>(null)
+  const [websiteWidgets, setWebsiteWidgets] = useState<VoiceWidget[]>([])
+  const [socialWidgets, setSocialWidgets] = useState<VoiceWidget[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const sampleReviews: VoiceReview[] = [
+  // Fallback demo data with real audio files
+  const fallbackWebsiteWidgets: VoiceWidget[] = [
     {
-      id: "1",
-      reviewerName: "Lisa Martinez",
-      productName: "Premium Wireless Headphones",
+      id: "demo-1",
+      reviewer_name: "Lisa Martinez",
+      product_name: "Premium Wireless Headphones",
+      location: "San Francisco, CA",
       duration: 15,
       rating: 2,
-      isPlaying: playingReview === "1",
-      location: "San Francisco, CA",
-      date: "2 hours ago",
-      audioUrl: "https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav",
-      gender: 'female'
+      audio_url: demoVoiceFemale,
+      gender: 'female',
+      myth_votes: 12,
+      fact_votes: 3,
+      unclear_votes: 8,
+      widget_type: 'website',
+      display_order: 1
     },
     {
-      id: "2", 
-      reviewerName: "David Kim",
-      productName: "Smart Fitness Tracker",
+      id: "demo-2",
+      reviewer_name: "David Kim",
+      product_name: "Smart Fitness Tracker",
+      location: "Austin, TX",
       duration: 32,
       rating: 3,
-      isPlaying: playingReview === "2",
-      location: "Austin, TX",
-      date: "5 hours ago",
-      audioUrl: "https://www2.cs.uic.edu/~i101/SoundFiles/PinkPanther30.wav",
-      gender: 'male'
+      audio_url: demoVoiceMale32,
+      gender: 'male',
+      myth_votes: 8,
+      fact_votes: 15,
+      unclear_votes: 6,
+      widget_type: 'website',
+      display_order: 2
     },
     {
-      id: "3",
-      reviewerName: "Alex Johnson", 
-      productName: "Ergonomic Office Chair",
+      id: "demo-3",
+      reviewer_name: "Alex Johnson",
+      product_name: "Ergonomic Office Chair",
+      location: "Seattle, WA",
       duration: 45,
       rating: 5,
-      isPlaying: playingReview === "3",
-      location: "Seattle, WA", 
-      date: "1 day ago",
-      audioUrl: "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav",
-      gender: 'male'
+      audio_url: demoVoiceMale45,
+      gender: 'male',
+      myth_votes: 2,
+      fact_votes: 28,
+      unclear_votes: 4,
+      widget_type: 'website',
+      display_order: 3
     }
   ]
 
-  const handlePlayPause = (reviewId: string) => {
-    setPlayingReview(playingReview === reviewId ? null : reviewId)
+  const fallbackSocialWidgets: VoiceWidget[] = [
+    {
+      id: "demo-social-1",
+      reviewer_name: "Alex Johnson",
+      product_name: "Ergonomic Office Chair",
+      location: "Seattle, WA",
+      duration: 45,
+      rating: 5,
+      audio_url: demoVoiceMale45,
+      gender: 'male',
+      myth_votes: 2,
+      fact_votes: 28,
+      unclear_votes: 4,
+      widget_type: 'social',
+      display_order: 1
+    }
+  ]
+
+  useEffect(() => {
+    loadWidgets()
+  }, [])
+
+  const loadWidgets = async () => {
+    try {
+      const { data: widgets, error } = await supabase
+        .from('landing_page_widgets')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order')
+
+      if (error) throw error
+
+      if (widgets && widgets.length > 0) {
+        const websiteWidgets = widgets.filter(w => w.widget_type === 'website')
+        const socialWidgets = widgets.filter(w => w.widget_type === 'social')
+        
+        setWebsiteWidgets(websiteWidgets.map(w => ({
+          ...w,
+          gender: w.gender as 'male' | 'female',
+          widget_type: w.widget_type as 'website' | 'social',
+          audio_url: w.audio_url || (w.gender === 'female' ? demoVoiceFemale : w.duration <= 32 ? demoVoiceMale32 : demoVoiceMale45)
+        })))
+        setSocialWidgets(socialWidgets.map(w => ({
+          ...w,
+          gender: w.gender as 'male' | 'female',
+          widget_type: w.widget_type as 'website' | 'social',
+          audio_url: w.audio_url || (w.gender === 'female' ? demoVoiceFemale : w.duration <= 32 ? demoVoiceMale32 : demoVoiceMale45)
+        })))
+      } else {
+        // Use fallback data if no widgets in database
+        setWebsiteWidgets(fallbackWebsiteWidgets)
+        setSocialWidgets(fallbackSocialWidgets)
+      }
+    } catch (error) {
+      console.error('Error loading widgets:', error)
+      // Use fallback data on error
+      setWebsiteWidgets(fallbackWebsiteWidgets)
+      setSocialWidgets(fallbackSocialWidgets)
+    } finally {
+      setLoading(false)
+    }
   }
+
+  const socialPlatforms = [
+    { icon: Instagram, name: "Instagram" },
+    { icon: Facebook, name: "Facebook" }, 
+    { icon: XIcon, name: "X" },
+    { icon: Linkedin, name: "LinkedIn" }
+  ]
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -72,12 +164,18 @@ const VoiceWidgetDemoEnhanced = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  const socialPlatforms = [
-    { icon: Instagram, name: "Instagram" },
-    { icon: Facebook, name: "Facebook" }, 
-    { icon: Twitter, name: "Twitter" },
-    { icon: Linkedin, name: "LinkedIn" }
-  ]
+  if (loading) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-b from-background via-muted/20 to-background">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <div className="w-8 h-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading demo widgets...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-background via-muted/20 to-background">
@@ -103,10 +201,10 @@ const VoiceWidgetDemoEnhanced = () => {
           <div className="relative max-w-4xl mx-auto">
             <Carousel className="w-full">
               <CarouselContent className="-ml-2 md:-ml-4">
-                {sampleReviews.map((review, index) => (
-                  <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                {websiteWidgets.map((widget, index) => (
+                  <CarouselItem key={widget.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                     <div className="h-full">
-                      <VoiceReviewCard review={review} onPlayPause={handlePlayPause} />
+                      <VoiceReviewCard widget={widget} />
                     </div>
                   </CarouselItem>
                 ))}
@@ -127,45 +225,50 @@ const VoiceWidgetDemoEnhanced = () => {
           </p>
           
           <div className="max-w-md mx-auto">
-            <Card className="panel overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-woices-violet to-woices-sky"></div>
-                  <div>
-                    <p className="font-semibold text-sm">{sampleReviews[2].reviewerName}</p>
-                    <p className="text-xs text-muted-foreground">{sampleReviews[2].location} • {sampleReviews[2].date}</p>
-                  </div>
-                </div>
-                
-                <p className="text-sm mb-4">
-                  Just tried the {sampleReviews[2].productName} - here's my honest voice review! 🎧
-                </p>
-                
-                <Card className="mb-4 bg-muted/30">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-8 h-8 rounded-full p-0"
-                          onClick={() => handlePlayPause(sampleReviews[2].id)}
-                        >
-                          {sampleReviews[2].isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                        </Button>
-                        <span className="text-sm font-medium">{formatTime(sampleReviews[2].duration)}</span>
-                      </div>
-                      <EchoLevels rating={sampleReviews[2].rating} size="sm" />
+            {socialWidgets.length > 0 && (
+              <Card className="panel overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div 
+                      className="w-10 h-10 rounded-full bg-gradient-to-br from-woices-violet to-woices-sky"
+                      style={socialWidgets[0].avatar_url ? {
+                        backgroundImage: `url(${socialWidgets[0].avatar_url})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      } : {}}
+                    ></div>
+                    <div>
+                      <p className="font-semibold text-sm">{socialWidgets[0].reviewer_name}</p>
+                      <p className="text-xs text-muted-foreground">{socialWidgets[0].location} • 2 hours ago</p>
                     </div>
-                    <DynamicWaveform isPlaying={sampleReviews[2].isPlaying} progress={sampleReviews[2].isPlaying ? 0.6 : 0} className="h-8" />
-                  </CardContent>
-                </Card>
-                
-                <p className="text-xs text-muted-foreground">
-                  💬 24 comments • 🔄 12 shares • ❤️ 89 likes
-                </p>
-              </CardContent>
-            </Card>
+                  </div>
+                  
+                  <p className="text-sm mb-4">
+                    Just tried the {socialWidgets[0].product_name} - here's my honest voice review! 🎧
+                  </p>
+                  
+                  <div className="mb-4">
+                    <ModernVoicePlayer
+                      voiceResponseId={socialWidgets[0].id}
+                      audioUrl={socialWidgets[0].audio_url || ""}
+                      duration={socialWidgets[0].duration}
+                      mythVotes={socialWidgets[0].myth_votes}
+                      factVotes={socialWidgets[0].fact_votes}
+                      unclearVotes={socialWidgets[0].unclear_votes}
+                      className="bg-muted/30"
+                    />
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-xs text-muted-foreground">
+                    <div className="flex gap-4">
+                      <span>{socialWidgets[0].fact_votes + socialWidgets[0].myth_votes + socialWidgets[0].unclear_votes} votes</span>
+                      <span>12 shares</span>
+                    </div>
+                    <span>89 likes</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
           
           {/* Social Platform Logos */}
@@ -183,52 +286,38 @@ const VoiceWidgetDemoEnhanced = () => {
   )
 }
 
-const VoiceReviewCard = ({ review, onPlayPause }: {
-  review: VoiceReview
-  onPlayPause: (id: string) => void
-}) => {
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
-
+const VoiceReviewCard = ({ widget }: { widget: VoiceWidget }) => {
   return (
     <Card className="panel h-full transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
       <CardContent className="p-6 h-full flex flex-col">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-woices-violet via-woices-sky to-woices-mint"></div>
+          <div 
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-woices-violet via-woices-sky to-woices-mint"
+            style={widget.avatar_url ? {
+              backgroundImage: `url(${widget.avatar_url})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            } : {}}
+          ></div>
           <div className="flex-1">
-            <p className="font-semibold text-sm">{review.reviewerName}</p>
-            <p className="text-xs text-muted-foreground">{review.location}</p>
+            <p className="font-semibold text-sm">{widget.reviewer_name}</p>
+            <p className="text-xs text-muted-foreground">{widget.location}</p>
           </div>
-          <EchoLevels rating={review.rating} size="sm" />
         </div>
         
-        <h4 className="font-medium text-sm mb-3 line-clamp-2">{review.productName}</h4>
+        <h4 className="font-medium text-sm mb-3 line-clamp-2">{widget.product_name}</h4>
         
         <div className="flex-1 flex flex-col justify-end">
-          <div className="flex items-center gap-3 mb-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-10 h-10 rounded-full p-0 bg-gradient-to-r from-woices-violet/10 to-woices-sky/10 border-woices-violet/20"
-              onClick={() => onPlayPause(review.id)}
-            >
-              {review.isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              {review.isPlaying ? `Playing...` : formatTime(review.duration)}
-            </span>
-          </div>
-          
-          <DynamicWaveform 
-            isPlaying={review.isPlaying} 
-            progress={review.isPlaying ? 0.4 : 0}
-            className="h-6"
+          <ModernVoicePlayer
+            voiceResponseId={widget.id}
+            audioUrl={widget.audio_url || ""}
+            duration={widget.duration}
+            mythVotes={widget.myth_votes}
+            factVotes={widget.fact_votes}
+            unclearVotes={widget.unclear_votes}
           />
           
-          <p className="text-xs text-muted-foreground mt-2">{review.date}</p>
+          <p className="text-xs text-muted-foreground mt-2">2 hours ago</p>
         </div>
       </CardContent>
     </Card>

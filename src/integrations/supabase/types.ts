@@ -146,6 +146,66 @@ export type Database = {
         }
         Relationships: []
       }
+      landing_page_widgets: {
+        Row: {
+          audio_url: string | null
+          avatar_url: string | null
+          created_at: string
+          display_order: number
+          duration: number
+          fact_votes: number
+          gender: string
+          id: string
+          is_active: boolean
+          location: string
+          myth_votes: number
+          product_name: string
+          rating: number
+          reviewer_name: string
+          unclear_votes: number
+          updated_at: string
+          widget_type: string
+        }
+        Insert: {
+          audio_url?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          display_order?: number
+          duration: number
+          fact_votes?: number
+          gender: string
+          id?: string
+          is_active?: boolean
+          location: string
+          myth_votes?: number
+          product_name: string
+          rating: number
+          reviewer_name: string
+          unclear_votes?: number
+          updated_at?: string
+          widget_type: string
+        }
+        Update: {
+          audio_url?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          display_order?: number
+          duration?: number
+          fact_votes?: number
+          gender?: string
+          id?: string
+          is_active?: boolean
+          location?: string
+          myth_votes?: number
+          product_name?: string
+          rating?: number
+          reviewer_name?: string
+          unclear_votes?: number
+          updated_at?: string
+          widget_type?: string
+        }
+        Relationships: []
+      }
       membership_plans: {
         Row: {
           created_at: string

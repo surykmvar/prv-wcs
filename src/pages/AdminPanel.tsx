@@ -40,6 +40,7 @@ export default function AdminPanel() {
   const [membershipPlans, setMembershipPlans] = useState([]);
   const [userReferrals, setUserReferrals] = useState([]);
   const [userProfiles, setUserProfiles] = useState([]);
+  const [landingWidgets, setLandingWidgets] = useState([]);
   
   // Filters
   const [codeFilter, setCodeFilter] = useState('all');
@@ -60,6 +61,20 @@ export default function AdminPanel() {
     priceCents: '',
     intervalType: 'month',
     features: ''
+  });
+
+  // New widget form
+  const [newWidget, setNewWidget] = useState({
+    reviewer_name: '',
+    product_name: '',
+    location: '',
+    duration: '',
+    rating: '5',
+    gender: 'male',
+    widget_type: 'website',
+    myth_votes: '0',
+    fact_votes: '0',
+    unclear_votes: '0'
   });
 
   useEffect(() => {
@@ -113,6 +128,13 @@ export default function AdminPanel() {
         .select('user_id, display_name, first_name, last_name');
       if (profilesError) throw profilesError;
 
+      // Load landing page widgets
+      const { data: widgetsData, error: widgetsError } = await supabase
+        .from('landing_page_widgets')
+        .select('*')
+        .order('display_order');
+      if (widgetsError) throw widgetsError;
+
       setUsers(usersData || []);
       setThoughts(thoughtsData || []);
       setVoiceResponses(voiceData || []);
@@ -120,6 +142,7 @@ export default function AdminPanel() {
       setMembershipPlans(plansData || []);
       setUserReferrals(referralsData || []);
       setUserProfiles(profilesData || []);
+      setLandingWidgets(widgetsData || []);
     } catch (error) {
       console.error('Error loading admin data:', error);
       toast({
@@ -270,6 +293,79 @@ export default function AdminPanel() {
     }
   };
 
+  const createLandingWidget = async () => {
+    try {
+      const { error } = await supabase
+        .from('landing_page_widgets')
+        .insert({
+          reviewer_name: newWidget.reviewer_name,
+          product_name: newWidget.product_name,
+          location: newWidget.location,
+          duration: parseInt(newWidget.duration),
+          rating: parseInt(newWidget.rating),
+          gender: newWidget.gender,
+          widget_type: newWidget.widget_type,
+          myth_votes: parseInt(newWidget.myth_votes),
+          fact_votes: parseInt(newWidget.fact_votes),
+          unclear_votes: parseInt(newWidget.unclear_votes),
+          display_order: landingWidgets.filter((w: any) => w.widget_type === newWidget.widget_type).length + 1
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Landing page widget created successfully"
+      });
+
+      setNewWidget({
+        reviewer_name: '',
+        product_name: '',
+        location: '',
+        duration: '',
+        rating: '5',
+        gender: 'male',
+        widget_type: 'website',
+        myth_votes: '0',
+        fact_votes: '0',
+        unclear_votes: '0'
+      });
+      loadAdminData();
+    } catch (error) {
+      console.error('Error creating widget:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create landing page widget",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const toggleWidgetStatus = async (id: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('landing_page_widgets')
+        .update({ is_active: !currentStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Widget ${!currentStatus ? 'activated' : 'deactivated'}`
+      });
+
+      loadAdminData();
+    } catch (error) {
+      console.error('Error updating widget status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update widget status",
+        variant: "destructive"
+      });
+    }
+  };
+
   const filteredCodes = referralCodes.filter((code: any) => {
     if (codeFilter === 'active') return code.is_active;
     if (codeFilter === 'inactive') return !code.is_active;
@@ -336,6 +432,7 @@ export default function AdminPanel() {
               <TabsTrigger value="referrals" className="shrink-0 px-2 py-1 text-xs">Referrals</TabsTrigger>
               <TabsTrigger value="memberships" className="shrink-0 px-2 py-1 text-xs">Members</TabsTrigger>
               <TabsTrigger value="content" className="shrink-0 px-2 py-1 text-xs">Content</TabsTrigger>
+              <TabsTrigger value="landing-widgets" className="shrink-0 px-2 py-1 text-xs">Landing Page</TabsTrigger>
             </TabsList>
           </div>
 
@@ -602,6 +699,174 @@ export default function AdminPanel() {
                           <Badge variant="secondary">
                             {voiceResponses.filter((v: any) => v.thought_id === thought.id).length} responses
                           </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="landing-widgets">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Create Landing Page Widget</CardTitle>
+                  <CardDescription>Manage demo voice reviews shown on the landing page</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="reviewer_name">Reviewer Name</Label>
+                      <Input
+                        id="reviewer_name"
+                        value={newWidget.reviewer_name}
+                        onChange={(e) => setNewWidget({...newWidget, reviewer_name: e.target.value})}
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="product_name">Product Name</Label>
+                      <Input
+                        id="product_name"
+                        value={newWidget.product_name}
+                        onChange={(e) => setNewWidget({...newWidget, product_name: e.target.value})}
+                        placeholder="Wireless Headphones"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="location">Location</Label>
+                      <Input
+                        id="location"
+                        value={newWidget.location}
+                        onChange={(e) => setNewWidget({...newWidget, location: e.target.value})}
+                        placeholder="New York, NY"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="duration">Duration (seconds)</Label>
+                      <Input
+                        id="duration"
+                        type="number"
+                        value={newWidget.duration}
+                        onChange={(e) => setNewWidget({...newWidget, duration: e.target.value})}
+                        placeholder="30"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="rating">Rating (1-5 stars)</Label>
+                      <Select value={newWidget.rating} onValueChange={(value) => setNewWidget({...newWidget, rating: value})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 Star</SelectItem>
+                          <SelectItem value="2">2 Stars</SelectItem>
+                          <SelectItem value="3">3 Stars</SelectItem>
+                          <SelectItem value="4">4 Stars</SelectItem>
+                          <SelectItem value="5">5 Stars</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="gender">Voice Gender</Label>
+                      <Select value={newWidget.gender} onValueChange={(value) => setNewWidget({...newWidget, gender: value})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="widget_type">Widget Type</Label>
+                      <Select value={newWidget.widget_type} onValueChange={(value) => setNewWidget({...newWidget, widget_type: value})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="website">Website Integration</SelectItem>
+                          <SelectItem value="social">Social Media</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="myth_votes">Myth Votes</Label>
+                      <Input
+                        id="myth_votes"
+                        type="number"
+                        value={newWidget.myth_votes}
+                        onChange={(e) => setNewWidget({...newWidget, myth_votes: e.target.value})}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="fact_votes">Fact Votes</Label>
+                      <Input
+                        id="fact_votes"
+                        type="number"
+                        value={newWidget.fact_votes}
+                        onChange={(e) => setNewWidget({...newWidget, fact_votes: e.target.value})}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="unclear_votes">Unclear Votes</Label>
+                      <Input
+                        id="unclear_votes"
+                        type="number"
+                        value={newWidget.unclear_votes}
+                        onChange={(e) => setNewWidget({...newWidget, unclear_votes: e.target.value})}
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                  
+                  <Button onClick={createLandingWidget} className="w-full">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Widget
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Existing Landing Page Widgets</CardTitle>
+                  <CardDescription>Manage and edit widgets shown on the landing page</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {landingWidgets.map((widget: any) => (
+                      <div key={widget.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border rounded-lg">
+                        <div className="flex-1">
+                          <div className="font-medium">{widget.reviewer_name} - {widget.product_name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {widget.location} • {widget.duration}s • {widget.rating} stars • {widget.gender}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            Votes: {widget.fact_votes} fact, {widget.myth_votes} myth, {widget.unclear_votes} unclear
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Type: {widget.widget_type} • Order: {widget.display_order}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge variant={widget.is_active ? "default" : "secondary"}>
+                            {widget.is_active ? "Active" : "Inactive"}
+                          </Badge>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleWidgetStatus(widget.id, widget.is_active)}
+                          >
+                            {widget.is_active ? "Deactivate" : "Activate"}
+                          </Button>
                         </div>
                       </div>
                     ))}
