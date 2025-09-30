@@ -39,50 +39,50 @@ const VoiceWidgetDemoEnhanced = () => {
   const [socialWidgets, setSocialWidgets] = useState<VoiceWidget[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Fallback demo data with diverse ratings showcasing different ring states
+  // Fallback demo data with real audio files
   const fallbackWebsiteWidgets: VoiceWidget[] = [
     {
-      id: "demo-bad",
-      reviewer_name: "Lisa Martinez", 
-      product_name: "Budget Wireless Headphones",
+      id: "demo-1",
+      reviewer_name: "Lisa Martinez",
+      product_name: "Premium Wireless Headphones",
       location: "San Francisco, CA",
       duration: 15,
-      rating: 1, // BAD - Only red ring (dust outcome)
+      rating: 2,
       audio_url: demoVoiceFemale,
       gender: 'female',
-      myth_votes: 15,
-      fact_votes: 2,
-      unclear_votes: 3,
+      myth_votes: 12,
+      fact_votes: 3,
+      unclear_votes: 8,
       widget_type: 'website',
       display_order: 1
     },
     {
-      id: "demo-okay",
+      id: "demo-2",
       reviewer_name: "David Kim",
       product_name: "Smart Fitness Tracker",
-      location: "Austin, TX", 
+      location: "Austin, TX",
       duration: 32,
-      rating: 3, // OKAY - Red + green rings (unclear outcome)
+      rating: 3,
       audio_url: demoVoiceMale32,
       gender: 'male',
-      myth_votes: 6,
-      fact_votes: 8,
-      unclear_votes: 12,
+      myth_votes: 8,
+      fact_votes: 15,
+      unclear_votes: 6,
       widget_type: 'website',
       display_order: 2
     },
     {
-      id: "demo-amazing",
+      id: "demo-3",
       reviewer_name: "Alex Johnson",
-      product_name: "Premium Office Chair",
+      product_name: "Ergonomic Office Chair",
       location: "Seattle, WA",
       duration: 45,
-      rating: 5, // AMAZING - All three rings (bloom outcome)
+      rating: 5,
       audio_url: demoVoiceMale45,
       gender: 'male',
-      myth_votes: 1,
-      fact_votes: 32,
-      unclear_votes: 2,
+      myth_votes: 2,
+      fact_votes: 28,
+      unclear_votes: 4,
       widget_type: 'website',
       display_order: 3
     }
@@ -90,17 +90,17 @@ const VoiceWidgetDemoEnhanced = () => {
 
   const fallbackSocialWidgets: VoiceWidget[] = [
     {
-      id: "demo-social-amazing",
+      id: "demo-social-1",
       reviewer_name: "Alex Johnson",
-      product_name: "Premium Office Chair",
+      product_name: "Ergonomic Office Chair",
       location: "Seattle, WA",
       duration: 45,
-      rating: 5, // AMAZING - All three rings
+      rating: 5,
       audio_url: demoVoiceMale45,
       gender: 'male',
-      myth_votes: 1,
-      fact_votes: 32,
-      unclear_votes: 2,
+      myth_votes: 2,
+      fact_votes: 28,
+      unclear_votes: 4,
       widget_type: 'social',
       display_order: 1
     }

@@ -275,12 +275,12 @@ export function ModernVoicePlayer({
       <CardContent className="p-2 sm:p-4">
         {!controlled && <audio ref={audioRef} src={signedUrl} preload="metadata" />}
         
-        <div className="grid grid-cols-[auto_1fr_auto_auto] gap-1 sm:gap-3 items-center">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Play/Pause Button */}
           <Button
             onClick={togglePlayPause}
             size="sm"
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-woices-violet to-woices-bloom hover:from-woices-violet/90 hover:to-woices-bloom/90 text-white flex-shrink-0"
           >
             {isPlaying ? (
               <Pause className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -291,7 +291,7 @@ export function ModernVoicePlayer({
 
           {/* Waveform Container */}
           <div 
-            className="min-w-0 cursor-pointer" 
+            className="flex-1 min-w-0 cursor-pointer" 
             onClick={(e) => {
               const rect = e.currentTarget.getBoundingClientRect()
               const x = e.clientX - rect.left
@@ -302,12 +302,12 @@ export function ModernVoicePlayer({
             <DynamicWaveform
               isPlaying={isPlaying}
               progress={audioDuration > 0 ? currentTime / audioDuration : 0}
-              className="h-6 sm:h-8 w-full"
+              className="h-6 sm:h-8"
             />
           </div>
 
           {/* Time Display */}
-          <div className="text-xs sm:text-sm text-muted-foreground tabular-nums text-right whitespace-nowrap">
+          <div className="text-xs sm:text-sm text-muted-foreground tabular-nums min-w-[45px] sm:min-w-[60px] text-right flex-shrink-0">
             {isPlaying 
               ? `${formatTime(audioDuration - currentTime)} left`
               : formatTime(audioDuration)
@@ -319,7 +319,7 @@ export function ModernVoicePlayer({
             onClick={togglePlaybackSpeed}
             variant="ghost"
             size="sm"
-            className="text-xs font-medium px-1 sm:px-2 h-6 sm:h-8 hover:bg-muted/50 whitespace-nowrap"
+            className="text-xs font-medium px-1 sm:px-2 h-6 sm:h-8 min-w-[32px] sm:min-w-[40px] hover:bg-muted/50 flex-shrink-0"
           >
             <Zap className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
             {playbackRate}x
@@ -328,9 +328,9 @@ export function ModernVoicePlayer({
         </div>
 
         {/* Voting and Rating Section */}
-        <div className="mt-3 sm:mt-4 grid grid-cols-[1fr_auto] gap-2 sm:gap-4 items-center">
+        <div className="mt-3 sm:mt-4 flex items-center justify-between gap-2 sm:gap-4">
           {/* Voting Buttons - Left side */}
-          <div className="min-w-0">
+          <div className="flex-1">
             <VotingButtons
               voiceResponseId={voiceResponseId}
               mythVotes={localMythVotes}
@@ -340,11 +340,12 @@ export function ModernVoicePlayer({
             />
           </div>
 
-          {/* Rating - Right side */}
-          <div className="flex justify-end">
+          {/* Ripple Rating - Right side */}
+          <div className="flex-shrink-0">
             <EchoLevels 
               rating={getRatingFromOutcome()} 
-              size="sm"
+              size="sm" 
+              className="justify-end"
             />
           </div>
         </div>

@@ -17,9 +17,9 @@ const ratingLabels = {
 }
 
 const ringColors = {
-  1: "#FF453A", // Red - Voice Clarity
-  2: "#30D158", // Green - Content Quality  
-  3: "#007AFF"  // Blue - Overall Experience
+  1: { border: "rgba(255, 69, 58, 0.8)", bg: "rgba(255, 69, 58, 0.15)", glow: "rgba(255, 69, 58, 0.4)" }, // Red - Voice Clarity
+  2: { border: "rgba(48, 209, 88, 0.8)", bg: "rgba(48, 209, 88, 0.15)", glow: "rgba(48, 209, 88, 0.4)" }, // Green - Content Quality
+  3: { border: "rgba(0, 122, 255, 0.8)", bg: "rgba(0, 122, 255, 0.15)", glow: "rgba(0, 122, 255, 0.4)" } // Blue - Overall Experience
 }
 
 export const EchoLevels = ({ 
@@ -33,15 +33,15 @@ export const EchoLevels = ({
   const [showTooltip, setShowTooltip] = useState(false)
   
   const sizeClasses = {
-    sm: "w-10 h-10",
-    md: "w-14 h-14", 
-    lg: "w-18 h-18"
+    sm: "w-8 h-8",
+    md: "w-12 h-12", 
+    lg: "w-16 h-16"
   }
   
-  const ringSizes = {
-    sm: [24, 32, 40],
-    md: [28, 38, 48],
-    lg: [36, 48, 60]
+  const rippleSizes = {
+    sm: [20, 28, 36],
+    md: [24, 34, 44],
+    lg: [32, 44, 56]
   }
 
   const iconSizes = {
@@ -87,28 +87,30 @@ export const EchoLevels = ({
 
   const currentRings = convertRatingToRings(hoveredRating ? (hoveredRating === 1 ? 2 : hoveredRating === 2 ? 3 : 5) : rating)
   
-  // Apple Watch style ring colors - pure outline rings only
+  // Apple Watch style ring colors - each ring has distinct color
   const getRingStyle = (level: number, currentLevel: number) => {
     const isActive = level <= currentLevel
-    const color = ringColors[level as keyof typeof ringColors]
+    const colors = ringColors[level as keyof typeof ringColors]
     
     if (!isActive) {
       return {
         borderColor: "rgba(128, 128, 128, 0.2)",
-        backgroundColor: "transparent"
+        backgroundColor: "rgba(128, 128, 128, 0.05)",
+        boxShadow: "none"
       }
     }
     
     return {
-      borderColor: color,
-      backgroundColor: "transparent"
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      boxShadow: `0 0 12px ${colors.glow}, inset 0 0 8px ${colors.glow}`
     }
   }
 
   const getCenterColor = () => {
-    if (currentRings === 1) return "#FF453A" // Red
-    if (currentRings === 2) return "#30D158" // Green
-    return "#007AFF" // Blue
+    if (currentRings === 1) return "rgba(255, 69, 58, 0.9)" // Red
+    if (currentRings === 2) return "rgba(48, 209, 88, 0.9)" // Green
+    return "rgba(0, 122, 255, 0.9)" // Blue
   }
 
   return (
@@ -117,7 +119,7 @@ export const EchoLevels = ({
         <div className={`relative ${sizeClasses[size]} flex items-center justify-center group`}>
           {/* 3 Activity Rings (Apple Watch style) with individual tooltips */}
           {[1, 2, 3].map((level) => {
-            const ringSize = ringSizes[size][level - 1]
+            const rippleSize = rippleSizes[size][level - 1]
             const levelLabel = ratingLabels[level as keyof typeof ratingLabels]
             const ringStyle = getRingStyle(level, currentRings)
             const isActive = level <= currentRings
@@ -127,14 +129,16 @@ export const EchoLevels = ({
                 <TooltipTrigger asChild>
                   <div
                     className={`
-                      absolute rounded-full border-[5px] transition-all duration-500 ease-out
-                      ${interactive ? "cursor-pointer hover:scale-105" : ""}
+                      absolute rounded-full border-[3px] transition-all duration-500 ease-out
+                      ${interactive ? "cursor-pointer" : ""}
                     `}
                     style={{
-                      width: `${ringSize}px`,
-                      height: `${ringSize}px`,
+                      width: `${rippleSize}px`,
+                      height: `${rippleSize}px`,
                       borderColor: ringStyle.borderColor,
                       backgroundColor: ringStyle.backgroundColor,
+                      boxShadow: ringStyle.boxShadow,
+                      transform: interactive && hoveredRating === level ? 'scale(1.08)' : 'scale(1)',
                     }}
                     onClick={() => handleClick(level)}
                     onMouseEnter={() => handleMouseEnter(level)}
@@ -153,7 +157,7 @@ export const EchoLevels = ({
           
           {/* Center voice icon */}
           <div 
-            className="relative z-10 rounded-full p-2 flex items-center justify-center transition-all duration-300"
+            className="relative z-10 rounded-full p-1.5 flex items-center justify-center transition-all duration-300 shadow-lg"
             style={{ backgroundColor: getCenterColor() }}
           >
             <Mic className={`${iconSizes[size]} text-white`} />
