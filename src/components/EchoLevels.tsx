@@ -11,9 +11,15 @@ interface EchoLevelsProps {
 }
 
 const ratingLabels = {
-  1: "Poor Quality",
-  2: "Good Quality",
-  3: "Excellent Quality"
+  1: "Clear Audio",
+  2: "Great Content",
+  3: "Excellent Experience"
+}
+
+const ringColors = {
+  1: { border: "rgba(255, 69, 58, 0.8)", bg: "rgba(255, 69, 58, 0.15)", glow: "rgba(255, 69, 58, 0.4)" }, // Red - Voice Clarity
+  2: { border: "rgba(48, 209, 88, 0.8)", bg: "rgba(48, 209, 88, 0.15)", glow: "rgba(48, 209, 88, 0.4)" }, // Green - Content Quality
+  3: { border: "rgba(0, 122, 255, 0.8)", bg: "rgba(0, 122, 255, 0.15)", glow: "rgba(0, 122, 255, 0.4)" } // Blue - Overall Experience
 }
 
 export const EchoLevels = ({ 
@@ -44,11 +50,11 @@ export const EchoLevels = ({
     lg: "w-4 h-4"
   }
 
-  // Convert 5-star rating to 3-ripple system
-  const convertRatingToRipples = (starRating: number) => {
-    if (starRating <= 2) return 1 // Poor - 1 red ripple
-    if (starRating === 3) return 2 // Okay - 2 ripples (red + blue)
-    return 3 // Great - 3 ripples (red + blue + green)
+  // Convert 5-star rating to 3-ring system (Apple Watch style)
+  const convertRatingToRings = (starRating: number) => {
+    if (starRating <= 2) return 1 // Only red ring (Clear Audio)
+    if (starRating === 3) return 2 // Red + green rings (Clear Audio + Great Content)
+    return 3 // All three rings (Clear Audio + Great Content + Excellent Experience)
   }
 
   const handleClick = (level: number) => {
@@ -79,45 +85,60 @@ export const EchoLevels = ({
     }
   }
 
-  const currentRipples = convertRatingToRipples(hoveredRating ? (hoveredRating === 1 ? 2 : hoveredRating === 2 ? 3 : 5) : rating)
+  const currentRings = convertRatingToRings(hoveredRating ? (hoveredRating === 1 ? 2 : hoveredRating === 2 ? 3 : 5) : rating)
   
-  // Single color system with intensity levels
-  const getRippleColor = (level: number, currentLevel: number) => {
-    if (level > currentLevel) return "border-muted-foreground/10 bg-muted/5"
+  // Apple Watch style ring colors - each ring has distinct color
+  const getRingStyle = (level: number, currentLevel: number) => {
+    const isActive = level <= currentLevel
+    const colors = ringColors[level as keyof typeof ringColors]
     
-    // Use primary color with increasing intensity
-    if (level === 1) return "border-primary/30 bg-primary/5"
-    if (level === 2) return "border-primary/60 bg-primary/10"
-    return "border-primary bg-primary/20"
+    if (!isActive) {
+      return {
+        borderColor: "rgba(128, 128, 128, 0.2)",
+        backgroundColor: "rgba(128, 128, 128, 0.05)",
+        boxShadow: "none"
+      }
+    }
+    
+    return {
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      boxShadow: `0 0 12px ${colors.glow}, inset 0 0 8px ${colors.glow}`
+    }
   }
 
   const getCenterColor = () => {
-    if (currentRipples === 1) return "hsl(var(--primary) / 0.7)"
-    if (currentRipples === 2) return "hsl(var(--primary) / 0.85)"
-    return "hsl(var(--primary))"
+    if (currentRings === 1) return "rgba(255, 69, 58, 0.9)" // Red
+    if (currentRings === 2) return "rgba(48, 209, 88, 0.9)" // Green
+    return "rgba(0, 122, 255, 0.9)" // Blue
   }
 
   return (
     <TooltipProvider>
       <div className={`relative flex flex-col items-center ${className}`}>
         <div className={`relative ${sizeClasses[size]} flex items-center justify-center group`}>
-          {/* 3 Ripple waves with individual tooltips */}
+          {/* 3 Activity Rings (Apple Watch style) with individual tooltips */}
           {[1, 2, 3].map((level) => {
             const rippleSize = rippleSizes[size][level - 1]
             const levelLabel = ratingLabels[level as keyof typeof ratingLabels]
+            const ringStyle = getRingStyle(level, currentRings)
+            const isActive = level <= currentRings
             
             return (
               <Tooltip key={level} delayDuration={0}>
                 <TooltipTrigger asChild>
                   <div
                     className={`
-                      absolute rounded-full border-3 transition-all duration-300 ease-in-out
-                      ${getRippleColor(level, currentRipples)}
-                      ${interactive ? "cursor-pointer hover:scale-110 hover:border-primary/80" : ""}
+                      absolute rounded-full border-[3px] transition-all duration-500 ease-out
+                      ${interactive ? "cursor-pointer" : ""}
                     `}
                     style={{
                       width: `${rippleSize}px`,
                       height: `${rippleSize}px`,
+                      borderColor: ringStyle.borderColor,
+                      backgroundColor: ringStyle.backgroundColor,
+                      boxShadow: ringStyle.boxShadow,
+                      transform: interactive && hoveredRating === level ? 'scale(1.08)' : 'scale(1)',
                     }}
                     onClick={() => handleClick(level)}
                     onMouseEnter={() => handleMouseEnter(level)}
@@ -125,7 +146,7 @@ export const EchoLevels = ({
                     onTouchStart={() => handleTouch(level)}
                   />
                 </TooltipTrigger>
-                {(interactive || (level <= currentRipples)) && (
+                {(interactive || isActive) && (
                   <TooltipContent side="top" className="bg-popover border border-border shadow-lg">
                     <p className="text-xs font-semibold">{levelLabel}</p>
                   </TooltipContent>
