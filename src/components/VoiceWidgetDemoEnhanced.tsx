@@ -186,8 +186,8 @@ const VoiceWidgetDemoEnhanced = () => {
           <h3 className="text-2xl font-bold text-center mb-8 text-foreground">
             Website Integration
           </h3>
-          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Showcase authentic voice reviews on your website, portfolio, or blog - more personal and trustworthy than traditional text reviews.
+          <p className="text-center text-muted-foreground text-sm mb-8 max-w-2xl mx-auto">
+            Authentic • Personal • Trustworthy • Portfolio Ready
           </p>
           
           <div className="relative max-w-5xl mx-auto px-12">
@@ -218,8 +218,8 @@ const VoiceWidgetDemoEnhanced = () => {
           <h3 className="text-2xl font-bold text-center mb-8 text-foreground">
             Social Media Integration
           </h3>
-          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Share voice reviews across social platforms to build authentic connections and trust with your audience.
+          <p className="text-center text-muted-foreground text-sm mb-8 max-w-2xl mx-auto">
+            Instagram • TikTok • LinkedIn • Twitter • Link in Bio
           </p>
           
           <div className="max-w-md mx-auto">

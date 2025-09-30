@@ -11,9 +11,9 @@ interface EchoLevelsProps {
 }
 
 const ratingLabels = {
-  1: "Poor",
-  2: "Okay",
-  3: "Great"
+  1: "Poor Quality",
+  2: "Good Quality",
+  3: "Excellent Quality"
 }
 
 export const EchoLevels = ({ 
@@ -80,42 +80,40 @@ export const EchoLevels = ({
   }
 
   const currentRipples = convertRatingToRipples(hoveredRating ? (hoveredRating === 1 ? 2 : hoveredRating === 2 ? 3 : 5) : rating)
-  const displayRating = hoveredRating || (currentRipples === 1 ? 1 : currentRipples === 2 ? 2 : 3)
-  const currentLabel = ratingLabels[displayRating as keyof typeof ratingLabels]
-
-  // 3-ripple color system
-  const getRippleColor = (level: number, isActive: boolean) => {
-    if (!isActive) return "border-muted-foreground/10"
+  
+  // Single color system with intensity levels
+  const getRippleColor = (level: number, currentLevel: number) => {
+    if (level > currentLevel) return "border-muted-foreground/10 bg-muted/5"
     
-    if (level === 1) return "border-[hsl(var(--echo-red))]"
-    if (level === 2) return "border-[hsl(var(--woices-sky))]"
-    return "border-[hsl(var(--echo-green))]"
+    // Use primary color with increasing intensity
+    if (level === 1) return "border-primary/30 bg-primary/5"
+    if (level === 2) return "border-primary/60 bg-primary/10"
+    return "border-primary bg-primary/20"
   }
 
   const getCenterColor = () => {
-    if (currentRipples === 1) return "hsl(var(--echo-red))"
-    if (currentRipples === 2) return "hsl(var(--woices-sky))"
-    return "hsl(var(--echo-green))"
+    if (currentRipples === 1) return "hsl(var(--primary) / 0.7)"
+    if (currentRipples === 2) return "hsl(var(--primary) / 0.85)"
+    return "hsl(var(--primary))"
   }
 
   return (
     <TooltipProvider>
-      <Tooltip open={showTooltip || (interactive && hoveredRating !== null)} delayDuration={0}>
-        <TooltipTrigger asChild>
-          <div className={`flex flex-col items-center ${className}`}>
-            <div className={`relative ${sizeClasses[size]} flex items-center justify-center group`}>
-              {/* 3 Ripple waves */}
-              {[1, 2, 3].map((level) => {
-                const isActive = level <= currentRipples
-                const rippleSize = rippleSizes[size][level - 1]
-                
-                return (
+      <div className={`relative flex flex-col items-center ${className}`}>
+        <div className={`relative ${sizeClasses[size]} flex items-center justify-center group`}>
+          {/* 3 Ripple waves with individual tooltips */}
+          {[1, 2, 3].map((level) => {
+            const rippleSize = rippleSizes[size][level - 1]
+            const levelLabel = ratingLabels[level as keyof typeof ratingLabels]
+            
+            return (
+              <Tooltip key={level} delayDuration={0}>
+                <TooltipTrigger asChild>
                   <div
-                    key={level}
                     className={`
-                      absolute rounded-full border-4 transition-all duration-300
-                      ${getRippleColor(level, isActive)}
-                      ${interactive ? "cursor-pointer hover:scale-105 hover:bg-black/5 dark:hover:bg-white/5" : ""}
+                      absolute rounded-full border-3 transition-all duration-300 ease-in-out
+                      ${getRippleColor(level, currentRipples)}
+                      ${interactive ? "cursor-pointer hover:scale-110 hover:border-primary/80" : ""}
                     `}
                     style={{
                       width: `${rippleSize}px`,
@@ -126,26 +124,25 @@ export const EchoLevels = ({
                     onMouseLeave={handleMouseLeave}
                     onTouchStart={() => handleTouch(level)}
                   />
-                )
-              })}
-              
-              {/* Center voice icon */}
-              <div 
-                className="relative z-10 rounded-full p-1 flex items-center justify-center transition-all duration-300"
-                style={{ backgroundColor: getCenterColor() }}
-              >
-                <Mic className={`${iconSizes[size]} text-white`} />
-              </div>
-            </div>
+                </TooltipTrigger>
+                {(interactive || (level <= currentRipples)) && (
+                  <TooltipContent side="top" className="bg-popover border border-border shadow-lg">
+                    <p className="text-xs font-semibold">{levelLabel}</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            )
+          })}
+          
+          {/* Center voice icon */}
+          <div 
+            className="relative z-10 rounded-full p-1.5 flex items-center justify-center transition-all duration-300 shadow-lg"
+            style={{ backgroundColor: getCenterColor() }}
+          >
+            <Mic className={`${iconSizes[size]} text-white`} />
           </div>
-        </TooltipTrigger>
-        
-        {((interactive && hoveredRating) || (!interactive && rating > 0) || showTooltip) ? (
-          <TooltipContent side="top" className="bg-popover border border-border">
-            <p className="text-xs font-medium">{currentLabel}</p>
-          </TooltipContent>
-        ) : null}
-      </Tooltip>
+        </div>
+      </div>
     </TooltipProvider>
   )
 }
