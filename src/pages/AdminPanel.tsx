@@ -14,7 +14,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search, CalendarIcon, Circle, Square } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search, CalendarIcon, Circle, Square, Trash2 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { CreditPackageManager } from '@/components/admin/CreditPackageManager';
 import { Helmet } from 'react-helmet-async';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -35,6 +36,7 @@ export default function AdminPanel() {
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [showSystemFlowMobileNotice, setShowSystemFlowMobileNotice] = useState(false);
+  const [deleteWidgetId, setDeleteWidgetId] = useState<string | null>(null);
   const [users, setUsers] = useState([]);
   const [thoughts, setThoughts] = useState([]);
   const [voiceResponses, setVoiceResponses] = useState([]);
@@ -399,6 +401,32 @@ export default function AdminPanel() {
     }
   };
 
+  const deleteWidget = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('landing_page_widgets')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Widget deleted successfully"
+      });
+
+      setDeleteWidgetId(null);
+      loadAdminData();
+    } catch (error) {
+      console.error('Error deleting widget:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete widget",
+        variant: "destructive"
+      });
+    }
+  };
+
   const filteredCodes = referralCodes.filter((code: any) => {
     if (codeFilter === 'active') return code.is_active;
     if (codeFilter === 'inactive') return !code.is_active;
@@ -436,7 +464,7 @@ export default function AdminPanel() {
         <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold">Admin Panel</h1>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2 items-center w-full sm:w-auto">
             <Button 
               onClick={() => {
                 if (isMobile) {
@@ -454,6 +482,7 @@ export default function AdminPanel() {
             <Button onClick={() => navigate('/')} variant="outline" size="sm" className="w-full sm:w-auto">
               Back to App
             </Button>
+            <ThemeToggle />
           </div>
         </div>
 
@@ -1056,16 +1085,33 @@ export default function AdminPanel() {
                             Type: {widget.widget_type} • Order: {widget.display_order}
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Badge variant={widget.is_active ? "default" : "secondary"}>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge 
+                            className={widget.is_active 
+                              ? "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-100 dark:border-green-700" 
+                              : "bg-red-100 text-red-800 border-red-300 dark:bg-red-900 dark:text-red-100 dark:border-red-700"
+                            }
+                          >
                             {widget.is_active ? "Active" : "Inactive"}
                           </Badge>
                           <Button
                             variant="outline"
                             size="sm"
+                            className={widget.is_active 
+                              ? "bg-red-50 text-red-700 border-red-300 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 dark:border-red-800 dark:hover:bg-red-900" 
+                              : "bg-green-50 text-green-700 border-green-300 hover:bg-green-100 dark:bg-green-950 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-900"
+                            }
                             onClick={() => toggleWidgetStatus(widget.id, widget.is_active)}
                           >
                             {widget.is_active ? "Deactivate" : "Activate"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="bg-red-50 text-red-700 border-red-300 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 dark:border-red-800 dark:hover:bg-red-900"
+                            onClick={() => setDeleteWidgetId(widget.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
@@ -1100,6 +1146,31 @@ export default function AdminPanel() {
                 navigate('/')
               }}>
                 Go Home
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={deleteWidgetId !== null} onOpenChange={(open) => !open && setDeleteWidgetId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Widget</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to permanently delete this widget? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction 
+                className="bg-muted text-muted-foreground hover:bg-muted/80"
+                onClick={() => setDeleteWidgetId(null)}
+              >
+                Cancel
+              </AlertDialogAction>
+              <AlertDialogAction 
+                className="bg-red-600 text-white hover:bg-red-700"
+                onClick={() => deleteWidgetId && deleteWidget(deleteWidgetId)}
+              >
+                Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
