@@ -14,10 +14,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search, CalendarIcon } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mic, Plus, Download, Search, CalendarIcon, Circle, Square } from 'lucide-react';
 import { CreditPackageManager } from '@/components/admin/CreditPackageManager';
 import { Helmet } from 'react-helmet-async';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useVoiceRecording } from '@/hooks/useVoiceRecording';
+import { validateAudioDuration } from '@/utils/audioUtils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,14 +70,18 @@ export default function AdminPanel() {
     reviewer_name: '',
     product_name: '',
     location: '',
-    duration: '',
-        audio_url: '',
+    duration: 0,
+    audio_url: '',
     gender: 'male',
     widget_type: 'website',
     myth_votes: '0',
     fact_votes: '0',
     unclear_votes: '0'
   });
+  
+  // Voice recording state
+  const [recordingMode, setRecordingMode] = useState<'upload' | 'record'>('upload');
+  const voiceRecording = useVoiceRecording(60);
 
   useEffect(() => {
     loadAdminData();
@@ -295,13 +301,33 @@ export default function AdminPanel() {
 
   const createLandingWidget = async () => {
     try {
+      // Validate required fields
+      if (!newWidget.reviewer_name || !newWidget.product_name || !newWidget.location) {
+        toast({
+          title: "Error",
+          description: "Please fill in all required fields",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Validate audio and duration
+      if (!newWidget.audio_url || newWidget.duration === 0) {
+        toast({
+          title: "Error",
+          description: "Please record or upload audio (max 60 seconds)",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('landing_page_widgets')
         .insert({
           reviewer_name: newWidget.reviewer_name,
           product_name: newWidget.product_name,
           location: newWidget.location,
-          duration: parseInt(newWidget.duration),
+          duration: newWidget.duration,
           rating: Math.max(1, Math.min(5, Math.round(
             parseInt(newWidget.fact_votes) > parseInt(newWidget.myth_votes) ? 5 : 
             parseInt(newWidget.myth_votes) > parseInt(newWidget.fact_votes) ? 1 : 3
@@ -322,11 +348,12 @@ export default function AdminPanel() {
         description: "Landing page widget created successfully"
       });
 
+      // Reset form and recording
       setNewWidget({
         reviewer_name: '',
         product_name: '',
         location: '',
-        duration: '',
+        duration: 0,
         audio_url: '',
         gender: 'male',
         widget_type: 'website',
@@ -334,6 +361,8 @@ export default function AdminPanel() {
         fact_votes: '0',
         unclear_votes: '0'
       });
+      voiceRecording.resetRecording();
+      setRecordingMode('upload');
       loadAdminData();
     } catch (error) {
       console.error('Error creating widget:', error);
@@ -748,55 +777,198 @@ export default function AdminPanel() {
                         placeholder="New York, NY"
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="duration">Duration (seconds)</Label>
-                      <Input
-                        id="duration"
-                        type="number"
-                        value={newWidget.duration}
-                        onChange={(e) => setNewWidget({...newWidget, duration: e.target.value})}
-                        placeholder="30"
-                      />
+                  </div>
+
+                  {/* Audio Recording/Upload Section */}
+                  <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-base font-semibold">Audio (Max 60 seconds)</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant={recordingMode === 'upload' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            setRecordingMode('upload');
+                            voiceRecording.resetRecording();
+                          }}
+                        >
+                          Upload File
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={recordingMode === 'record' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setRecordingMode('record')}
+                        >
+                          <Mic className="w-3 h-3 mr-1" />
+                          Record Voice
+                        </Button>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="audio_upload">Audio File Upload</Label>
-                      <Input
-                        id="audio_upload"
-                        type="file"
-                        accept=".wav,.mp3,.m4a,audio/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0]
-                          if (file) {
-                            try {
-                              const fileExt = file.name.split('.').pop()
-                              const fileName = `widget-${Date.now()}.${fileExt}`
-                              
-                              const { data, error } = await supabase.storage
-                                .from('voice-recordings')
-                                .upload(fileName, file)
-                              
-                              if (error) throw error
-                              
-                              setNewWidget({...newWidget, audio_url: fileName})
-                              toast({
-                                title: "Success",
-                                description: "Audio file uploaded successfully"
-                              })
-                            } catch (error) {
-                              console.error('Upload error:', error)
-                              toast({
-                                title: "Error",
-                                description: "Failed to upload audio file",
-                                variant: "destructive"
-                              })
+
+                    {recordingMode === 'upload' ? (
+                      <div>
+                        <Input
+                          id="audio_upload"
+                          type="file"
+                          accept=".wav,.mp3,.m4a,.ogg,audio/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              try {
+                                // Validate audio duration
+                                const validation = await validateAudioDuration(file, 60);
+                                
+                                if (!validation.valid) {
+                                  toast({
+                                    title: "Error",
+                                    description: validation.error,
+                                    variant: "destructive"
+                                  });
+                                  e.target.value = ''; // Reset input
+                                  return;
+                                }
+
+                                const fileExt = file.name.split('.').pop();
+                                const fileName = `widget-${Date.now()}.${fileExt}`;
+                                
+                                const { data, error } = await supabase.storage
+                                  .from('voice-recordings')
+                                  .upload(fileName, file);
+                                
+                                if (error) throw error;
+                                
+                                setNewWidget({
+                                  ...newWidget, 
+                                  audio_url: fileName,
+                                  duration: validation.duration
+                                });
+                                
+                                toast({
+                                  title: "Success",
+                                  description: `Audio uploaded (${validation.duration}s)`
+                                });
+                              } catch (error) {
+                                console.error('Upload error:', error);
+                                toast({
+                                  title: "Error",
+                                  description: "Failed to upload audio file",
+                                  variant: "destructive"
+                                });
+                              }
                             }
-                          }
-                        }}
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Upload audio file or leave empty for demo audio. Rating is determined by vote counts.
-                      </p>
-                    </div>
+                          }}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Upload audio file (max 60 seconds). Supported formats: WAV, MP3, M4A, OGG
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {/* Recording Controls */}
+                        <div className="flex items-center gap-3">
+                          {!voiceRecording.isRecording && !voiceRecording.audioUrl && (
+                            <Button
+                              type="button"
+                              onClick={voiceRecording.startRecording}
+                              size="sm"
+                              className="gap-2"
+                            >
+                              <Circle className="w-4 h-4 fill-current" />
+                              Start Recording
+                            </Button>
+                          )}
+                          
+                          {voiceRecording.isRecording && (
+                            <>
+                              <Button
+                                type="button"
+                                onClick={voiceRecording.stopRecording}
+                                size="sm"
+                                variant="destructive"
+                                className="gap-2"
+                              >
+                                <Square className="w-4 h-4" />
+                                Stop
+                              </Button>
+                              <div className="flex items-center gap-2 text-sm">
+                                <div className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
+                                <span className="font-mono">{voiceRecording.formatTime(voiceRecording.timeLeft)}</span>
+                              </div>
+                            </>
+                          )}
+
+                          {voiceRecording.audioUrl && (
+                            <>
+                              <audio src={voiceRecording.audioUrl} controls className="flex-1 h-8" />
+                              <Button
+                                type="button"
+                                onClick={async () => {
+                                  try {
+                                    if (!voiceRecording.audioBlob) return;
+                                    
+                                    const fileName = `widget-${Date.now()}.webm`;
+                                    const { data, error } = await supabase.storage
+                                      .from('voice-recordings')
+                                      .upload(fileName, voiceRecording.audioBlob);
+                                    
+                                    if (error) throw error;
+                                    
+                                    setNewWidget({
+                                      ...newWidget, 
+                                      audio_url: fileName,
+                                      duration: voiceRecording.duration
+                                    });
+                                    
+                                    toast({
+                                      title: "Success",
+                                      description: `Recording saved (${voiceRecording.duration}s)`
+                                    });
+                                  } catch (error) {
+                                    console.error('Save error:', error);
+                                    toast({
+                                      title: "Error",
+                                      description: "Failed to save recording",
+                                      variant: "destructive"
+                                    });
+                                  }
+                                }}
+                                size="sm"
+                                variant="default"
+                              >
+                                Use Recording
+                              </Button>
+                              <Button
+                                type="button"
+                                onClick={voiceRecording.resetRecording}
+                                size="sm"
+                                variant="outline"
+                              >
+                                Re-record
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                        
+                        {voiceRecording.isRecording && (
+                          <p className="text-xs text-muted-foreground">
+                            Recording will automatically stop at 60 seconds
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Show current audio status */}
+                    {newWidget.audio_url && newWidget.duration > 0 && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background p-2 rounded">
+                        <Mic className="w-4 h-4" />
+                        <span>Audio ready: {newWidget.duration}s</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="gender">Voice Gender</Label>
                       <Select value={newWidget.gender} onValueChange={(value) => setNewWidget({...newWidget, gender: value})}>
