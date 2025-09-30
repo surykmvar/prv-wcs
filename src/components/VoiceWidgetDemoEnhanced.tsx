@@ -178,7 +178,7 @@ const VoiceWidgetDemoEnhanced = () => {
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-background via-muted/20 to-background">
+    <section className="py-20 px-4 bg-gradient-to-b from-background via-muted/20 to-background overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
 
         {/* Website Integration */}
@@ -190,19 +190,25 @@ const VoiceWidgetDemoEnhanced = () => {
             Showcase authentic voice reviews on your website, portfolio, or blog - more personal and trustworthy than traditional text reviews.
           </p>
           
-          <div className="relative max-w-4xl mx-auto">
-            <Carousel className="w-full">
+          <div className="relative max-w-5xl mx-auto px-4">
+            <Carousel 
+              className="w-full"
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+            >
               <CarouselContent className="-ml-2 md:-ml-4">
                 {websiteWidgets.map((widget, index) => (
-                  <CarouselItem key={widget.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={widget.id} className="pl-2 md:pl-4 basis-11/12 sm:basis-1/2 lg:basis-1/3">
                     <div className="h-full">
                       <VoiceReviewCard widget={widget} />
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="hidden md:flex" />
-              <CarouselNext className="hidden md:flex" />
+              <CarouselPrevious />
+              <CarouselNext />
             </Carousel>
           </div>
         </div>
