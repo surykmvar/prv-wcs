@@ -274,7 +274,7 @@ const Landing = () => {
       <div className="relative">
         <Header />
         
-        <main>
+        <main className="pt-16 sm:pt-20 md:pt-24">
           {/* Hero Section */}
           <section className="py-6 sm:py-8 md:py-12 px-4">
             <div className="max-w-6xl mx-auto">

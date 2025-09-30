@@ -10,6 +10,7 @@ import { MembershipModal } from '@/components/MembershipModal'
 import { useState } from 'react'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useLocation } from 'react-router-dom'
+import { useScrollDirection } from '@/hooks/useScrollDirection'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,15 +37,22 @@ export function Header() {
   const isMobile = useIsMobile()
   const [membershipModalOpen, setMembershipModalOpen] = useState(false)
   const [showSystemFlowMobileNotice, setShowSystemFlowMobileNotice] = useState(false)
+  const { scrollDirection, isAtTop } = useScrollDirection()
 
   const handleSignOut = async () => {
     await signOut()
     navigate('/auth')
   }
 
+  const shouldShowHeader = isAtTop || scrollDirection === 'up'
+
   return (
-    <header className="w-full px-4 sm:px-6 py-3 sm:py-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center mt-2 sm:mt-3 md:mt-4">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-6 py-3 sm:py-4 bg-background/95 backdrop-blur-sm border-b border-border/50 transition-transform duration-300 ${
+        shouldShowHeader ? 'transform translate-y-0' : 'transform -translate-y-full'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div 
           className="cursor-pointer hover:opacity-80 transition-opacity relative"
           onClick={(e) => {

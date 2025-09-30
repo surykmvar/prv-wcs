@@ -26,7 +26,7 @@ const Index = () => {
       </Helmet>
       <div className="relative">
         <Header />
-        <main className="py-4 sm:py-8 md:py-12">
+        <main className="py-4 sm:py-8 md:py-12 pt-20 sm:pt-24 md:pt-28">
           <MainActions />
         </main>
       </div>

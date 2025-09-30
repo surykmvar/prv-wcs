@@ -69,7 +69,7 @@ export default function AdminPanel() {
     product_name: '',
     location: '',
     duration: '',
-    rating: '5',
+        audio_url: '',
     gender: 'male',
     widget_type: 'website',
     myth_votes: '0',
@@ -302,7 +302,11 @@ export default function AdminPanel() {
           product_name: newWidget.product_name,
           location: newWidget.location,
           duration: parseInt(newWidget.duration),
-          rating: parseInt(newWidget.rating),
+          rating: Math.max(1, Math.min(5, Math.round(
+            parseInt(newWidget.fact_votes) > parseInt(newWidget.myth_votes) ? 5 : 
+            parseInt(newWidget.myth_votes) > parseInt(newWidget.fact_votes) ? 1 : 3
+          ))),
+          audio_url: newWidget.audio_url || null,
           gender: newWidget.gender,
           widget_type: newWidget.widget_type,
           myth_votes: parseInt(newWidget.myth_votes),
@@ -323,7 +327,7 @@ export default function AdminPanel() {
         product_name: '',
         location: '',
         duration: '',
-        rating: '5',
+        audio_url: '',
         gender: 'male',
         widget_type: 'website',
         myth_votes: '0',
@@ -755,19 +759,43 @@ export default function AdminPanel() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="rating">Rating (1-5 stars)</Label>
-                      <Select value={newWidget.rating} onValueChange={(value) => setNewWidget({...newWidget, rating: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">1 Star</SelectItem>
-                          <SelectItem value="2">2 Stars</SelectItem>
-                          <SelectItem value="3">3 Stars</SelectItem>
-                          <SelectItem value="4">4 Stars</SelectItem>
-                          <SelectItem value="5">5 Stars</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="audio_upload">Audio File Upload</Label>
+                      <Input
+                        id="audio_upload"
+                        type="file"
+                        accept=".wav,.mp3,.m4a,audio/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            try {
+                              const fileExt = file.name.split('.').pop()
+                              const fileName = `widget-${Date.now()}.${fileExt}`
+                              
+                              const { data, error } = await supabase.storage
+                                .from('voice-recordings')
+                                .upload(fileName, file)
+                              
+                              if (error) throw error
+                              
+                              setNewWidget({...newWidget, audio_url: fileName})
+                              toast({
+                                title: "Success",
+                                description: "Audio file uploaded successfully"
+                              })
+                            } catch (error) {
+                              console.error('Upload error:', error)
+                              toast({
+                                title: "Error",
+                                description: "Failed to upload audio file",
+                                variant: "destructive"
+                              })
+                            }
+                          }
+                        }}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Upload audio file or leave empty for demo audio. Rating is determined by vote counts.
+                      </p>
                     </div>
                     <div>
                       <Label htmlFor="gender">Voice Gender</Label>

@@ -35,7 +35,7 @@ const Feed = () => {
 
         <div className="relative">
           <Header />
-          <main className="py-4 sm:py-8 md:py-12">
+          <main className="py-4 sm:py-8 md:py-12 pt-20 sm:pt-24 md:pt-28">
             <div className="w-full max-w-6xl mx-auto px-3 sm:px-6">
               <VoiceRecorder 
                 thoughtId={recordingThoughtId} 
@@ -61,7 +61,7 @@ const Feed = () => {
 
       <div className="relative">
         <Header />
-        <main className="py-4 sm:py-8 md:py-12">
+        <main className="py-4 sm:py-8 md:py-12 pt-20 sm:pt-24 md:pt-28">
           <h1 className="sr-only">Break the Ice – Voice Feed</h1>
           <div className="w-full max-w-6xl mx-auto px-3 sm:px-6">
             {/* Trending Thoughts Header Section */}
