@@ -190,7 +190,7 @@ const VoiceWidgetDemoEnhanced = () => {
             Showcase authentic voice reviews on your website, portfolio, or blog - more personal and trustworthy than traditional text reviews.
           </p>
           
-          <div className="relative max-w-5xl mx-auto px-4">
+          <div className="relative max-w-5xl mx-auto px-12">
             <Carousel 
               className="w-full"
               opts={{

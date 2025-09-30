@@ -204,12 +204,12 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border-border/50 shadow-lg",
-        "hover:bg-background hover:scale-110 transition-all duration-200",
-        "disabled:opacity-50 disabled:hover:scale-100",
+        "absolute z-10 h-10 w-10 rounded-full bg-background/90 backdrop-blur-md border border-border/40 shadow-lg",
+        "hover:bg-background hover:scale-110 hover:shadow-xl transition-all duration-200",
+        "disabled:opacity-30 disabled:hover:scale-100 disabled:cursor-not-allowed",
         orientation === "horizontal"
-          ? "left-2 top-1/2 -translate-y-1/2"
-          : "top-2 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-left-5 top-1/2 -translate-y-1/2"
+          : "-top-5 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollPrev}
@@ -235,12 +235,12 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border-border/50 shadow-lg",
-        "hover:bg-background hover:scale-110 transition-all duration-200",
-        "disabled:opacity-50 disabled:hover:scale-100",
+        "absolute z-10 h-10 w-10 rounded-full bg-background/90 backdrop-blur-md border border-border/40 shadow-lg",
+        "hover:bg-background hover:scale-110 hover:shadow-xl transition-all duration-200",
+        "disabled:opacity-30 disabled:hover:scale-100 disabled:cursor-not-allowed",
         orientation === "horizontal"
-          ? "right-2 top-1/2 -translate-y-1/2"
-          : "bottom-2 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-right-5 top-1/2 -translate-y-1/2"
+          : "-bottom-5 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollNext}

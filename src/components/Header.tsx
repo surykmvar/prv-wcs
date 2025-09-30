@@ -48,13 +48,13 @@ export function Header() {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-6 py-3 sm:py-4 bg-background/95 backdrop-blur-sm border-b border-border/50 transition-transform duration-300 ${
-        shouldShowHeader ? 'transform translate-y-0' : 'transform -translate-y-full'
+      className={`fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-6 py-2 sm:py-3 bg-background/70 backdrop-blur-md border-b border-border/20 shadow-sm transition-all duration-300 ${
+        shouldShowHeader ? 'transform translate-y-0 opacity-100' : 'transform -translate-y-full opacity-0'
       }`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div 
-          className="cursor-pointer hover:opacity-80 transition-opacity relative"
+          className="cursor-pointer hover:scale-105 transition-all duration-200 relative group"
           onClick={(e) => {
             console.log('Woices header clicked'); // Debug log
             e.preventDefault();
@@ -64,10 +64,10 @@ export function Header() {
           <img 
             src="/lovable-uploads/ccb13ffe-01c5-48bb-9a1d-19f49502baa9.png" 
             alt="Woices" 
-            className="h-12 sm:h-14 rounded-full"
+            className="h-10 sm:h-12 rounded-full shadow-sm group-hover:shadow-md transition-shadow duration-200"
           />
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
           
           {/* Get Started Button */}
@@ -75,7 +75,7 @@ export function Header() {
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/start')}
-            className="hidden sm:inline-flex"
+            className="hidden sm:inline-flex rounded-full px-4 py-2 text-sm font-medium hover:bg-accent/80 transition-all duration-200"
           >
             Get Started
           </Button>
@@ -83,11 +83,11 @@ export function Header() {
             variant="ghost"
             size="icon"
             onClick={() => navigate('/start')}
-            className="sm:hidden"
+            className="sm:hidden rounded-full w-8 h-8 hover:bg-accent/80 transition-all duration-200"
             aria-label="Get Started"
             title="Get Started"
           >
-            <Play className="h-5 w-5" />
+            <Play className="h-4 w-4" />
           </Button>
           
           {/* Feed Button */}
@@ -95,7 +95,7 @@ export function Header() {
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/feed')}
-            className="hidden sm:inline-flex"
+            className="hidden sm:inline-flex rounded-full px-4 py-2 text-sm font-medium hover:bg-accent/80 transition-all duration-200"
           >
             Feed
           </Button>
@@ -103,11 +103,11 @@ export function Header() {
             variant="ghost"
             size="icon"
             onClick={() => navigate('/feed')}
-            className="sm:hidden"
+            className="sm:hidden rounded-full w-8 h-8 hover:bg-accent/80 transition-all duration-200"
             aria-label="Feed"
             title="Feed"
           >
-            <Mic className="h-5 w-5" />
+            <Mic className="h-4 w-4" />
           </Button>
           {user ? (
             <div className="flex items-center gap-2">
@@ -117,10 +117,10 @@ export function Header() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setMembershipModalOpen(true)}
-                    className="flex items-center gap-1.5 px-2 py-1 h-8 text-xs font-medium rounded-full border border-border/50 hover:bg-accent hover:border-border transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 h-8 text-xs font-medium rounded-full bg-accent/30 border border-border/30 hover:bg-accent/50 hover:border-border/50 backdrop-blur-sm transition-all duration-200"
                   >
                     <Coins className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-                    <span className="text-foreground">{Math.floor(creditsInfo.balance * 100) / 100}</span>
+                    <span className="text-foreground font-semibold">{Math.floor(creditsInfo.balance * 100) / 100}</span>
                   </Button>
                    {/* Low credits warning dot */}
                    {creditsInfo.balance < 45 && (
@@ -130,9 +130,9 @@ export function Header() {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">{user.email}</span>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2 rounded-full px-3 py-1.5 h-8 text-xs bg-background/80 border-border/30 hover:bg-accent/50 hover:border-border/50 backdrop-blur-sm transition-all duration-200">
+                    <User className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline text-xs font-medium">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -181,14 +181,14 @@ export function Header() {
                 variant="outline" 
                 size="sm" 
                 onClick={() => navigate('/auth?mode=signup')}
-                className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md"
+                className="text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-background/80 border-border/30 hover:bg-accent/50 hover:border-border/50 backdrop-blur-sm transition-all duration-200"
               >
                 Sign up
               </Button>
               <Button 
                 size="sm" 
                 onClick={() => navigate('/auth?mode=signin')}
-                className="bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
               >
                 Sign in
               </Button>
