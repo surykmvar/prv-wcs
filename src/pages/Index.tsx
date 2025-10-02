@@ -5,10 +5,18 @@ import { Header } from "@/components/Header"
 import { MainActions } from "@/components/MainActions"
 import { VotingExplanationModal } from '@/components/VotingExplanationModal'
 import { DynamicBackground } from "@/components/DynamicBackground"
+import { LowCreditBanner } from "@/components/LowCreditBanner"
+import { SocialProof } from "@/components/SocialProof"
+import { MembershipModal } from "@/components/MembershipModal"
+import { useCredits } from "@/hooks/useCredits"
+import { useAuth } from "@/hooks/useAuth"
 import { Helmet } from "react-helmet-async"
 
 const Index = () => {
   const location = useLocation()
+  const { user } = useAuth()
+  const { creditsInfo } = useCredits()
+  const [showMembershipModal, setShowMembershipModal] = useState(false)
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background font-inter">
@@ -27,10 +35,29 @@ const Index = () => {
       <div className="relative">
         <Header />
         <main className="py-4 sm:py-8 md:py-12 pt-20 sm:pt-24 md:pt-28">
-          <MainActions />
+          <div className="container mx-auto px-4 max-w-4xl">
+            {user && creditsInfo && (
+              <LowCreditBanner 
+                credits={creditsInfo.balance} 
+                onPurchaseClick={() => setShowMembershipModal(true)}
+              />
+            )}
+            <MainActions />
+            
+            {/* Social Proof Section - Show to non-authenticated users */}
+            {!user && (
+              <div className="mt-16">
+                <SocialProof />
+              </div>
+            )}
+          </div>
         </main>
       </div>
       <VotingExplanationModal />
+      <MembershipModal 
+        open={showMembershipModal} 
+        onOpenChange={setShowMembershipModal}
+      />
     </div>
   )
 }
