@@ -13,10 +13,16 @@ export function useAudioUrl(audioPath: string | null) {
     }
 
     // If it's already a full URL, local blob/data URL, or local asset, use directly
-    if (audioPath.startsWith('http') || audioPath.startsWith('blob:') || audioPath.startsWith('data:') || 
-        audioPath.startsWith('/src/assets/') || audioPath.startsWith('/assets/') || 
+    if (audioPath.startsWith('http') || 
+        audioPath.startsWith('blob:') || 
+        audioPath.startsWith('data:') || 
+        audioPath.startsWith('/src/assets/') || 
+        audioPath.startsWith('/assets/') || 
+        audioPath.endsWith('.wav') ||
+        audioPath.endsWith('.mp3') ||
         audioPath.includes('demo-voice-')) {
       setSignedUrl(audioPath)
+      setLoading(false)
       return
     }
 

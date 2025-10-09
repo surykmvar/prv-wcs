@@ -7,6 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ContactSalesModal } from "@/components/ContactSalesModal"
 import { SparkleField } from "@/components/SparkleField"
 import { FoundersNoteToggle } from "@/components/FoundersNoteToggle"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { Helmet } from "react-helmet-async"
 import { Mic, MessageSquare, TrendingUp, Shield, Users, Clock, Heart, Code, Zap, Globe, Star, ChevronRight, Check, Building, User, Share2, Link2, Type, ArrowRight, ArrowDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -521,21 +522,23 @@ const Landing = () => {
           </section>
 
           {/* Widget Demo */}
-          <section className="py-12 sm:py-16 md:py-20 px-4 bg-card/50">
-            <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">See Voice Reviews in Action</h2>
-                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
-                  Experience how voice reviews look when embedded on websites, social media, and mobile apps. 
-                  This is what your customers will see and interact with.
-                </p>
+          <ErrorBoundary>
+            <section className="py-12 sm:py-16 md:py-20 px-4 bg-card/50">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-12 sm:mb-16">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-4">See Voice Reviews in Action</h2>
+                  <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
+                    Experience how voice reviews look when embedded on websites, social media, and mobile apps. 
+                    This is what your customers will see and interact with.
+                  </p>
+                </div>
+                
+                <div className="max-w-4xl mx-auto">
+                  <VoiceWidgetDemoEnhanced />
+                </div>
               </div>
-              
-              <div className="max-w-4xl mx-auto">
-                <VoiceWidgetDemoEnhanced />
-              </div>
-            </div>
-          </section>
+            </section>
+          </ErrorBoundary>
 
           {/* Roadmap */}
           <section className="py-12 sm:py-16 md:py-20 px-4">

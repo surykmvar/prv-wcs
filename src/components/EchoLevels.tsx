@@ -100,10 +100,16 @@ export const EchoLevels = ({
       }
     }
     
+    // Simplified box-shadow for better mobile performance
+    const isMobile = window.innerWidth < 768
+    const boxShadow = isMobile 
+      ? `0 0 6px ${colors.glow}` 
+      : `0 0 12px ${colors.glow}, inset 0 0 8px ${colors.glow}`
+    
     return {
       borderColor: colors.border,
       backgroundColor: colors.bg,
-      boxShadow: `0 0 12px ${colors.glow}, inset 0 0 8px ${colors.glow}`
+      boxShadow
     }
   }
 

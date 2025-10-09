@@ -1,0 +1,45 @@
+{
+  "name": "Woices - Voice-Powered Social Feedback",
+  "short_name": "Woices",
+  "description": "Authentic voice reviews and social feedback. Replace fake text reviews with real human voices.",
+  "start_url": "/start",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#9b87f5",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/lovable-uploads/0d554336-6d8b-4a92-a538-27f0d97b6191.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/lovable-uploads/0d554336-6d8b-4a92-a538-27f0d97b6191.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/lovable-uploads/0d554336-6d8b-4a92-a538-27f0d97b6191.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["social", "productivity", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Create Voice Thought",
+      "url": "/start",
+      "icons": [
+        {
+          "src": "/lovable-uploads/0d554336-6d8b-4a92-a538-27f0d97b6191.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

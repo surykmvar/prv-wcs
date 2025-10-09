@@ -17,6 +17,7 @@ interface ModernVoicePlayerProps {
   factVotes: number
   unclearVotes: number
   className?: string
+  demo?: boolean // Disable subscriptions for demo widgets
   // Controlled mode props
   controlled?: boolean
   isActive?: boolean
@@ -38,6 +39,7 @@ export function ModernVoicePlayer({
   factVotes,
   unclearVotes,
   className,
+  demo = false,
   controlled = false,
   isActive = false,
   isPlaying: controlledIsPlaying = false,
@@ -69,12 +71,15 @@ export function ModernVoicePlayer({
   // Get signed URL for audio playback (only if not controlled)
   const { signedUrl, loading: urlLoading, error: urlError } = useAudioUrl(controlled && !isActive ? null : audioUrl)
 
-  // Real-time subscription for vote updates
+  // Real-time subscription for vote updates (disabled for demo widgets)
   useEffect(() => {
     // Update local vote counts when props change
     setLocalMythVotes(mythVotes)
     setLocalFactVotes(factVotes)
     setLocalUnclearVotes(unclearVotes)
+
+    // Skip subscription for demo widgets
+    if (demo) return
 
     // Subscribe to real-time vote count updates for this specific voice response
     const channel = supabase
@@ -101,7 +106,7 @@ export function ModernVoicePlayer({
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [voiceResponseId, mythVotes, factVotes, unclearVotes])
+  }, [voiceResponseId, mythVotes, factVotes, unclearVotes, demo])
 
   // Audio event handlers setup - only for uncontrolled mode
   useEffect(() => {

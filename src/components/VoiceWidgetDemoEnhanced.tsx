@@ -254,6 +254,7 @@ const VoiceWidgetDemoEnhanced = () => {
                       factVotes={socialWidgets[0].fact_votes}
                       unclearVotes={socialWidgets[0].unclear_votes}
                       className="bg-muted/30"
+                      demo={true}
                     />
                   </div>
                   
@@ -313,6 +314,7 @@ const VoiceReviewCard = ({ widget }: { widget: VoiceWidget }) => {
             mythVotes={widget.myth_votes}
             factVotes={widget.fact_votes}
             unclearVotes={widget.unclear_votes}
+            demo={true}
           />
           
           <p className="text-xs text-muted-foreground mt-2">2 hours ago</p>
