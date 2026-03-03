@@ -42,10 +42,28 @@ serve(async (req) => {
     if (!user?.email) throw new Error('User not authenticated or email not available');
     logStep('User authenticated', { userId: user.id, email: user.email });
 
-    const { points, planType, planDetails, region, currency } = await req.json();
-    if (!points || points < 10) throw new Error('Invalid points amount');
-    if (!region || !currency) throw new Error('Invalid region or currency');
-    logStep('Request parsed', { points, planType, planDetails, region, currency });
+    const body = await req.json();
+    const { points, planType, planDetails, region, currency } = body;
+
+    // Strict input validation
+    if (typeof points !== 'number' || !Number.isInteger(points) || points < 10 || points > 100000) {
+      throw new Error('Invalid points amount: must be an integer between 10 and 100000');
+    }
+
+    const allowedPlanTypes = ['usage', 'annual', 'custom'];
+    if (planType && !allowedPlanTypes.includes(planType)) {
+      throw new Error('Invalid plan type');
+    }
+
+    if (typeof region !== 'string' || region.length > 10 || !/^[A-Z]{2,5}$/.test(region)) {
+      throw new Error('Invalid region format');
+    }
+
+    if (typeof currency !== 'string' || currency.length > 5 || !/^[a-zA-Z]{3}$/.test(currency)) {
+      throw new Error('Invalid currency format');
+    }
+
+    logStep('Request parsed and validated', { points, planType, region, currency });
 
     // Lookup pricing server-side from regional_pricing table
     const { data: pricingData, error: pricingError } = await supabaseClient
