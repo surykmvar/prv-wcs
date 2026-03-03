@@ -833,30 +833,25 @@ export type Database = {
         }
         Returns: boolean
       }
-      can_access_sales_inquiries: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      check_sales_inquiry_rate_limit: {
-        Args:
-          | Record<PropertyKey, never>
-          | { p_email: string; p_max_per_hour?: number; p_user_id: string }
-        Returns: boolean
-      }
+      can_access_sales_inquiries: { Args: never; Returns: boolean }
+      check_sales_inquiry_rate_limit:
+        | { Args: never; Returns: boolean }
+        | {
+            Args: {
+              p_email: string
+              p_max_per_hour?: number
+              p_user_id: string
+            }
+            Returns: boolean
+          }
       check_woices_home_uniqueness: {
         Args: { home_name: string; user_uuid: string }
         Returns: boolean
       }
-      cleanup_old_sales_inquiries: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      evaluate_thought_status: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_old_sales_inquiries: { Args: never; Returns: number }
+      evaluate_thought_status: { Args: never; Returns: undefined }
       get_auth_users_basic: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           email: string
@@ -881,7 +876,7 @@ export type Database = {
         }[]
       }
       get_public_thoughts_for_feed: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           city: string
           country_code: string
@@ -899,7 +894,7 @@ export type Database = {
         }[]
       }
       get_public_voice_responses_for_feed: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           audio_url: string
           classification: string
@@ -913,10 +908,7 @@ export type Database = {
           unclear_votes: number
         }[]
       }
-      get_user_credits_balance: {
-        Args: { user_uuid: string }
-        Returns: number
-      }
+      get_user_credits_balance: { Args: { user_uuid: string }; Returns: number }
       get_user_saved_thoughts: {
         Args: { user_uuid: string }
         Returns: {
@@ -977,14 +969,8 @@ export type Database = {
         }
         Returns: undefined
       }
-      sanitize_html_input: {
-        Args: { input_text: string }
-        Returns: string
-      }
-      update_expired_thoughts: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      sanitize_html_input: { Args: { input_text: string }; Returns: string }
+      update_expired_thoughts: { Args: never; Returns: undefined }
       update_user_credits: {
         Args: {
           credit_amount: number
@@ -999,10 +985,7 @@ export type Database = {
         Args: { thought_uuid: string; user_uuid: string }
         Returns: boolean
       }
-      validate_email_format: {
-        Args: { email: string }
-        Returns: boolean
-      }
+      validate_email_format: { Args: { email: string }; Returns: boolean }
       validate_sales_inquiry_data: {
         Args: {
           p_company_name?: string
@@ -1012,10 +995,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      validate_woices_home: {
-        Args: { home_name: string }
-        Returns: boolean
-      }
+      validate_woices_home: { Args: { home_name: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"
