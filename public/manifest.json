@@ -2,7 +2,7 @@
   "name": "Woices - Voice-Powered Social Feedback",
   "short_name": "Woices",
   "description": "Authentic voice reviews and social feedback. Replace fake text reviews with real human voices.",
-  "start_url": "/start",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0A0A0A",
   "theme_color": "#9b87f5",
