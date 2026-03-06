@@ -183,6 +183,7 @@ const VoiceWidgetDemoEnhanced = () => {
       <div className="max-w-7xl mx-auto">
 
         {/* Website Integration */}
+        <ErrorBoundary>
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center mb-8 text-foreground">
             Website Integration
