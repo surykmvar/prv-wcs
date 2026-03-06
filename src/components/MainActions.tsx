@@ -102,38 +102,6 @@ export function MainActions() {
         </div>
       </div>
 
-      {/* Helper text */}
-      <div className="mt-8 max-w-lg mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Ask Questions Card */}
-          <div className="group relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-lg border border-border/40 p-4 hover:bg-card/70 hover:backdrop-blur-xl hover:border-border/70 hover:ring-2 hover:ring-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors duration-300">
-                <MessageSquare className="w-4 h-4 text-primary strokeWidth-2.5" strokeWidth={2.5} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-foreground text-sm mb-1">Ask Questions</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">Click the text field to ask interesting questions regarding a product, business, or a trending topic.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Voice Replies Card */}
-          <div className="group relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-lg border border-border/40 p-4 hover:bg-card/70 hover:backdrop-blur-xl hover:border-border/70 hover:ring-2 hover:ring-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                <Mic className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-foreground text-sm mb-1">Voice Replies</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">Click the mic to give voice feedback as a User or viewer on topics, Services, Products, etc 😉</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <WriteNoteDialog 
         open={showWriteNote} 
