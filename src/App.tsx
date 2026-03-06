@@ -36,8 +36,8 @@ const App = () => {
           <BrowserRouter>
             <Suspense fallback={<div>Loading...</div>}>
               <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/start" element={<Index />} />
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<Landing />} />
                 <Route 
                   path="/auth"
                   element={

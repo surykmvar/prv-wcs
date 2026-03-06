@@ -78,13 +78,10 @@ export function MainActions() {
 
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col gap-6 mt-4 sm:mt-8">
-      <div className="text-center mb-8">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 bg-gradient-to-r from-slate-600 to-slate-800 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight">
-          Share your voice, shape conversations
+      <div className="text-center mb-6">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent leading-tight">
+          What's on your voice?
         </h1>
-        <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-          Ask meaningful questions or reply with thoughtful 60-second voices
-        </p>
       </div>
 
       {/* Live Trending Banner */}
@@ -105,38 +102,6 @@ export function MainActions() {
         </div>
       </div>
 
-      {/* Helper text */}
-      <div className="mt-8 max-w-lg mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Ask Questions Card */}
-          <div className="group relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-lg border border-border/40 p-4 hover:bg-card/70 hover:backdrop-blur-xl hover:border-border/70 hover:ring-2 hover:ring-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors duration-300">
-                <MessageSquare className="w-4 h-4 text-primary strokeWidth-2.5" strokeWidth={2.5} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-foreground text-sm mb-1">Ask Questions</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">Click the text field to ask interesting questions regarding a product, business, or a trending topic.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Voice Replies Card */}
-          <div className="group relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-lg border border-border/40 p-4 hover:bg-card/70 hover:backdrop-blur-xl hover:border-border/70 hover:ring-2 hover:ring-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                <Mic className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-foreground text-sm mb-1">Voice Replies</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">Click the mic to give voice feedback as a User or viewer on topics, Services, Products, etc 😉</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <WriteNoteDialog 
         open={showWriteNote} 

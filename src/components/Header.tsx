@@ -70,24 +70,24 @@ export function Header() {
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
           
-          {/* Get Started Button */}
+          {/* About Button */}
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => navigate('/start')}
+            onClick={() => navigate('/about')}
             className="hidden sm:inline-flex rounded-full px-4 py-2 text-sm font-medium hover:bg-accent/80 transition-all duration-200"
           >
-            Get Started
+            About
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/start')}
+            onClick={() => navigate('/about')}
             className="sm:hidden rounded-full w-8 h-8 hover:bg-accent/80 transition-all duration-200"
-            aria-label="Get Started"
-            title="Get Started"
+            aria-label="About"
+            title="About"
           >
-            <Play className="h-4 w-4" />
+            <Home className="h-4 w-4" />
           </Button>
           
           {/* Feed Button */}

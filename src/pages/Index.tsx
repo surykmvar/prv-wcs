@@ -6,7 +6,7 @@ import { MainActions } from "@/components/MainActions"
 import { VotingExplanationModal } from '@/components/VotingExplanationModal'
 import { DynamicBackground } from "@/components/DynamicBackground"
 import { LowCreditBanner } from "@/components/LowCreditBanner"
-import { SocialProof } from "@/components/SocialProof"
+
 import { MembershipModal } from "@/components/MembershipModal"
 import { useCredits } from "@/hooks/useCredits"
 import { useAuth } from "@/hooks/useAuth"
@@ -44,12 +44,6 @@ const Index = () => {
             )}
             <MainActions />
             
-            {/* Social Proof Section - Show to non-authenticated users */}
-            {!user && (
-              <div className="mt-16">
-                <SocialProof />
-              </div>
-            )}
           </div>
         </main>
       </div>
