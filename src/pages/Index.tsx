@@ -44,12 +44,6 @@ const Index = () => {
             )}
             <MainActions />
             
-            {/* Social Proof Section - Show to non-authenticated users */}
-            {!user && (
-              <div className="mt-16">
-                <SocialProof />
-              </div>
-            )}
           </div>
         </main>
       </div>
