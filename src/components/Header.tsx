@@ -39,6 +39,7 @@ export function Header() {
   const [membershipModalOpen, setMembershipModalOpen] = useState(false)
   const [showSystemFlowMobileNotice, setShowSystemFlowMobileNotice] = useState(false)
   const { scrollDirection, isAtTop } = useScrollDirection()
+  const { isStandalone, isInstallable, isIOS, installApp } = usePWAInstall()
 
   const handleSignOut = async () => {
     await signOut()
