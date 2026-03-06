@@ -78,13 +78,10 @@ export function MainActions() {
 
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col gap-6 mt-4 sm:mt-8">
-      <div className="text-center mb-8">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 bg-gradient-to-r from-slate-600 to-slate-800 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight">
-          Share your voice, shape conversations
+      <div className="text-center mb-6">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent leading-tight">
+          What's on your voice?
         </h1>
-        <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-          Ask meaningful questions or reply with thoughtful 60-second voices
-        </p>
       </div>
 
       {/* Live Trending Banner */}
