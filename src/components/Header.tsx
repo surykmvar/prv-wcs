@@ -169,6 +169,28 @@ export function Header() {
                     </DropdownMenuItem>
                   </>
                 )}
+                {!isStandalone && (isInstallable || isIOS) && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={async () => {
+                      if (isInstallable) {
+                        await installApp()
+                      } else if (isIOS) {
+                        // Show iOS instructions via toast or similar
+                        import('@/hooks/use-toast').then(({ toast }) => {
+                          toast({
+                            title: "Install on iOS",
+                            description: "Tap the Share button in Safari, then 'Add to Home Screen'.",
+                            duration: 5000
+                          })
+                        })
+                      }
+                    }}>
+                      <Download className="mr-2 h-4 w-4" />
+                      Install App
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />

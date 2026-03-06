@@ -284,6 +284,7 @@ const VoiceWidgetDemoEnhanced = () => {
             ))}
           </div>
         </div>
+        </ErrorBoundary>
       </div>
     </section>
   )
