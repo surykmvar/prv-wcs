@@ -214,8 +214,10 @@ const VoiceWidgetDemoEnhanced = () => {
             </Carousel>
           </div>
         </div>
+        </ErrorBoundary>
 
         {/* Social Media Integration */}
+        <ErrorBoundary>
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center mb-8 text-foreground">
             Social Media Integration
