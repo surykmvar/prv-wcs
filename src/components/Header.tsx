@@ -5,9 +5,10 @@ import { useAuth } from '@/hooks/useAuth'
 import { useAdminRole } from '@/hooks/useAdminRole'
 import { useCredits } from '@/hooks/useCredits'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, User, Mic, Shield, GitBranch, CreditCard, Coins, Home, Play } from 'lucide-react'
+import { LogOut, User, Mic, Shield, GitBranch, CreditCard, Coins, Home, Play, Download } from 'lucide-react'
 import { MembershipModal } from '@/components/MembershipModal'
 import { useState } from 'react'
+import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useLocation } from 'react-router-dom'
 import { useScrollDirection } from '@/hooks/useScrollDirection'
@@ -38,6 +39,7 @@ export function Header() {
   const [membershipModalOpen, setMembershipModalOpen] = useState(false)
   const [showSystemFlowMobileNotice, setShowSystemFlowMobileNotice] = useState(false)
   const { scrollDirection, isAtTop } = useScrollDirection()
+  const { isStandalone, isInstallable, isIOS, installApp } = usePWAInstall()
 
   const handleSignOut = async () => {
     await signOut()
@@ -164,6 +166,28 @@ export function Header() {
                     }}>
                       <GitBranch className="mr-2 h-4 w-4" />
                       System Flow
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {!isStandalone && (isInstallable || isIOS) && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={async () => {
+                      if (isInstallable) {
+                        await installApp()
+                      } else if (isIOS) {
+                        // Show iOS instructions via toast or similar
+                        import('@/hooks/use-toast').then(({ toast }) => {
+                          toast({
+                            title: "Install on iOS",
+                            description: "Tap the Share button in Safari, then 'Add to Home Screen'.",
+                            duration: 5000
+                          })
+                        })
+                      }
+                    }}>
+                      <Download className="mr-2 h-4 w-4" />
+                      Install App
                     </DropdownMenuItem>
                   </>
                 )}

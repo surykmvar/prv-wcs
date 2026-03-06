@@ -6,6 +6,7 @@ import { ModernVoicePlayer } from "./ModernVoicePlayer"
 import { VotingButtons } from "./VotingButtons"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { supabase } from "@/integrations/supabase/client"
+import { ErrorBoundary } from "./ErrorBoundary"
 import demoVoiceFemale from "@/assets/demo-voice-female-15s.wav"
 import demoVoiceMale32 from "@/assets/demo-voice-male-32s.wav"
 import demoVoiceMale45 from "@/assets/demo-voice-male-45s.wav"
@@ -182,6 +183,7 @@ const VoiceWidgetDemoEnhanced = () => {
       <div className="max-w-7xl mx-auto">
 
         {/* Website Integration */}
+        <ErrorBoundary>
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center mb-8 text-foreground">
             Website Integration
@@ -212,8 +214,10 @@ const VoiceWidgetDemoEnhanced = () => {
             </Carousel>
           </div>
         </div>
+        </ErrorBoundary>
 
         {/* Social Media Integration */}
+        <ErrorBoundary>
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center mb-8 text-foreground">
             Social Media Integration
@@ -280,6 +284,7 @@ const VoiceWidgetDemoEnhanced = () => {
             ))}
           </div>
         </div>
+        </ErrorBoundary>
       </div>
     </section>
   )

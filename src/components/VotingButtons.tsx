@@ -38,7 +38,12 @@ export function VotingButtons({
   const { userSession } = useUserSession()
   const navigate = useNavigate()
 
+  const isDemo = voiceResponseId.startsWith('demo-')
+
   useEffect(() => {
+    // Skip Supabase query for demo IDs
+    if (isDemo) return
+
     // Check if user has already voted
     const checkExistingVote = async () => {
       if (!user?.id && !userSession) {
@@ -47,7 +52,6 @@ export function VotingButtons({
       }
       
       try {
-        // Query by user_id if authenticated, otherwise by user_session
         let query = supabase
           .from('user_votes')
           .select('vote_type')
@@ -73,10 +77,12 @@ export function VotingButtons({
     }
     
     checkExistingVote()
-  }, [voiceResponseId, user?.id, userSession])
+  }, [voiceResponseId, user?.id, userSession, isDemo])
 
-  // Real-time subscription for vote count updates
+  // Real-time subscription for vote count updates (skip for demo)
   useEffect(() => {
+    if (isDemo) return
+
     const channel = supabase
       .channel(`voice_response_votes_${voiceResponseId}`)
       .on(
@@ -101,7 +107,7 @@ export function VotingButtons({
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [voiceResponseId])
+  }, [voiceResponseId, isDemo])
 
   // Sync initial vote counts when component mounts or props change
   useEffect(() => {
