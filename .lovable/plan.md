@@ -1,12 +1,11 @@
 
 
-## Plan: Set Default Theme to Dark Mode
+## Plan: Remove heading, enlarge GooeyText
 
-A single change in `src/App.tsx`: update the `ThemeProvider` `defaultTheme` prop from `"light"` to `"dark"`. The existing `ThemeToggle` component already allows users to switch to light mode.
+### Changes
 
-### Change
-**File: `src/App.tsx` (line 33)**
-- Change `defaultTheme="light"` → `defaultTheme="dark"`
-
-This ensures new users (with no stored preference) see dark mode by default. Users who already have a stored theme preference in localStorage will keep their existing choice.
+**`src/components/MainActions.tsx`**:
+1. Remove the "What's on your voice?" `<h1>` block (lines 81-85)
+2. Increase GooeyText container height from `h-12` to `h-16` and add top margin
+3. Increase `textClassName` to `text-2xl sm:text-3xl md:text-4xl font-bold text-foreground` to match the previous heading size
 
