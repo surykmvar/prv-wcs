@@ -78,20 +78,14 @@ export function MainActions() {
 
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col gap-6 mt-4 sm:mt-8">
-      <div className="text-center mb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent leading-tight">
-          What's on your voice?
-        </h1>
-      </div>
-
       {/* Gooey Text Morphing */}
-      <div className="flex items-center justify-center h-12 w-full mb-2">
+      <div className="flex items-center justify-center h-16 w-full mb-2">
         <GooeyText
           texts={["Talk Engineering", "Ditch AI Slop", "Review Nearby Spots", "Expose Fake News", "Debate Bold Ideas"]}
           morphTime={1.5}
           cooldownTime={0.5}
           className="w-full"
-          textClassName="text-xl sm:text-2xl font-bold text-foreground"
+          textClassName="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground"
         />
       </div>
 
