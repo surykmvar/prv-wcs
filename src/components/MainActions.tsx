@@ -84,11 +84,15 @@ export function MainActions() {
         </h1>
       </div>
 
-      {/* Live Trending Banner */}
-      <LiveTrendingBanner 
-        onOpenAuth={handleOpenAuth}
-        onStartRecording={handleStartRecording}
-      />
+      {/* Gooey Text Morphing */}
+      <div className="flex items-center justify-center h-10 mb-2">
+        <GooeyText
+          texts={["Share your voice", "Start a thought", "Join the conversation", "Be heard"]}
+          morphTime={1.5}
+          cooldownTime={0.5}
+          textClassName="text-lg sm:text-xl font-semibold text-muted-foreground"
+        />
+      </div>
 
       {/* Main Action Bar */}
       <div className="relative">
