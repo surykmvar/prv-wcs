@@ -116,7 +116,7 @@ export function GooeyText({
         <span
           ref={text1Ref}
           className={cn(
-            "absolute inline-block w-full text-center select-none",
+            "absolute inline-block w-full text-center select-none whitespace-nowrap",
             textClassName
           )}
         >
@@ -125,7 +125,7 @@ export function GooeyText({
         <span
           ref={text2Ref}
           className={cn(
-            "absolute inline-block w-full text-center select-none",
+            "absolute inline-block w-full text-center select-none whitespace-nowrap",
             textClassName
           )}
         >
