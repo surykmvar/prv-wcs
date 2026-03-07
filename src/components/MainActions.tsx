@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { Mic, MessageSquare } from "lucide-react"
+
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
 import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { SmartThoughtInput } from "@/components/SmartThoughtInput"
