@@ -85,12 +85,13 @@ export function MainActions() {
       </div>
 
       {/* Gooey Text Morphing */}
-      <div className="flex items-center justify-center h-10 mb-2">
+      <div className="flex items-center justify-center h-12 w-full mb-2">
         <GooeyText
-          texts={["Share your voice", "Start a thought", "Join the conversation", "Be heard"]}
+          texts={["Talk Engineering", "Ditch AI Slop", "Review Nearby Spots", "Expose Fake News", "Debate Bold Ideas"]}
           morphTime={1.5}
           cooldownTime={0.5}
-          textClassName="text-lg sm:text-xl font-semibold text-muted-foreground"
+          className="w-full"
+          textClassName="text-xl sm:text-2xl font-bold text-foreground"
         />
       </div>
 
