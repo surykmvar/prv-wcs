@@ -3,73 +3,26 @@ import { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
 import { WriteNoteDialog } from "@/components/WriteNoteDialog"
-import { VoiceRecorder } from "@/components/VoiceRecorder"
 import { SmartThoughtInput } from "@/components/SmartThoughtInput"
 import { GooeyText } from "@/components/ui/gooey-text-morphing"
 import { useAuth } from "@/hooks/useAuth"
-import { useTrendingThoughts } from "@/hooks/useTrendingThoughts"
-import { motion } from "framer-motion"
-import { SparkleField } from "@/components/SparkleField"
 
 export function MainActions() {
   const [showWriteNote, setShowWriteNote] = useState(false)
-  const [recordingTrendingTopicId, setRecordingTrendingTopicId] = useState<string | null>(null)
-  const [materializedThoughtId, setMaterializedThoughtId] = useState<string | null>(null)
   const [thoughtInputTitle, setThoughtInputTitle] = useState<string>("")
   const location = useLocation()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { materializeTrendingTopic } = useTrendingThoughts()
 
-  // Reset state when navigating back to home page
   useEffect(() => {
-    console.log('MainActions route changed:', location.pathname); // Debug log
     if (location.pathname === '/') {
       setShowWriteNote(false)
-      setRecordingTrendingTopicId(null)
-      setMaterializedThoughtId(null)
       setThoughtInputTitle("")
     }
   }, [location.pathname])
 
-  const handleOpenAuth = () => {
-    navigate(`/auth?mode=signup&redirect=${encodeURIComponent('/?trending=true')}`)
-  }
-
-  const handleStartRecording = async (trendingTopicId: string) => {
-    if (!user) {
-      // Allow guests to navigate to feed without forcing auth
-      navigate('/feed')
-      return
-    }
-
-    try {
-      // Materialize the trending topic into a real thought
-      const thoughtId = await materializeTrendingTopic(trendingTopicId, user.id)
-      if (thoughtId) {
-        setMaterializedThoughtId(thoughtId)
-        setRecordingTrendingTopicId(trendingTopicId)
-      }
-    } catch (error) {
-      console.error('Error materializing trending topic:', error)
-    }
-  }
-
-  const handleRecordingSuccess = () => {
-    setRecordingTrendingTopicId(null)
-    setMaterializedThoughtId(null)
-    // Navigate to feed to see the new post
-    navigate('/feed')
-  }
-
-  const handleRecordingClose = () => {
-    setRecordingTrendingTopicId(null)
-    setMaterializedThoughtId(null)
-  }
-
   const handleThoughtInputFocus = () => {
     if (!user) {
-      // Allow guests to navigate to feed to see content
       navigate('/feed')
     } else {
       setShowWriteNote(true)
@@ -91,8 +44,6 @@ export function MainActions() {
 
       {/* Main Action Bar */}
       <div className="relative">
-        <SparkleField className="hidden sm:block absolute inset-0 -z-10 opacity-60" density={18} />
-        
         <div className="flex justify-center">
           <SmartThoughtInput 
             onFocus={handleThoughtInputFocus}
@@ -101,20 +52,11 @@ export function MainActions() {
         </div>
       </div>
 
-
       <WriteNoteDialog 
         open={showWriteNote} 
         onOpenChange={setShowWriteNote}
         initialTitle={thoughtInputTitle}
       />
-
-      {recordingTrendingTopicId && materializedThoughtId && (
-        <VoiceRecorder
-          thoughtId={materializedThoughtId}
-          onClose={handleRecordingClose}
-          onSuccess={handleRecordingSuccess}
-        />
-      )}
     </div>
   )
 }
