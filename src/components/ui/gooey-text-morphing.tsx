@@ -30,12 +30,12 @@ export function GooeyText({
 
     const setMorph = (fraction: number) => {
       if (text1Ref.current && text2Ref.current) {
-        text2Ref.current.style.filter = `blur(${Math.min(4 / fraction - 4, 100)}px)`;
+        text2Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
         text2Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
 
-        const inv = 1 - fraction;
-        text1Ref.current.style.filter = `blur(${Math.min(4 / inv - 4, 100)}px)`;
-        text1Ref.current.style.opacity = `${Math.pow(inv, 0.4) * 100}%`;
+        fraction = 1 - fraction;
+        text1Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
+        text1Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
       }
     };
 
@@ -94,25 +94,41 @@ export function GooeyText({
 
   return (
     <div className={cn("relative", className)}>
-      <div className="flex items-center justify-center">
+      <svg className="absolute h-0 w-0" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="threshold">
+            <feColorMatrix
+              in="SourceGraphic"
+              type="matrix"
+              values="1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 0 255 -140"
+            />
+          </filter>
+        </defs>
+      </svg>
+
+      <div
+        className="flex items-center justify-center"
+        style={{ filter: "url(#threshold)" }}
+      >
         <span
           ref={text1Ref}
           className={cn(
-            "absolute inline-block w-full text-center select-none whitespace-nowrap",
+            "absolute inline-block select-none text-center text-6xl md:text-[60pt]",
+            "text-foreground",
             textClassName
           )}
-        >
-          {texts[0]}
-        </span>
+        />
         <span
           ref={text2Ref}
           className={cn(
-            "absolute inline-block w-full text-center select-none whitespace-nowrap",
+            "absolute inline-block select-none text-center text-6xl md:text-[60pt]",
+            "text-foreground",
             textClassName
           )}
-        >
-          {texts[1]}
-        </span>
+        />
       </div>
     </div>
   );
